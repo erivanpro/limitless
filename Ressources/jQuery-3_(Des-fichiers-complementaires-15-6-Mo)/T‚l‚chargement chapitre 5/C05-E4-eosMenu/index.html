@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>jQuery eosMenu Plugin Demo</title>
+	<style>
+		body {
+			margin: 0px;
+			padding: 0px;
+		}
+	</style>
+	<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+	<link rel="stylesheet" href="eosMenu.css" />
+</head>
+<body>
+<div class="eos-menu" id="menu">
+	<div class="eos-menu-title">Welcome to eosMenu Plugin<i class="fa fa-bars fa-lg eos-pull-right" aria-hidden="true"></i></div>
+	<div class="eos-menu-content">
+		<li class="eos-item">
+			<a href="#"><i class="fa fa-home" aria-hidden="true"></i> Home</a>
+		</li>
+		
+		<li class="eos-item">
+			<a href="#"><i class="fa fa-envelope" aria-hidden="true"></i> Contact Us</a>
+		</li>
+		
+		<div class="eos-group-title"><i class="fa fa-user" aria-hidden="true"></i> Profile <i class="fa fa-angle-right fa-lg eos-pull-right" aria-hidden="true"></i></div>
+		<div class="eos-group-content">
+			<li class="eos-item">
+				<a href="#"><i class="fa fa-user-plus" aria-hidden="true"></i> New User</a>
+			</li>
+			<li class="eos-item">
+				<a href="#"><i class="fa fa-users" aria-hidden="true"></i> All Users</a>
+			</li>
+		</div>
+		
+		<li class="eos-item">
+			<a href="#"><i class="fa fa-gear" aria-hidden="true"></i> Settings</a>
+		</li>
+		
+		<div class="eos-group-title"><i class="fa fa-share" aria-hidden="true"></i> Social Media <i class="fa fa-angle-right fa-lg eos-pull-right" aria-hidden="true"></i></div>
+		<div class="eos-group-content">
+			<li class="eos-item">
+				<a href="#"><i class="fa fa-facebook" aria-hidden="true"></i> Facebook</a>
+			</li>
+			<li class="eos-item">
+				<a href="#"><i class="fa fa-twitter" aria-hidden="true"></i> Twitter</a>
+			</li>
+			<li class="eos-item">
+				<a href="#"><i class="fa fa-google-plus" aria-hidden="true"></i> Google Plus</a>
+			</li>
+		</div>
+		
+		<li class="eos-item">
+			<a href="#"><i class="fa fa-power-off" aria-hidden="true"></i> Logout</a>
+		</li>
+	</div>
+</div>
+
+<div>
+	<h2>Aenean eu leo quam</h2>
+	<p>Pellentesque ornare sem lacinia quam venenatis vestibulum. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Curabitur blandit tempus porttitor. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.</p>   
+</div>
+<script src="http://code.jquery.com/jquery-3.1.0.slim.min.js"></script>
+<script src="eosMenu.js" type="text/javascript" charset="utf-8"></script>
+<script>
+	$("#menu").eosMenu();
+</script>
+</body>
+</html>

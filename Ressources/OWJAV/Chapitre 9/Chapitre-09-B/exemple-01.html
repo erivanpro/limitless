@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Ma page</title>
+    </head>
+    <body>
+        <script>
+			localStorage.setItem("Nom","Aubry");
+			var le_nom = localStorage.getItem("Nom") ;
+			console.log(le_nom) ;
+			localStorage.removeItem("Nom") ;
+			console.log(sessionStorage.Nom) ;
+		</script>
+    </body>
+</html>

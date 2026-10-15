@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Crosscover</title>
+	<link href="css/sandbox.css" rel="stylesheet">
+	<link href="css/crosscover.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.3.0/animate.min.css">
+	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<script src="js/crosscover.js"></script>
+	<script>
+		$(function(){
+			$('.crosscover').crosscover({
+				dotNav: true
+			});
+		});
+	</script>
+</head>
+<body>
+	<div class="crosscover">
+		<div class="crosscover-overlay">
+			<div class="crosscover-island">
+				<h1 class="crosscover-title">Voyage à Venise</h1>
+				<h2 class="crosscover-description">Des photos...</h2>
+			</div>
+		</div>
+		<div class="crosscover-list">
+			<div class="crosscover-item">
+				<img src="images/venise-1.jpg" alt="Venise"/>
+			</div>
+			<div class="crosscover-item">
+				<img src="images/venise-2.jpg" alt="Venise"/>
+			</div>
+			<div class="crosscover-item">
+				<img src="images/venise-3.jpg" alt="Venise"/>
+			</div>
+			<div class="crosscover-item">
+				<img src="images/venise-4.jpg" alt="Venise"/>
+			</div>
+			<div class="crosscover-item">
+				<img src="images/venise-5.jpg" alt="Venise"/>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

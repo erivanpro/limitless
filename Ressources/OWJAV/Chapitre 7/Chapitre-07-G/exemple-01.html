@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Ma page</title>
+	</head>
+	<body>
+		<div id="conteneur"></div>
+		<script id="template" type="x-tmpl-mustache">
+			{{#chiens}}
+				<h2>Nom du chien : {{Nom}}.</h2>
+				<p>Couleur du chien : {{Couleur}}.</p>
+				{{> race}}
+			{{/chiens}}
+		</script>
+		<script id="race" type="x-tmpl-mustache">
+			<p><em>Race du chien</em> : <strong>{{Race}}</strong>.</p>
+		</script>
+		<script src="mustache.js"></script>
+		<script>
+			// Fournir les données internes en JSON
+			var chiensJSON = {"chiens":[{"Nom":"Raja","Couleur":"Brun","Race":"Labrador"},{"Nom":"Lord","Couleur":"Beige","Race":"Beagle"},{"Nom":"Yuky","Couleur":"Noir","Race":"Caniche"}]} ;
+			//console.log(chiensJSON);
+			// Définir les templates
+			var leTemplate = document.getElementById('template').innerHTML ;
+			var laRace = document.getElementById('race').innerHTML ;
+			// Exécuter le rendu
+			var rendu = Mustache.render(leTemplate,chiensJSON, {race: laRace}) ;
+			// Afficher le rendu
+			var leConteneur = document.getElementById('conteneur') ;
+			leConteneur.innerHTML = rendu;
+			
+		</script>
+	</body>
+</html>

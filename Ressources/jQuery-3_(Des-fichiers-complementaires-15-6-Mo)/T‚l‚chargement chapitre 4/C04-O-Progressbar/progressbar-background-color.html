@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>jQuery UI Dialog</title>
+    <link rel="stylesheet" href="css/jquery-ui.min.css">
+    <link rel="stylesheet" href="css/jquery-ui.structure.min.css">
+    <link rel="stylesheet" href="css/jquery-ui.theme.min.css">
+    <script src="js/jquery.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <style>
+        #barre_progres .ui-progressbar-value {
+            background-color: #42e92d;
+        }
+    </style>
+    <script>
+        $( function() {
+            $( "#barre_progres" ).progressbar({
+                value: 25,
+            });
+        } );
+  </script>
+</head>
+<body>
+<div id="barre_progres"></div>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Ma page</title>
+		<script>
+			function articlesJSON() {
+				var httpRequestArticles = new XMLHttpRequest();
+				httpRequestArticles.open("GET", "articles.json", true);
+				httpRequestArticles.setRequestHeader("Content-type", "application/json");
+				httpRequestArticles.onreadystatechange = function() {
+					if (httpRequestArticles.readyState == 4 && httpRequestArticles.status == 200) {
+						var donneesJSON = JSON.parse(httpRequestArticles.responseText);
+						console.log(donneesJSON.article2.auteur);
+					}
+				}
+				httpRequestArticles.send(null);
+			}
+		</script>
+	</head>
+	<body>
+		<script type="text/javascript">
+			articlesJSON();
+		</script>
+	</body>
+</html>

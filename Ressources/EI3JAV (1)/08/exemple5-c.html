@@ -1,0 +1,15 @@
+<html>
+ <head>
+  <script>
+function init() {
+ let voitures = new Map();
+ voitures.set( "clio", "Renault" );
+ voitures.set( "zoé", "Renault" );
+ voitures.set( "308", "Peugeot" );
+ voitures.forEach( function( cle, valeur ) { console.log( `La marque de ${cle} est ${valeur}` ) } );
+}
+  </script>
+ </head>
+ <body onload="init()">
+ </body>
+</html>

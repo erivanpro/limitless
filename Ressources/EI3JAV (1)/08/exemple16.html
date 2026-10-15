@@ -1,0 +1,33 @@
+<html>
+ <head>
+  <script>
+
+class Voiture {
+ constructor( plaque ) {
+  this.Plaque = plaque;
+ }
+ get Plaque() { 
+   return this.plaque
+ }
+ set Plaque( plaque) { 
+  if ( plaque.length < 8 ) 
+   throw "Plaque invalide"; 
+  this.plaque = plaque };
+}
+
+function init() {
+ let v = new Voiture( "AA1234BB" );
+ v.Plaque = "AA0123BB";
+ alert( "Voiture de plaque [" + v.Plaque + "]" );
+ try {
+   v.Plaque = "AA11BB";
+ } catch( e ) {
+   alert( "La nouvelle plaque n'est pas valide" );
+ }
+}
+
+  </script>
+ </head>
+ <body onload="init()">
+ </body>
+</html>

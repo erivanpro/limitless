@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>jQuery UI Menu</title>
+    <link rel="stylesheet" href="css/jquery-ui.min.css">
+    <link rel="stylesheet" href="css/jquery-ui.structure.min.css">
+    <link rel="stylesheet" href="css/jquery-ui.theme.min.css">
+    <script src="js/jquery.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <script>
+        $( function() {
+            $( "#menu_principal" ).menu();
+        } );
+    </script>
+    <style>
+        .ui-menu {
+            width: 150px;
+        }
+    </style>
+</head>
+<body>
+<ul id="menu_principal">
+    <li><div><span class="ui-icon ui-icon-disk"></span>Enregistrer</div></li>
+    <li><div><span class="ui-icon ui-icon-zoomin"></span>Zoomer</div></li>
+    <li><div><span class="ui-icon ui-icon-scissors"></span>Couper</div></li>
+    <li><div><span class="ui-icon ui-icon-alert"></span>Attention</div></li>
+</ul>
+</body>
+</html>

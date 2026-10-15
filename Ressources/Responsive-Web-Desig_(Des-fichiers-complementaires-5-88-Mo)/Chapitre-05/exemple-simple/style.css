@@ -1,0 +1,75 @@
+/* Styles communs */
+.container {
+	margin: 0 auto;
+}
+
+header, footer {
+	background-color: #dedede;
+}
+
+main {
+	background-color: #efefef;
+	overflow: auto;
+}
+
+article {
+	box-sizing: border-box;
+	float: left;
+	padding: 10px;
+}
+
+h1, p {
+	margin: 0;
+}
+
+footer {
+	clear: both;
+	overflow: auto;
+}
+
+footer div {
+	float: left;
+	font-style: italic;
+}
+
+@media screen and (min-width: 320px) {
+	div.pied-droite {
+		display: none ;
+	}
+}
+
+@media screen and (min-width: 768px) {
+	.container {
+		width: 650px;
+	}
+	main article:nth-child(2n+1) {
+		clear: both;
+	}
+	article {
+		width: 50%;
+	}
+}
+
+@media screen and (min-width: 1024px) {
+	.container {
+		width: 960px;
+	}
+	main article:nth-child(2n+1) {
+		clear: none;
+	}
+	main article:nth-child(3n+1) {
+		clear: both;
+	}
+	article {
+		width: 33.3333%;
+	}
+	div.pied-droite {
+		display: block ;
+	}
+	footer div.pied-gauche {
+		width: 60%;
+	}
+	footer div.pied-droite {
+		width: 40%;
+	}
+}

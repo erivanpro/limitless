@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Ma page</title>
+		<style>
+			.carre_rouge {
+				background-color: #FF0000 ;
+				width: 100px;
+				height: 100px;
+			}
+		</style>
+    </head>
+    <body>
+		<div id="contexte">
+			<div class="carre_rouge"></div>
+		</div>
+		<script src="anime.min.js"></script>
+		<script>
+			var elements_animes = document.querySelector('#contexte .carre_rouge');
+			var anime_carre_rouge = anime({
+				targets: elements_animes,
+				translateX: 250
+			});
+		</script>
+    </body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Ma page</title>
+    </head>
+    <body>
+        <form id="inscription" name="formulaire" method="post" action="#">
+			<p>
+				<label for="nom">Nom : </label>
+				<input id="nom" name="nom" type="text">
+			</p>
+			<p>
+				<label for="prenom">Prénom : </label>
+				<input id="prenom" name="prenom" type="text">
+			</p>
+			<p>
+				<label for="motDePasse">Mot de passe : </label>
+				<input id="motDePasse" name="motDePasse" type="password">
+			</p>
+			<p>
+				<input type="submit" name="envoyer" id="envoyer" value="Envoyer">
+			</p>
+		</form>
+		<script>
+			window.onload = function(){
+				alert("Page chargée !")	;
+			};
+		</script>
+    </body>
+</html>

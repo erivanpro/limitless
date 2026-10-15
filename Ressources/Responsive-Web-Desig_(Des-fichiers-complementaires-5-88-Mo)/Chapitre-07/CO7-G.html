@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<title>Flexbox</title>
+	<meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<style>
+        /* Structure Flexbox */
+        #conteneur {
+            display: flex;
+            flex-direction: column;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        #main {
+            display: flex;
+            flex-direction: row;
+        }
+        aside {
+            flex: 2;
+        }
+        article {
+            flex: 5;
+        }
+        nav {
+            flex: 1;
+        }
+        /* Mise en forme */
+        header, footer {
+            background: #000;
+            color: #fff;
+            text-align: center;
+        }
+        article, aside, nav {
+            padding: 5px;
+        }
+        article h2:first-child {
+            margin-top: 0;
+        }
+        aside, nav {
+            background: #eee;
+        }
+        aside h3, nav h3 {
+            margin: 0;
+        }
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        nav ul a {
+            text-decoration: none;
+            color: #000;
+        }
+        nav ul a:hover {
+            text-decoration: underline;
+        }
+        /* Media Queries écran de 480 pixels de large maximum */
+        @media screen and (max-width: 480px) {
+            #conteneur {
+                display: flex;
+                flex-direction: column;
+            }
+            #main {
+                display: flex;
+                flex-direction: column;
+            }
+            nav {
+                order: -1;
+                background-color: #ccc;
+            }
+            nav li {
+                display: inline-block;
+                margin-right: 10px;
+            }
+        }
+	</style>
+</head>
+<body>
+<div id="conteneur">
+    <header>
+        <h1>En-tête de mon site</h1>
+    </header>
+    <div id="main">
+        <aside>
+            <h3>A propos</h3>
+            <p>Cras mattis consectetur purus sit amet fermentum. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.</p>
+        </aside>
+        <article>
+            <h2>Dolor Ultricies Fringilla</h2>
+            <p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.</p>
+            <h2>Consectetur Porta Tortor</h2>
+            <p>Donec ullamcorper nulla non metus auctor fringilla. Donec ullamcorper nulla non metus auctor fringilla. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+            <h2>Pharetra Mattis</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit sit amet non magna. Nulla vitae elit libero, a pharetra augue. Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper.</p>
+        </article>
+        <nav>
+            <h3>Les liens</h3>
+            <ul>
+                <li><a href="#">Lien 1</a></li>
+                <li><a href="#">Lien 2</a></li>
+                <li><a href="#">Lien 3</a></li>
+                <li><a href="#">Lien 4</a></li>
+                <li><a href="#">Lien 5</a></li>
+            </ul>
+        </nav>
+    </div>
+    <footer>
+        <p>Aenean lacinia bibendum nulla sed consectetur.</p>
+    </footer>
+</div>
+</body>
+</html>

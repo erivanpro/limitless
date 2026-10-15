@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<title>Mon site avec Bootstrap</title>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<!-- Liaison au fichier css de Bootstrap -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+<p>&nbsp;</p>
+<div class="container">
+	<div class="row">
+		<div class="col-3">
+			<div id="venise" class="carousel slide" data-ride="carousel">
+				<div class="carousel-inner">
+					<div class="carousel-item active">
+						<img class="d-block w-100" src="dorsoduro-01.jpg" alt="Dorsoduro">
+					</div>
+					<div class="carousel-item">
+						<img class="d-block w-100" src="dorsoduro-02.jpg" alt="Dorsoduro">
+					</div>
+					<div class="carousel-item">
+						<img class="d-block w-100" src="dorsoduro-03.jpg" alt="Dorsoduro">
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-3">
+			<div id="venise-btn" class="carousel slide" data-ride="carousel">
+				<ol class="carousel-indicators">
+					<li data-target="#venise-btn" data-slide-to="0" class="active"></li>
+					<li data-target="#venise-btn" data-slide-to="1"></li>
+					<li data-target="#venise-btn" data-slide-to="2"></li>
+				</ol>
+				<div class="carousel-inner">
+					<div class="carousel-item active">
+						<img class="d-block w-100" src="dorsoduro-01.jpg" alt="Dorsoduro">
+					</div>
+					<div class="carousel-item">
+						<img class="d-block w-100" src="dorsoduro-02.jpg" alt="Dorsoduro">
+					</div>
+					<div class="carousel-item">
+						<img class="d-block w-100" src="dorsoduro-03.jpg" alt="Dorsoduro">
+					</div>
+				</div>
+				<a class="carousel-control-prev" href="#venise-btn" role="button" data-slide="prev">
+					<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+					<span class="sr-only">Précédent</span>
+				</a>
+				<a class="carousel-control-next" href="#venise-btn" role="button" data-slide="next">
+					<span class="carousel-control-next-icon" aria-hidden="true"></span>
+					<span class="sr-only">Suivant</span>
+				</a>
+			</div>
+		</div>
+		<div class="col-3">
+			<div id="venise-legende" class="carousel slide" data-ride="carousel">
+				<div class="carousel-inner">
+					<div class="carousel-item active">
+						<img class="d-block w-100" src="dorsoduro-01.jpg" alt="Dorsoduro">
+						<div class="carousel-caption">
+							<h5>Basilique Santa Maria della Salute</h5>
+							<p>Vue de la rive opposée</p>
+						</div>
+					</div>
+					<div class="carousel-item">
+						<img class="d-block w-100" src="dorsoduro-02.jpg" alt="Dorsoduro">
+						<div class="carousel-caption">
+							<h5>Fin du Grand Canal</h5>
+							<p>Vu de Santa Maria della Salute</p>
+						</div>
+					</div>
+					<div class="carousel-item">
+						<img class="d-block w-100" src="dorsoduro-03.jpg" alt="Dorsoduro">
+						<div class="carousel-caption">
+							<h5>Des gondoles à Santa Maria della Salute</h5>
+							<p>Vue sur le parvis</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+</div>
+<p>&nbsp;</p>
+<!-- Les liaisons aux scripts -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+</html>

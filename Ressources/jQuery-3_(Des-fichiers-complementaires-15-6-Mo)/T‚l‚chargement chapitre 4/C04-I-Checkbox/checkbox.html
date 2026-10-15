@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <title>jQuery UI Checkbox</title>
+    <link rel="stylesheet" href="css/jquery-ui.min.css">
+    <link rel="stylesheet" href="css/jquery-ui.structure.min.css">
+    <link rel="stylesheet" href="css/jquery-ui.theme.min.css">
+    <script src="js/jquery.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <script>
+        $( function() {
+            $( "input" ).checkboxradio();
+        } );
+    </script>
+</head>
+<body>
+<fieldset>
+    <legend>Prestations : </legend>
+    <label for="dejeuner">Déjeuner</label>
+        <input type="checkbox" name="dejeuner" id="dejeuner">
+    <label for="diner">Dîner</label>
+        <input type="checkbox" name="diner" id="diner">
+    <label for="guide">Guide</label>
+        <input type="checkbox" name="guide" id="guide">
+    <label for="conference">Conférence</label>
+        <input type="checkbox" name="conference" id="conference">
+</fieldset>
+</body>
+</html>

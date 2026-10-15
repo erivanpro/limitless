@@ -1,0 +1,33 @@
+<html>
+ <head>
+  <script>
+class Personne {
+ constructor( nom, prenom ) {
+   this.nom = nom;
+   this.prenom = prenom;
+ }
+ hello() {
+  alert( "Bonjour " + this.nom + " " + this.prenom );
+ }
+}
+
+class Employe extends Personne {
+ constructor( nom, prenom, poste ) {
+   super( nom, prenom );
+   this.poste = poste;
+ }
+ affectation() {
+  alert( "Vous êtes affecté à " + this.poste );
+ }
+}
+
+function init() {
+ let e = new Employe( "brillant", "alexandre", "auteur" );
+ e.hello();
+ e.affectation();
+}
+  </script>
+ </head>
+ <body onload="init()">
+ </body>
+</html>

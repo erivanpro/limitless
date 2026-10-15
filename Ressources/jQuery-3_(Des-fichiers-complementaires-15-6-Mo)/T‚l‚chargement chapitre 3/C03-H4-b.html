@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>jQuery UI</title>
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <style>
+  	#zebre {
+  		width: 300px; 
+  		height: 199px;
+  		padding: 10px;
+  	}
+  </style>
+  <script src="js/jquery.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script>
+  $( function() {
+    $( "#zebre" ).resizable({
+		maxHeight: 350,
+		maxWidth: 450,
+		minHeight: 199,
+		minWidth: 300,
+		aspectRatio: true
+    });
+  } );
+  </script>
+</head>
+<body>
+<img src="zebre.jpg" id="zebre" />
+</body>
+</html>

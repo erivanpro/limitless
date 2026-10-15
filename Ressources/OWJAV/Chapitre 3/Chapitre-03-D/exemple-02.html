@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Mon script</title>
+    </head>
+    <body>
+    	<div id="destinations">
+		
+		</div>
+        <script>
+			// Création des deux nouveaux éléments
+			var nouvelEnTeteH2 = document.createElement('h2') ;
+			var nouveauParagraphe = document.createElement('p') ;
+			// Création des variables de texte
+			var h2Texte = document.createTextNode("Nouvelles destinations") ;
+			var pTexte = document.createTextNode("Venise, Madrid et Londres.") ;
+			// Ajouter ces textes aux éléments créés
+			nouvelEnTeteH2.appendChild(h2Texte) ;
+			nouveauParagraphe.appendChild(pTexte) ;
+			// Localisation des ajouts
+			document.getElementById('destinations').appendChild(nouvelEnTeteH2) ;
+			document.getElementById('destinations').appendChild(nouveauParagraphe) ;
+		</script>
+    </body>
+</html>

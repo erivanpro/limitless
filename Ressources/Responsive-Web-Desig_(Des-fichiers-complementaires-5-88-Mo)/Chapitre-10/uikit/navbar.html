@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Mon site avec UIkit</title>
+	<meta charset="UTF-8" />
+	<link rel="stylesheet" href="css/uikit.min.css" />
+	<link rel="stylesheet" href="css/uikit.gradient.min.css" />
+	<script src="js/jquery.min.js"></script>
+	<script src="js/uikit.min.js"></script>
+	<style>
+	.conteneur {
+		width: 450px;
+	}
+	body {
+		margin: 10px;
+	}
+	</style>
+</head>
+<body>
+<div class="conteneur">
+	<nav class="uk-navbar">
+		<ul class="uk-navbar-nav">
+			<li class="uk-active"><a href="#">Accueil</a></li>
+			<li><a href="#">Références</a></li>
+			<li><a href="#">Projets</a></li>
+			<li class="uk-parent" data-uk-dropdown="">
+				<a href="#">Exemples <i class="uk-icon-caret-down"></i></a>
+				<div class="uk-dropdown uk-dropdown-navbar">
+					<ul class="uk-nav uk-nav-navbar">
+						<li><a href="#">Machin</a></li>
+						<li><a href="#">Bidule</a></li>
+						<li><a href="#">Chose</a></li>
+						<li class="uk-nav-divider"></li>
+						<li><a href="#">Truc</a></li>
+						<li><a href="#">Schmurt</a></li>
+					</ul>
+				</div>
+			
+			</li>
+		</ul>
+	</nav>
+</div>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>jQuery UI Button</title>
+    <link rel="stylesheet" href="css/jquery-ui.min.css">
+    <link rel="stylesheet" href="css/jquery-ui.structure.min.css">
+    <link rel="stylesheet" href="css/jquery-ui.theme.min.css">
+    <script src="js/jquery.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <script>
+        $( function() {
+            $( ".widget button" )
+            .eq( 0 ).button()
+            .end().eq( 1 ).button( {
+                icon: "ui-icon-gear",
+                showLabel: false
+            } )
+            .end().eq( 2 ).button( {
+                icon: "ui-icon-gear"
+            } )
+            .end().eq( 3 ).button( {
+                icon: "ui-icon-gear",
+                iconPosition: "end"
+            } )
+            .end().eq( 4 ).button( {
+                icon: "ui-icon-gear",
+                iconPosition: "top"
+            } )
+            .end().eq( 5 ).button( {
+                icon: "ui-icon-gear",
+                iconPosition: "bottom"
+            } );
+        } );
+    </script>
+</head>
+<body>
+<div class="widget">
+    <h3>Les widgets de type bouton :</h3>
+    <button>Bouton sans icône</button><br>
+    <button>Bouton avec une icône</button><br>
+    <button>Bouton avec une icône à gauche</button><br>
+    <button>Bouton avec une icône à droite</button><br>
+    <button>Bouton avec une icône en haut</button><br>
+    <button>Bouton avec une icône en bas</button>
+</div>
+<h3>Les boutons en CSS :</h3>
+<button class="ui-button ui-widget ui-corner-all">
+    Bouton sans icône
+</button><br>
+<button class="ui-button ui-widget ui-corner-all ui-button-icon-only" title="Bouton avec une icône">
+    <span class="ui-icon ui-icon-gear"></span> Bouton avec une icône
+</button><br>
+<button class="ui-button ui-widget ui-corner-all">
+    <span class="ui-icon ui-icon-gear"></span> Bouton avec une icône à gauche
+</button><br>
+<button class="ui-button ui-widget ui-corner-all">
+    Bouton avec une icône à droite <span class="ui-icon ui-icon-gear"></span>
+</button><br>
+<button class="ui-button ui-widget ui-corner-all">
+    <span class="ui-icon ui-icon-gear ui-widget-icon-block"></span> Bouton avec une icône en haut
+</button><br>
+<button class="ui-button ui-widget ui-corner-all">
+    Bouton avec une icône en bas <span class="ui-icon ui-icon-gear ui-widget-icon-block"></span>
+</button>
+</body>
+</html>

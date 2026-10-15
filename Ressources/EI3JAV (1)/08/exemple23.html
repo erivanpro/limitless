@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+ <head>
+
+  <script>
+
+function init() {
+ // setTimeout( function() { alert( "Bonjour" ); }, 3000 );
+ 
+
+ let p = new Promise( ( fait, erreur ) => (setTimeout( () => fait(), 3000 ) ) );
+ let p2 = new Promise( ( fait, erreur ) => (setTimeout( () => fait(), 3000 ) ) );
+ let p3 = new Promise( ( fait, erreur ) => (setTimeout( () => fait(), 3000 ) ) );
+ 
+ Promise.all( [ p.then( ()=> alert( "Bonjour" ) ), p2, p3 ] ).then( () => alert( "Au revoir") );
+ 
+}
+
+
+  </script>
+
+ </head>
+ <body onload="init()">
+ </body>
+</html>

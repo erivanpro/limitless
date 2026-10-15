@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Ma page</title>
+    </head>
+    <body>
+		<form method="post" action="#">
+			<p>
+				<label for="date">Saisissez une date : </label>
+				<input id="date" class="input-date" type="text"/>
+			</p>
+		</form>
+		<script src="cleave.min.js"></script>
+		<script>
+			var cleave = new Cleave('.input-date', {
+			    date: true,
+			    datePattern: ['d', 'm', 'Y']
+			});
+		</script>
+    </body>
+</html>

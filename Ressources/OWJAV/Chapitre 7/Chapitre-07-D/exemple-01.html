@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Ma page</title>
+	</head>
+	<body>
+		<div id="conteneur"></div>
+		<script src="mustache.js"></script>
+		<script>
+			// Fournir les données internes en JSON
+			var chienJSON = {"Nom":"Raja","Couleur":"Brun","Race":"Labrador"} ;
+			// Définir le template
+			var leTemplate = "<h2>Nom du chien : {{Nom}}.</h2><p>Couleur du chien : {{Couleur}}.</p><p>Race du chien : {{Race}}.</p>" ;
+			// Exécuter le rendu
+			var rendu = Mustache.render(leTemplate,chienJSON) ;
+			// Afficher le rendu
+			var leConteneur = document.getElementById('conteneur');
+			leConteneur.innerHTML = rendu;
+		</script>
+	</body>
+</html>

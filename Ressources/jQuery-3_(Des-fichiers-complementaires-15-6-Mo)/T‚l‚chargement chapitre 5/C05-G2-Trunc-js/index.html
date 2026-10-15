@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>jQuery trunc.js Plugin Demos</title>
+	<meta name="description" content="jQuery.trunc">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/css/materialize.min.css">
+</head>
+<body>
+<section class="example" style="margin-top:150px;">
+	<div class="container">
+		<div class="row">
+			<div class="news">
+				<div class="col s12">
+					<h3>Lorem ipsum dolor</h3>
+					<p class="limited-news">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestias mollitia quibusdam, reprehenderit ratione! Eveniet perspiciatis minus error vero odit, totam rem eos repudiandae iste placeat. Asperiores ipsam veniam quam eum. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestias mollitia quibusdam, reprehenderit ratione! Eveniet perspiciatis minus error vero odit, totam rem eos repudiandae iste placeat. Asperiores ipsam veniam quam eum. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestias mollitia quibusdam, reprehenderit ratione! Eveniet perspiciatis minus error vero odit, totam rem eos repudiandae iste placeat. Asperiores ipsam veniam quam eum.
+					</p>
+				</div>
+			</div>
+			<div class="news">
+				<div class="col s12">
+					<h3>Lorem ipsum dolor</h3>
+					<p class="limited-news">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestias mollitia quibusdam, reprehenderit ratione! Eveniet perspiciatis minus error vero odit, totam rem eos repudiandae iste placeat. Asperiores ipsam veniam quam eum.
+					</p>
+				</div>
+			</div>
+			<div class="news">
+				<div class="col s12">
+					<h3>Lorem ipsum dolor</h3>
+					<p class="limited-news">Lorem ipsum dolor sit amet, consectetur adipisicing elit. </p>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<script src="http://code.jquery.com/jquery-3.1.0.min.js"></script>
+<script src="jquery.trunc.min.js"></script>
+<script>
+	$(document).ready(function () {
+		$('.limited-news').trunc(200);
+	})
+</script>
+</body>
+</html>

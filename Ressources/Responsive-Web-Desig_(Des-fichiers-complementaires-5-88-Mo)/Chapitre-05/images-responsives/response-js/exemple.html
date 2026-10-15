@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<title>Le JavaScript response.js</title>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body data-responsejs='{
+	"create": [
+		{"breakpoints": [0,768,992], "mode": "src", "prefix": "dim"},
+		{"breakpoints": [0,768,992], "mode": "markup", "prefix": "lgd"}
+	]
+}'>
+<figure>
+	<img src="chat-sm.jpg" data-dim768="chat-tb.jpg" data-dim992="chat-eo.jpg" alt="Un chat" />
+	<figcaption data-lgd768="Une légende moyenne" data-lgd992="Une légende plus importante en texte">Légende</figcaption>
+</figure>
+<script src="js/jquery-1.11.0.min.js"></script>
+<script src="js/response.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Ma page</title>
+		<style>
+			p {
+				margin: 80px;
+			}
+			span.tippy {
+				text-decoration: underline dotted;
+			}
+		</style>
+    </head>
+    <body>
+		<br>
+		<p>Le <span class="tippy" id="doges" title="Le palais des Doges ou palais Ducal est un palais vénitien de styles gothique et Renaissance situé sur la place Saint-Marc.">Palais des doges</span>.</p>
+		<script src="https://unpkg.com/tippy.js/dist/tippy.all.min.js"></script>
+		<script>
+			tippy('#doges');
+		</script>
+    </body>
+</html>

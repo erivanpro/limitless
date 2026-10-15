@@ -1,0 +1,983 @@
+----SQL Server
+----Syntaxe générale
+DECLARE @Hotel int 
+BEGIN 
+SET @Hotel = 2 
+SELECT NumChambre, Description 
+FROM Chambres INNER JOIN TypesChambre ON TypesChambre.idTypeChambre = 
+Chambres.TypeChambre 
+WHERE Hotel = @Hotel; 
+END;
+
+
+
+DECLARE @Hotel int
+BEGIN
+BEGIN TRY
+SET @Hotel = 2
+SELECT NumChambre, Description
+FROM Chambres INNER JOIN TypesChambre ON TypesChambre.idTypeChambre = Chambres.TypeChambre
+WHERE Hotel = @Hotel;
+END TRY
+BEGIN CATCH
+	SELECT ERROR_NUMBER() AS ErrorNumber,
+	ERROR_MESSAGE() AS ErrorMessage;
+END CATCH
+END;
+
+
+----curseurs
+BEGIN 
+-- Liste des chambres 
+DECLARE @libelle varchar(50) 
+DECLARE @etoile varchar(5) 
+DECLARE @numChambre int 
+DECLARE @typeLit varchar(20) 
+DECLARE @nombreLit int 
+DECLARE @description varchar(255) 
+ 
+DECLARE C1 CURSOR 
+FOR 
+SELECT TOP 1 Hotels.Libelle, Hotels.Etoile, Chambres.NumChambre, 
+TypesChambre.TypeLit, TypesChambre.NombreLit, TypesChambre.Description 
+FROM Hotels INNER JOIN Chambres ON Hotels.idHotel = Chambres.Hotel 
+INNER JOIN TypesChambre ON Chambres.TypeChambre =  
+TypesChambre.idTypeChambre 
+ORDER BY Hotels.idHotel, Chambres.NumChambre; 
+  
+OPEN C1; 
+FETCH C1 into @libelle, @etoile, @numChambre, @typeLit, @nombreLit, 
+@description;  
+WHILE @@FETCH_STATUS=0 
+    BEGIN 
+        print 'Nom de l''hôtel : ' + @libelle 
+        print 'Etoiles : ' + @etoile 
+        print 'Numéro de chambre : ' + CONVERT(varchar(3), 
+@numChambre) 
+        print 'Type de lit : ' + @typeLit 
+        print 'Nombre de lits : ' + CONVERT(char(1), @nombreLit) 
+        print 'Description de la chambre : ' + @description 
+        FETCH C1 into @libelle, @etoile, @numChambre, @typeLit, 
+@nombreLit, @description; --ligne suivante 
+END; 
+CLOSE C1; 
+DEALLOCATE C1; 
+END;
+
+
+
+BEGIN
+DECLARE @i int;
+SET @i = 0;
+ WHILE @i < 8
+	BEGIN
+		SET @i = @i + 1
+	END
+print @i;
+END;
+
+BEGIN
+DECLARE @i int;
+SET @i = 0;
+
+WHILE @i < 8
+	BEGIN
+		SET @i = @i + 1
+		if @i = 5
+			BREAK
+		ELSE
+			CONTINUE
+	END
+print @i
+END;
+
+BEGIN
+DECLARE @i int;
+SET @i = 0;
+
+WHILE @i < 8
+	BEGIN
+		SET @i = @i + 1
+		SELECT CASE @i
+			WHEN 5 THEN 'OK'
+			ELSE 'NON OK'
+		END 	
+	END
+print @i
+END;
+
+BEGIN
+DECLARE @i int;
+SET @i = 0;
+
+WHILE @i < 8
+	BEGIN
+		SET @i = @i + 1
+		if @i = 5
+			print 'OK'
+		ELSE
+			print @i
+	END 	
+END;
+
+
+----gestion erreurs
+DECLARE @i int
+DECLARE @f float
+BEGIN
+IF @i IS NULL OR @i = 0
+RAISERROR('valeur non divisable à traiter', 16, 1)
+
+SET @f = 18 / @i
+
+END;
+
+
+-----procédures stockée
+
+CREATE PROCEDURE Liste_chambre_hotel (@hotel int)  
+ AS 
+BEGIN 
+BEGIN TRY 
+SELECT NumChambre, Description 
+FROM Chambres INNER JOIN TypesChambre 
+ON TypesChambre.idTypeChambre = Chambres.TypeChambre 
+WHERE Hotel = @Hotel; 
+END TRY 
+BEGIN CATCH 
+    SELECT ERROR_NUMBER() AS ErrorNumber, 
+    ERROR_MESSAGE() AS ErrorMessage; 
+END CATCH 
+END;
+
+
+execute Liste_chambre_hotel 2;
+
+
+-----fonction
+CREATE FUNCTION PRIX_Chambre (@vhotel varchar(50), @vTypeLit varchar(20), @iNbLit int, @dDate date) 
+RETURNS money
+ AS 
+BEGIN
+DECLARE @prix money  
+SELECT @prix = Prix FROM Tarifs t
+INNER JOIN Hotels h ON t.hotel = h.idHotel
+INNER JOIN TypesChambre tc ON tc.idTypeChambre = t.typeChambre
+WHERE h.Libelle = @vhotel AND tc.TypeLit = @vTypeLit AND tc.NombreLit = @iNbLit and DateDebut <= @dDate and DateFin >= @dDate
+
+RETURN @prix
+END;
+
+
+BEGIN 
+DECLARE @mPrix money;
+EXEC @mPrix = PRIX_Chambre 'Ski Hotel', 'lit simple', 2, '24/03/2022'
+Print @mPrix
+Print 'Prix de la nuit : ' + CONVERT(varchar(6), @mPrix)END; 
+
+
+------Déclencheurs
+CREATE TRIGGER T_INS_Chambres
+ON Chambres
+AFTER INSERT 
+AS 
+BEGIN 
+DECLARE @nbvaleur int 
+DECLARE @idtypechambre int 
+SET @nbvaleur = 0; 
+ 
+SELECT @idtypechambre = TypeChambre FROM inserted 
+ 
+SELECT @nbvaleur = COUNT(1) FROM TypesChambre WHERE idTypeChambre = @idtypechambre
+ 
+if @nbvaleur = 0 
+    BEGIN 
+        print 'Le type de chambre est inconnu : ' + CONVERT(varchar(3), 
+@idtypechambre) 
+        print 'Une insertion dans la table TypesChambre va être réalisée' 
+        print 'Merci de compléter les informations de ce nouveau type de chambre ultérieurement' 
+  
+        INSERT INTO TypesChambre VALUES (@idtypechambre,0, 'A COMPLETER', 'A COMPLETER') 
+    END 
+END;
+
+CREATE TRIGGER MAJ_Chambres
+ON Chambres
+AFTER INSERT, UPDATE, DELETE 
+AS 
+BEGIN
+
+DECLARE @i int
+DECLARE @d int
+
+SET @i = 0;
+SET @d = 0;
+
+SELECT @i = COUNT(1) FROM inserted;
+SELECT @d = COUNT(1) FROM deleted;
+--si il existe des lignes à la fois dans la table inserted et deleted alors les lignes sont modifiées
+--utiliser les valeurs des variables pour un résultat fiable
+if @i > 0 AND @d > 0
+BEGIN
+	UPDATE SUIV_MAJ SET NB_CHAMBRES_MODIFIES = NB_CHAMBRES_MODIFIES + @i
+	WHERE date_jour = CAST(getdate() AS date);
+END;
+/* si il existe des lignes dans la table inserted mais pas dans la table deleted alors il s'agit d'un ajout.
+Il est important de tester les 2 critères pour ne pas comptabiliser les lignes modifiées*/
+if @i > 0 AND @d = 0
+BEGIN
+	UPDATE SUIV_MAJ SET NB_CHAMBRES_AJOUTES = NB_CHAMBRES_AJOUTES + @i
+	WHERE date_jour = CAST(getdate() AS date);
+END;
+
+/* si il n'existe pas de ligne dans la table inserted mais dans la table deleted alors il s'agit
+d'une suppression. Il est important de tester les 2 critères pour ne pas comptabiliser les lignes modifiées*/
+if @i = 0 AND @d > 0
+BEGIN
+	UPDATE SUIV_MAJ SET NB_CHAMBRES_SUPPRIMES = NB_CHAMBRES_SUPPRIMES + @d
+	WHERE date_jour = CAST(getdate() AS date);
+END;
+
+END;
+
+
+CREATE TRIGGER MAJ_TARIFS
+ON TARIFS
+AFTER INSERT, UPDATE, DELETE 
+AS 
+BEGIN
+
+DECLARE @i int
+DECLARE @d int
+
+SET @i = 0;
+SET @d = 0;
+
+SELECT @i = COUNT(1) FROM inserted;
+SELECT @d = COUNT(1) FROM deleted;
+--si il existe des lignes à la fois dans la table inserted et deleted alors les lignes sont modifiées
+--utiliser les valeurs des variables pour un résultat fiable
+if @i > 0 AND @d > 0
+BEGIN
+	UPDATE SUIV_MAJ SET NB_TARIFS_MODIFIES = NB_TARIFS_MODIFIES + @i
+	WHERE date_jour = CAST(getdate() AS date);
+END;
+/* si il existe des lignes dans la table inserted mais pas dans la table deleted alors il s'agit d'un ajout.
+Il est important de tester les 2 critères pour ne pas comptabiliser les lignes modifiées*/
+if @i > 0 AND @d = 0
+BEGIN
+	UPDATE SUIV_MAJ SET NB_TARIFS_AJOUTES = NB_TARIFS_AJOUTES + @i
+	WHERE date_jour = CAST(getdate() AS date);
+END;
+
+/* si il n'existe pas de ligne dans la table inserted mais dans la table deleted alors il s'agit
+d'une suppression. Il est important de tester les 2 critères pour ne pas comptabiliser les lignes modifiées*/
+if @i = 0 AND @d > 0
+BEGIN
+	UPDATE SUIV_MAJ SET NB_TARIFS_SUPPRIMES = NB_TARIFS_SUPPRIMES + @d
+	WHERE date_jour = CAST(getdate() AS date);
+END;
+
+END;
+
+
+CREATE TRIGGER MAJ_TYPESCHAMBRE
+ON TYPESCHAMBRE
+AFTER INSERT, UPDATE, DELETE 
+AS 
+BEGIN
+
+DECLARE @i int
+DECLARE @d int
+
+SET @i = 0;
+SET @d = 0;
+
+SELECT @i = COUNT(1) FROM inserted;
+SELECT @d = COUNT(1) FROM deleted;
+--si il existe des lignes à la fois dans la table inserted et deleted alors les lignes sont modifiées
+--utiliser les valeurs des variables pour un résultat fiable
+if @i > 0 AND @d > 0
+BEGIN
+	UPDATE SUIV_MAJ SET NB_TYPESCHAMBRE_MODIFIES = NB_TYPESCHAMBRE_MODIFIES + @i
+	WHERE date_jour = CAST(getdate() AS date);
+END;
+/* si il existe des lignes dans la table inserted mais pas dans la table deleted alors il s'agit d'un ajout.
+Il est important de tester les 2 critères pour ne pas comptabiliser les lignes modifiées*/
+if @i > 0 AND @d = 0
+BEGIN
+	UPDATE SUIV_MAJ SET NB_TYPESCHAMBRE_AJOUTES = NB_TYPESCHAMBRE_AJOUTES + @i
+	WHERE date_jour = CAST(getdate() AS date);
+END;
+
+/* si il n'existe pas de ligne dans la table inserted mais dans la table deleted alors il s'agit
+d'une suppression. Il est important de tester les 2 critères pour ne pas comptabiliser les lignes modifiées*/
+if @i = 0 AND @d > 0
+BEGIN
+	UPDATE SUIV_MAJ SET NB_TYPESCHAMBRE_SUPPRIMES = NB_TYPESCHAMBRE_SUPPRIMES + @d
+	WHERE date_jour = CAST(getdate() AS date);
+END;
+
+END;
+
+ 
+----- Oracle
+---- Syntaxe générale
+SELECT Hotels.Libelle, Hotels.Etoile, Chambres.NumChambre, TypesChambre.NombreLit, TypesChambre.TypeLit, TypesChambre.Description
+FROM Chambres INNER JOIN
+Hotels ON Chambres.Hotel = Hotels.idHotel INNER JOIN
+TypesChambre ON Chambres.TypeChambre = TypesChambre.idTypeChambre
+WHERE TypeLit = 'lit XL' and Etoile = '**'
+
+DECLARE
+Etoile_recherche varchar2(5) := '**';
+Libelle_hotel varchar2(50);
+Num_Chambre varchar2(6);
+NbLit number(38,0);
+TypLit varchar2(20) := 'lit XL';
+Descript varchar2(255);
+
+BEGIN
+SELECT Hotels.Libelle, Chambres.NumChambre, TypesChambre.NombreLit, TypesChambre.Description
+INTO Libelle_hotel, Num_Chambre, NbLit, descript
+FROM Chambres INNER JOIN
+Hotels ON Chambres.Hotel = Hotels.idHotel INNER JOIN
+TypesChambre ON Chambres.TypeChambre = TypesChambre.idTypeChambre
+WHERE TypeLit = typlit and Etoile = etoile_recherche;
+DBMS_OUTPUT.put_line('SQLCODE : '||TO_CHAR(SQLCODE)); 
+IF SQLCODE = 0 THEN
+DBMS_OUTPUT.PUT_LINE('Nom de l''hôtel : '||Libelle_hotel);
+DBMS_OUTPUT.PUT_LINE('Numéro de chambre : '||num_chambre);
+DBMS_OUTPUT.PUT_LINE('Nombre de lit : '||nblit);
+DBMS_OUTPUT.PUT_LINE('Type de lit : '||typlit);
+DBMS_OUTPUT.PUT_LINE('Description : '||descript);
+END IF;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Aucune ligne trouvée avec '||etoile_recherche||' étoiles.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Le numéro de l''erreur est : '||TO_CHAR(SQLCODE));
+        DBMS_OUTPUT.PUT_LINE('correspondant à : '||TO_CHAR(SQLERRM));
+END;
+
+
+-----curseurs
+DECLARE
+-- déclaration du curseur C_chambres_par_type_lit
+CURSOR C_chambres_par_type_lit (TypLit in varchar2) IS
+SELECT Hotels.Libelle, Chambres.NumChambre, TypesChambre.NombreLit, TypesChambre.Description
+FROM Chambres INNER JOIN
+Hotels ON Chambres.Hotel = Hotels.idHotel INNER JOIN
+TypesChambre ON Chambres.TypeChambre = TypesChambre.idTypeChambre
+WHERE TypeLit = typlit and Etoile = '**';
+
+-- déclaration des variables réceptrices
+Libelle_hotel varchar2(50);
+Num_Chambre varchar2(6);
+NbLit number(38,0);
+Descript varchar2(255);
+
+--déclaration des autres variables
+Etoile_recherche varchar2(5) := '**';
+TypLit_recherche varchar2(20) := 'lit simple';
+
+BEGIN
+--Ouverture
+OPEN C_chambres_par_type_lit(typlit_recherche);
+-- boucle de lecture
+LOOP
+--récupération des éléments ligne par ligne
+FETCH C_chambres_par_type_lit
+INTO Libelle_hotel, Num_Chambre, NbLit, descript;
+EXIT WHEN C_chambres_par_type_lit%NOTFOUND;
+--Affichage des éléments récupérés
+DBMS_OUTPUT.PUT_LINE('Nom de l''hôtel : '||Libelle_hotel);
+DBMS_OUTPUT.PUT_LINE('Numéro de chambre : '||num_chambre);
+DBMS_OUTPUT.PUT_LINE('Nombre de lit : '||nblit);
+DBMS_OUTPUT.PUT_LINE('Type de lit : '||typlit_recherche);
+DBMS_OUTPUT.PUT_LINE('Description : '||descript);
+END LOOP;
+-- Fermeture du curseur (libération mémoire)
+CLOSE C_chambres_par_type_lit;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Aucune ligne trouvée avec '||etoile_recherche||' étoiles.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Le numéro de l''erreur est : '||TO_CHAR(SQLCODE));
+        DBMS_OUTPUT.PUT_LINE('correspondant à : '||TO_CHAR(SQLERRM));
+END;
+
+
+
+DECLARE
+-- déclaration du curseur C_chambres_par_type_lit
+CURSOR C_chambres_par_type_lit (TypLit in varchar2) IS
+SELECT Chambres.idChambre, Hotels.Libelle, Chambres.NumChambre, TypesChambre.NombreLit, TypesChambre.Description
+FROM Chambres INNER JOIN
+Hotels ON Chambres.Hotel = Hotels.idHotel INNER JOIN
+TypesChambre ON Chambres.TypeChambre = TypesChambre.idTypeChambre
+WHERE TypeLit = typlit and Etoile = '**';
+
+-- déclaration des variables réceptrices
+id_chambre number :=0;
+Libelle_hotel varchar2(50);
+Num_Chambre varchar2(6);
+NbLit number(38,0);
+Descript varchar2(255);
+
+--déclaration des autres variables
+TypLit_recherche varchar2(20) := 'lit simple';
+
+BEGIN
+--Ouverture
+OPEN C_chambres_par_type_lit(typlit_recherche);
+-- lecture du premier élément
+FETCH C_chambres_par_type_lit
+INTO id_chambre, Libelle_hotel, Num_Chambre, NbLit, descript;
+-- boucle de lecture tant que l'identifiant de la chambre est < 10
+WHILE id_chambre < 10
+LOOP
+--Affichage des éléments récupérés
+DBMS_OUTPUT.PUT_LINE('Id Chambre : '||id_chambre);
+DBMS_OUTPUT.PUT_LINE('Nom de l''hôtel : '||Libelle_hotel);
+DBMS_OUTPUT.PUT_LINE('Numéro de chambre : '||num_chambre);
+DBMS_OUTPUT.PUT_LINE('Nombre de lit : '||nblit);
+DBMS_OUTPUT.PUT_LINE('Type de lit : '||typlit_recherche);
+DBMS_OUTPUT.PUT_LINE('Description : '||descript);
+-- lecture de l'élément suivant
+FETCH C_chambres_par_type_lit
+INTO id_chambre, Libelle_hotel, Num_Chambre, NbLit, descript;
+EXIT WHEN C_chambres_par_type_lit%NOTFOUND;
+END LOOP;
+-- Fermeture du curseur (libération mémoire)
+CLOSE C_chambres_par_type_lit;
+END;
+
+
+DECLARE
+-- déclaration du curseur C_chambres_par_type_lit
+CURSOR C_chambres_par_type_lit (TypLit in varchar2) IS
+SELECT Chambres.idChambre, Hotels.Libelle, Chambres.NumChambre, TypesChambre.NombreLit, TypesChambre.Description
+FROM Chambres INNER JOIN
+Hotels ON Chambres.Hotel = Hotels.idHotel INNER JOIN
+TypesChambre ON Chambres.TypeChambre = TypesChambre.idTypeChambre
+WHERE TypeLit = typlit and Etoile = '**';
+
+-- déclaration des variables réceptrices
+id_chambre number :=0;
+Libelle_hotel varchar2(50);
+Num_Chambre varchar2(6);
+NbLit number(38,0);
+Descript varchar2(255);
+
+--déclaration des autres variables
+TypLit_recherche varchar2(20) := 'lit simple';
+nb_lecture number := 0;
+
+BEGIN
+--Ouverture
+OPEN C_chambres_par_type_lit(typlit_recherche);
+-- lecture des deux premiers éléments
+FOR nb_lecture in 1..2
+LOOP
+FETCH C_chambres_par_type_lit
+INTO id_chambre, Libelle_hotel, Num_Chambre, NbLit, descript;
+EXIT WHEN C_chambres_par_type_lit%NOTFOUND;
+--Affichage des éléments récupérés
+DBMS_OUTPUT.PUT_LINE('Id Chambre : '||id_chambre);
+DBMS_OUTPUT.PUT_LINE('Nom de l''hôtel : '||Libelle_hotel);
+DBMS_OUTPUT.PUT_LINE('Numéro de chambre : '||num_chambre);
+DBMS_OUTPUT.PUT_LINE('Nombre de lit : '||nblit);
+DBMS_OUTPUT.PUT_LINE('Type de lit : '||typlit_recherche);
+DBMS_OUTPUT.PUT_LINE('Description : '||descript);
+END LOOP;
+-- Fermeture du curseur (libération mémoire)
+CLOSE C_chambres_par_type_lit;
+END;
+
+
+DECLARE
+-- déclaration du curseur C_chambres_par_type_lit
+CURSOR C_chambres_par_type_lit IS
+SELECT Hotels.Libelle, typeschambre.typelit
+FROM Chambres INNER JOIN
+Hotels ON Chambres.Hotel = Hotels.idHotel INNER JOIN
+TypesChambre ON Chambres.TypeChambre = TypesChambre.idTypeChambre
+WHERE Etoile = '**';
+
+-- déclaration des variables réceptrices
+Libelle_hotel varchar2(50);
+TypLit typeschambre.typelit%TYPE;
+
+--déclaration des autres variables
+nb_ligne_litXL number :=0;
+nb_ligne_litsimple number :=0;
+nb_ligne_autre number :=0;
+
+BEGIN
+--Ouverture
+OPEN C_chambres_par_type_lit;
+-- boucle de lecture
+LOOP
+FETCH C_chambres_par_type_lit
+INTO Libelle_hotel, typlit;
+EXIT WHEN C_chambres_par_type_lit%NOTFOUND;
+CASE typlit
+    WHEN 'Lit XL' THEN nb_ligne_litxl := nb_ligne_litxl + 1;
+    WHEN 'Lit simple' THEN nb_ligne_litsimple := nb_ligne_litsimple + 1;
+    ELSE nb_ligne_autre := nb_ligne_autre + 1;
+END CASE;
+END LOOP;
+-- Fermeture du curseur (libération mémoire)
+CLOSE C_chambres_par_type_lit;
+--Affichage des valeurs
+DBMS_OUTPUT.PUT_LINE('Nombre de chambres avec lit XL : '||nb_ligne_litxl);
+DBMS_OUTPUT.PUT_LINE('Nombre de chambres avec lit simple : '||nb_ligne_litsimple);
+DBMS_OUTPUT.PUT_LINE('Nombre de chambre avec autre lit : '||nb_ligne_autre);
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Aucune ligne trouvée dans la sélection.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Le numéro de l''erreur est : '||TO_CHAR(SQLCODE));
+        DBMS_OUTPUT.PUT_LINE('correspondant à : '||TO_CHAR(SQLERRM));
+END;
+
+
+----procédure
+create or replace PROCEDURE LISTE_CHAMBRE_HOTEL
+(nidhotel IN NUMBER)
+IS
+
+CURSOR cChambres IS
+SELECT numchambre, description
+FROM chambres INNER JOIN typeschambre
+ON chambres.typechambre = typeschambre.idtypechambre
+WHERE hotel = nidhotel;
+
+--déclaration des variables internes
+vnumchambre chambres.numchambre%TYPE;
+vdesc typeschambre.description%TYPE;
+BEGIN
+DBMS_OUTPUT.PUT_LINE('** Liste des chambres **');
+OPEN cChambres;
+LOOP
+FETCH cChambres INTO vnumchambre, vdesc;
+EXIT WHEN cChambres%NOTFOUND;
+DBMS_OUTPUT.PUT_LINE('Chambre N° '||vnumchambre||' - '||vdesc);
+END LOOP;
+EXCEPTION
+WHEN OTHERS THEN
+DBMS_OUTPUT.PUT_LINE('Le numéro de l''erreur est : '||TO_CHAR(SQLCODE));
+DBMS_OUTPUT.PUT_LINE('correspondant à : '||TO_CHAR(SQLERRM));
+END;
+
+EXECUTE liste_chambre_hotel(2);
+
+
+
+----fonction
+CREATE OR REPLACE FUNCTION PRIX_CHAMBRE 
+ (vhotel IN VARCHAR2, vtypelit IN VARCHAR2, inblit IN INT, ddate IN DATE) RETURN DECIMAL
+ IS  
+ dPrix DECIMAL(7,3); 
+BEGIN 
+SELECT Prix INTO dPrix FROM Tarifs t
+INNER JOIN Hotels h ON t.hotel = h.idHotel
+INNER JOIN TypesChambre tc ON tc.idTypeChambre = t.typeChambre
+WHERE h.Libelle = vhotel AND tc.TypeLit = vTypeLit AND tc.NombreLit = iNbLit
+and DateDebut <= dDate and DateFin >= dDate;
+RETURN  (dPrix); 
+ 
+EXCEPTION 
+   WHEN OTHERS THEN  
+     DBMS_OUTPUT.PUT_LINE( 'Le numéro de l erreur est : '|| 
+TO_CHAR( SQLCODE )) ; 
+     DBMS_OUTPUT.PUT_LINE( 'correspondant à : '|| 
+TO_CHAR( SQLERRM )) ; 
+END;
+
+DECLARE mPrix DECIMAL(7,3);
+BEGIN
+SELECT PRIX_Chambre('Ski Hotel', 'lit simple', 2, '24/03/2022') INTO mPrix FROM DUAL;
+DBMS_OUTPUT.PUT_LINE('Prix de la nuit : '||mprix);
+END;
+
+
+
+-----packages
+CREATE OR REPLACE PACKAGE AFFICHAGE_HOTEL
+AS
+/* DETAILS FONCTION */
+FUNCTION FN_PRIX (nhotel IN NUMBER, ntypeChambre IN NUMBER, ddate IN DATE) RETURN NUMBER;
+/* DETAILS PROCEDURE */
+PROCEDURE LST_CHAMBRES (nidhotel IN NUMBER, ddate IN DATE);
+
+END AFFICHAGE_HOTEL;
+/
+CREATE OR REPLACE PACKAGE BODY AFFICHAGE_HOTEL
+AS
+ 
+FUNCTION FN_PRIX (nhotel IN NUMBER, ntypeChambre IN NUMBER, ddate IN DATE) RETURN NUMBER
+IS
+/* DECLARATION VARAIBLES */
+ dPrix NUMBER;
+BEGIN
+/* CORPS FONCTION*/
+SELECT Prix INTO dPrix FROM Tarifs
+WHERE hotel = nhotel AND typeChambre = ntypeChambre
+and DateDebut <= dDate and DateFin >= dDate;
+RETURN  (dPrix); 
+
+EXCEPTION 
+   WHEN OTHERS THEN  
+     DBMS_OUTPUT.PUT_LINE( 'Le numéro de l erreur est : '|| 
+TO_CHAR( SQLCODE )) ; 
+     DBMS_OUTPUT.PUT_LINE( 'correspondant à : '|| 
+TO_CHAR( SQLERRM )) ; 
+ 
+END FN_PRIX;
+ 
+PROCEDURE LST_CHAMBRES (nidhotel IN NUMBER, ddate IN DATE)
+IS
+/* DECLARATION VARIABLES */
+CURSOR cChambres IS
+SELECT h.libelle, c.numchambre, TEST(h.idhotel, tc.idtypechambre, ddate) as prix, tc.description
+FROM hotels h INNER JOIN chambres c ON c.hotel = h.idhotel
+INNER JOIN typeschambre tc ON c.typechambre = tc.idtypechambre
+WHERE h.idhotel = nidhotel;
+
+vlibelle hotels.libelle%TYPE;
+vnumchambre chambres.numchambre%TYPE;
+nprix NUMBER;
+vdesc typeschambre.description%TYPE;
+
+BEGIN
+/* CORPS PROCEDURE*/
+DBMS_OUTPUT.PUT_LINE('** Liste des chambres **');
+OPEN cChambres;
+LOOP
+FETCH cChambres INTO vlibelle, vnumchambre, nprix, vdesc;
+EXIT WHEN cChambres%NOTFOUND;
+DBMS_OUTPUT.PUT_LINE('Chambre N° '||vnumchambre||' - '||vdesc);
+DBMS_OUTPUT.PUT_LINE('Prix : '||nprix);
+END LOOP;
+EXCEPTION
+WHEN OTHERS THEN
+DBMS_OUTPUT.PUT_LINE('Le numéro de l''erreur est : '||TO_CHAR(SQLCODE));
+DBMS_OUTPUT.PUT_LINE('correspondant à : '||TO_CHAR(SQLERRM)); 
+END LST_CHAMBRES;
+ 
+END AFFICHAGE_HOTEL;
+/
+
+
+EXECUTE AFFICHAGE_HOTEL.LST_CHAMBRE_HOTEL(1, '24/03/2022');
+
+
+
+----- Déclencheurs
+CREATE OR REPLACE TRIGGER T_SUP_HOTEL  
+BEFORE DELETE  
+ON HOTELS  
+FOR EACH ROW  
+DECLARE   
+  
+BEGIN  
+  
+   DBMS_OUTPUT.PUT_LINE( 'Il vous est interdit de supprimer un  
+hôtel') ;  
+   DBMS_OUTPUT.PUT_LINE( 'Veuillez contacter votre  
+administrateur');  
+   RAISE_APPLICATION_ERROR(-20502, 'Commande non autorisée');  
+END;  
+
+
+CREATE OR REPLACE TRIGGER T_INS_CHAMBRE
+BEFORE INSERT  
+ON CHAMBRES
+FOR EACH ROW  
+DECLARE  
+   nbvaleur NUMBER(5);  
+BEGIN  
+   nbvaleur := 0;  
+   SELECT COUNT(1) INTO nbvaleur FROM typeschambre WHERE idtypechambre = :new.typechambre;  
+  
+   IF (nbvaleur = 0) THEN  
+       DBMS_OUTPUT.PUT_LINE( 'Le type de chambre est inconnu :  
+'||:new.typechambre) ;  
+   DBMS_OUTPUT.PUT_LINE( 'Une insertion dans la table TYPESCHAMBRE va être réalisée');  
+   DBMS_OUTPUT.PUT_LINE( 'Merci de compléter les informations de ce nouveau type de chambre ultérieurement');  
+      INSERT INTO TYPESCHAMBRE VALUES (:new.typechambre,0, 'A COMPLETER', 'A COMPLETER');  
+   END IF;  
+END;
+
+TRIGGER T_INS_CHAMBRE
+BEFORE INSERT  
+ON CHAMBRES
+FOR EACH ROW
+WHEN (old.hotel = 1)
+DECLARE  
+   nbvaleur NUMBER(5);  
+BEGIN  
+   nbvaleur := 0;  
+   SELECT COUNT(1) INTO nbvaleur FROM typeschambre WHERE idtypechambre = :new.typechambre;  
+
+   IF (nbvaleur = 0) THEN  
+       DBMS_OUTPUT.PUT_LINE( 'Le type de chambre est inconnu :  
+'||:new.typechambre) ;  
+   DBMS_OUTPUT.PUT_LINE( 'Une insertion dans la table TYPESCHAMBRE va être réalisée');  
+   DBMS_OUTPUT.PUT_LINE( 'Merci de compléter les informations de ce nouveau type de chambre ultérieurement');  
+      INSERT INTO TYPESCHAMBRE VALUES (:new.typechambre,0, 'A COMPLETER', 'A COMPLETER');  
+   END IF;  
+END;
+
+
+CREATE TABLE SUIV_MAJ(
+DATE_JOUR DATE
+, NB_CHAMBRES_AJOUTES INT
+, NB_CHAMBRES_MODIFIES INT
+, NB_CHAMBRES_SUPPRIMES INT
+, NB_TARIFS_AJOUTES INT
+, NB_TARIFS_MODIFIES INT
+, NB_TARIFS_SUPPRIMES INT
+, NB_TYPESCHAMBRE_AJOUTES INT
+, NB_TYPESCHAMBRE_MODIFIES INT
+, NB_TYPESCHAMBRE_SUPPRIMES INT
+);
+
+CREATE OR REPLACE TRIGGER MAJ_CHAMBRES 
+AFTER INSERT OR DELETE OR UPDATE  
+ON CHAMBRES
+FOR EACH ROW  
+DECLARE  
+BEGIN 
+   IF INSERTING THEN  
+     UPDATE SUIV_MAJ SET  
+             NB_CHAMBRES_AJOUTES = NB_CHAMBRES_AJOUTES + 1  
+     WHERE TO_CHAR(DATE_JOUR,'DD/MM/YYYY') =  
+           TO_CHAR(SYSDATE,'DD/MM/YYYY');  
+   END IF;  
+   IF UPDATING THEN  
+     UPDATE SUIV_MAJ SET  
+             NB_CHAMBRES_MODIFIES = NB_CHAMBRES_MODIFIES + 1  
+     WHERE TO_CHAR(DATE_JOUR,'DD/MM/YYYY') =  
+           TO_CHAR(SYSDATE,'DD/MM/YYYY');  
+   END IF;  
+   IF DELETING THEN  
+     UPDATE SUIV_MAJ SET  
+             NB_CHAMBRES_SUPPRIMES = NB_CHAMBRES_SUPPRIMES + 1  
+     WHERE TO_CHAR(DATE_JOUR,'DD/MM/YYYY') =  
+           TO_CHAR(SYSDATE,'DD/MM/YYYY');  
+   END IF;  
+END;
+
+CREATE OR REPLACE TRIGGER MAJ_TARIFS 
+AFTER INSERT OR DELETE OR UPDATE  
+ON TARIFS
+FOR EACH ROW  
+DECLARE  
+BEGIN 
+   IF INSERTING THEN  
+     UPDATE SUIV_MAJ SET  
+             NB_TARIFS_AJOUTES = NB_TARIFS_AJOUTES + 1  
+     WHERE TO_CHAR(DATE_JOUR,'DD/MM/YYYY') =  
+           TO_CHAR(SYSDATE,'DD/MM/YYYY');  
+   END IF;  
+   IF UPDATING THEN  
+     UPDATE SUIV_MAJ SET  
+             NB_TARIFS_MODIFIES = NB_TARIFS_MODIFIES + 1  
+     WHERE TO_CHAR(DATE_JOUR,'DD/MM/YYYY') =  
+           TO_CHAR(SYSDATE,'DD/MM/YYYY');  
+   END IF;  
+   IF DELETING THEN  
+     UPDATE SUIV_MAJ SET  
+             NB_TARIFS_SUPPRIMES = NB_TARIFS_SUPPRIMES + 1  
+     WHERE TO_CHAR(DATE_JOUR,'DD/MM/YYYY') =  
+           TO_CHAR(SYSDATE,'DD/MM/YYYY');  
+   END IF;  
+END;
+
+CREATE OR REPLACE TRIGGER MAJ_TYPESCHAMBRE 
+AFTER INSERT OR DELETE OR UPDATE  
+ON TYPESCHAMBRE
+FOR EACH ROW  
+DECLARE  
+BEGIN 
+   IF INSERTING THEN  
+     UPDATE SUIV_MAJ SET  
+             NB_TYPESCHAMBRE_AJOUTES = NB_TYPESCHAMBRE_AJOUTES + 1  
+     WHERE TO_CHAR(DATE_JOUR,'DD/MM/YYYY') =  
+           TO_CHAR(SYSDATE,'DD/MM/YYYY');  
+   END IF;  
+   IF UPDATING THEN  
+     UPDATE SUIV_MAJ SET  
+             NB_TYPESCHAMBRE_MODIFIES = NB_TYPESCHAMBRE_MODIFIES + 1  
+     WHERE TO_CHAR(DATE_JOUR,'DD/MM/YYYY') =  
+           TO_CHAR(SYSDATE,'DD/MM/YYYY');  
+   END IF;  
+   IF DELETING THEN  
+     UPDATE SUIV_MAJ SET  
+             NB_TYPESCHAMBRE_SUPPRIMES = NB_TYPESCHAMBRE_SUPPRIMES + 1  
+     WHERE TO_CHAR(DATE_JOUR,'DD/MM/YYYY') =  
+           TO_CHAR(SYSDATE,'DD/MM/YYYY');  
+   END IF;  
+END;
+
+DELETE FROM TARIFS; 
+DELETE FROM CHAMBRES WHERE IDCHAMBRE = 7; 
+INSERT INTO TYPESCHAMBRE VALUES (9,2,'lit double','2 lits double avec douche'); 
+INSERT INTO TYPESCHAMBRE VALUES (10,2,'lit double','2 lits double avec douche et WC séparé'); 
+INSERT INTO TYPESCHAMBRE VALUES (11,2,'lit double','2 lits double avec bain et WC séparé'); 
+INSERT INTO TYPESCHAMBRE VALUES (12,2,'lit double','1 lit double et 1 lit simple avec douche'); 
+UPDATE TYPESCHAMBRE SET NOMBRELIT = 2, TYPELIT = 'lit XL', DESCRIPTION = '1 lit XL et 1 lit simple avec bain' WHERE IDTYPECHAMBRE = 8;
+
+SELECT * FROM SUIV_MAJ;
+
+
+-----MySQL
+DROP PROCEDURE Liste_chambre_hotel;
+CREATE PROCEDURE Liste_chambre_hotel(IN pHotel INT)
+SELECT NumChambre, Description 
+FROM Chambres INNER JOIN TypesChambre 
+ON TypesChambre.idTypeChambre = Chambres.TypeChambre
+WHERE Hotel = pHotel;
+
+
+
+DROP PROCEDURE Liste_chambre_hotel;
+CREATE PROCEDURE Liste_chambre_hotel(IN pHotel INT)
+BEGIN
+DECLARE violation_contrainte
+    CONDITION FOR SQLSTATE '23000';
+DECLARE EXIT HANDLER FOR violation_contrainte
+    BEGIN
+        SELECT 'Une erreur est survenue...';
+        SELECT 'Arrêt prématuré de la procédure.';
+    END;
+
+SELECT NumChambre, Description 
+FROM Chambres INNER JOIN TypesChambre 
+ON TypesChambre.idTypeChambre = Chambres.TypeChambre
+WHERE Hotel = pHotel;
+END
+
+
+
+DROP PROCEDURE Liste_chambre_hotel;
+CREATE PROCEDURE Liste_chambre_hotel(IN pHotel INT)
+BEGIN
+DECLARE v_numChambre VARCHAR(6);
+DECLARE v_description VARCHAR(255);
+-- variable utilisée pour staopper la boucle
+DECLARE fin TINYINT DEFAULT 0;
+
+DECLARE C1 CURSOR
+FOR SELECT NumChambre, Description 
+FROM Chambres INNER JOIN TypesChambre 
+ON TypesChambre.idTypeChambre = Chambres.TypeChambre
+WHERE Hotel = pHotel;
+
+-- Gestionnaire d'erreur pour la condition NOT FOUND
+DECLARE CONTINUE HANDLER FOR NOT FOUND SET fin = 1;
+
+OPEN C1;
+loop_curseur: LOOP
+    FETCH C1 INTO v_numChambre, v_description;
+    -- Structure IF pour quitter la boucle à la fin des résultats
+    IF fin = 1 THEN
+        LEAVE loop_curseur;
+    END IF;
+    SELECT CONCAT('Chambre N° : ', v_numChambre, ' - ', v_description) as 'Chambre';
+END LOOP;
+CLOSE C1;
+
+END
+
+
+call Liste_chambre_hotel(2)
+
+
+CREATE FUNCTION LibelleHotel(idHotel INT) RETURNS VARCHAR(50)
+DETERMINISTIC
+BEGIN
+DECLARE vLibelle VARCHAR(50);
+SELECT libelle INTO vLibelle FROM Hotels 
+WHERE idhotel = idHotel;
+
+RETURN vLibelle;
+
+END
+
+SELECT LibelleHotel(3);
+
+
+
+CREATE OR REPLACE TRIGGER T_INS_CHAMBRE
+AFTER INSERT  
+ON CHAMBRES
+FOR EACH ROW  
+BEGIN  
+DECLARE nbvaleur integer; 
+  SELECT COUNT(*) INTO nvbaleur FROM typeschambre WHERE idtypechambre = new.typechambre;  
+  
+   IF nbvaleur = 0 THEN  
+            SELECT 'Le type de chambre est inconnu';
+            SELECT 'Une insertion dans la table TypesChambre va être réalisée';
+            SELECT 'Merci de compléter les informations de ce nouveau type de chambre ultérieurement';
+      INSERT INTO TYPESCHAMBRE VALUES (new.typechambre,0, 'A COMPLETER', 'A COMPLETER');  
+   END IF;  
+END;
+
+
+-----PostGreSQL
+CREATE OR REPLACE FUNCTION F_ECART_JOUR(d DATE)
+RETURNS INTEGER
+AS
+$corps$
+DECLARE jour date := CURRENT_DATE;
+        nombre_jour INTEGER;
+BEGIN
+   nombre_jour := jour - d;
+   RETURN nombre_jour;
+END;
+$corps$
+LANGUAGE PLPGSQL
+
+select F_ECART_JOUR ('20/05/2020')
+
+
+CREATE OR REPLACE FUNCTION PRIX_Chambre (vhotel VARCHAR, vTypeLit VARCHAR, iNbLit INT, dDate DATE)
+RETURNS money AS
+$$
+DECLARE mPrix money;
+BEGIN
+   SELECT Prix INTO mPrix FROM Tarifs t
+INNER JOIN Hotels h ON t.hotel = h.idHotel
+INNER JOIN TypesChambre tc ON tc.idTypeChambre = t.typeChambre
+WHERE h.Libelle = $1 AND tc.TypeLit = $2 AND tc.NombreLit = $3 and DateDebut <= $4 and DateFin >= $4;
+   RETURN mPrix;
+END;
+$$
+LANGUAGE plpgsql;
+
+SELECT PRIX_Chambre ('Ski Hotel', 'lit simple', 2, '24/03/2022');
+
+
+
+CREATE FUNCTION T_INS_Chambres() RETURNS trigger AS $T_INS_Chambres$
+  DECLARE nbvaleur int = 1;
+    BEGIN
+        SELECT COUNT(*) INTO nbvaleur FROM TypesChambre WHERE idTypeChambre = NEW.TypeChambre;
+        IF (nbvaleur = 0) THEN
+            INSERT INTO TypesChambre VALUES (NEW.TypeChambre,0, 'A COMPLETER', 'A COMPLETER'); 
+        END IF;
+        
+        RETURN NULL;
+    END;
+$T_INS_Chambres$ LANGUAGE plpgsql;
+
+CREATE TRIGGER T_INS_Chambres AFTER INSERT OR UPDATE ON Chambres
+    FOR EACH ROW EXECUTE PROCEDURE T_INS_Chambres();
+
+
+

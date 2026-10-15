@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>jQuery UI Slider</title>
+    <link rel="stylesheet" href="css/jquery-ui.min.css">
+    <link rel="stylesheet" href="css/jquery-ui.structure.min.css">
+    <link rel="stylesheet" href="css/jquery-ui.theme.min.css">
+    <script src="js/jquery.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <script>
+        $( function() {
+            var curseur = $( "#barre" );
+            $( "#boite" ).slider({
+                create: function() {
+                    curseur.text( $( this ).slider( "value" ) );
+                },
+                slide: function( event, ui ) {
+                    curseur.text( ui.value );
+                }
+            });
+        } );
+    </script>
+    <style>
+        #boite {
+            width: 400px;
+            margin: 20px;
+        }
+        #barre {
+            width: 3em;
+            height: 1.6em;
+            top: 50%;
+            margin-top: -.8em;
+            text-align: center;
+            line-height: 1.6em;
+        }
+    </style>
+</head>
+<body>
+<div id="boite">
+    <div id="barre" class="ui-slider-handle"></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Ma page</title>
+		<link href="styles.css" rel="stylesheet">
+    </head>
+    <body>
+        <form id="inscription" name="formulaire" method="post" action="#">
+			<p>
+				<label for="nom">Nom : </label>
+				<input id="nom" name="nom" type="text">
+			</p>
+			<p>
+				<label for="prenom">Prénom : </label>
+				<input id="prenom" name="prenom" type="text">
+			</p>
+			<p>Voir les options d'inscription : <input type="checkbox" name="caseOptions" id="caseOptions"></p>
+			<div id="divOptions">
+				<fieldset>
+					<legend>Les options d'inscription</legend>
+					<p>
+						<label for="option1">Option 1</label>
+						<input id="option1" name="option1" type="checkbox">
+					</p>
+					<p>
+						<label for="option2">Option 2</label>
+						<input id="option" name="option2" type="checkbox">
+					</p>
+					<p>
+						<label for="option3">Option 3</label>
+						<input id="option3" name="option3" type="checkbox">
+					</p>
+				</fieldset>
+			</div>
+			<p>
+				<input type="submit" name="envoyer" id="envoyer" value="Envoyer">
+			</p>
+		</form>
+		<script>
+			document.getElementById("divOptions").style.display = "none" ;
+			document.getElementById("caseOptions").onclick = function (){
+				console.log("click");
+				if (document.getElementById("caseOptions").checked) {
+					document.getElementById("divOptions").style.display = "block" ;
+				} else {
+					document.getElementById("divOptions").style.display = "none" ;
+				}
+			}
+		</script>
+    </body>
+</html>

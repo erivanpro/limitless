@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>jQuery</title>
+<script src="js/jquery.js"></script>
+<script>
+	$(document).ready(function() {
+        $("#lancer").click(function(){
+			$("#cible").animate({
+                left: "+=200px",
+                opacity: 0.25 ,
+                width: "50%" ,
+                height: "50%"
+            },"slow");
+		});
+	});
+</script>
+<style>
+    #cible {
+        position: relative;
+        width: 300px;
+        height: 199px;
+    }
+</style>
+</head>
+<body>
+<button id="lancer">Lancer l'animation</button>
+<br>
+<img id="cible" src="zebre.jpg">
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<title>Nivo Slider</title>
+	<meta charset="UTF-8" />
+	<link rel="stylesheet" href="css/default/default.css" />
+	<link rel="stylesheet" href="css/light/light.css" />
+	<link rel="stylesheet" href="css/dark/dark.css" />
+	<link rel="stylesheet" href="css/bar/bar.css" />
+	<link rel="stylesheet" href="css/nivo-slider.css" />
+	<link rel="stylesheet" href="css/style.css" />
+	<script src="js/jquery-1.9.0.min.js"></script>
+	<script src="js/jquery.nivo.slider.js"></script>
+	<script>
+		$(window).load(function() {
+			$('#slider').nivoSlider({
+				animSpeed: 2000,
+				controlNavThumbs: true
+			});
+		});
+	</script>
+</head>
+<body>
+	<div id="wrapper">
+		<div class="slider-wrapper theme-dark">
+			<div id="slider" class="nivoSlider">
+				<img src="images/venise-1.jpg" data-thumb="images/venise-1.jpg" data-transition="slideInLeft" alt="Venise" title="Le palais des Doges vu du canal" />
+				<img src="images/venise-2.jpg" data-thumb="images/venise-2.jpg" data-transition="fold" alt="Venise" />
+				<img src="images/venise-3.jpg" data-thumb="images/venise-3.jpg" data-transition="boxRain" alt="Venise" />
+				<img src="images/venise-4.jpg" data-thumb="images/venise-4.jpg" data-transition="fade" alt="Venise" title="La basilique Saint-Marc"/>
+			</div>
+	</div>
+</div>
+</body>
+</html>

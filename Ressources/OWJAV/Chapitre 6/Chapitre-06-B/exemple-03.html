@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Ma page</title>
+		<style>
+			.carre_rouge {
+				background-color: #FF0000 ;
+				width: 100px;
+				height: 100px;
+			}
+			#contexte {
+				margin-top: 50px;	
+			}
+		</style>
+    </head>
+    <body>
+		<div id="contexte">
+			<div class="carre_rouge"></div>
+		</div>
+		<script src="anime.min.js"></script>
+		<script>
+			var anime_CSS = anime({
+				targets: '#contexte .carre_rouge',
+				opacity: .5,
+				backgroundColor: '#030',
+				borderRadius: ['0em', '3em'],
+				easing: 'easeInOutQuad'
+			});
+		</script>
+    </body>
+</html>

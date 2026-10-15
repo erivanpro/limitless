@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>jQuery UI Selectmenu - Default functionality</title>
+    <link rel="stylesheet" href="css/jquery-ui.min.css">
+    <link rel="stylesheet" href="css/jquery-ui.structure.min.css">
+    <link rel="stylesheet" href="css/jquery-ui.theme.min.css">
+    <script src="js/jquery.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <style>
+        fieldset {
+            border: 0;
+        }
+        label {
+            display: block;
+        margin: 30px 0 0 0;
+        }
+    </style>
+    <script>
+        $( function() {
+            $( "#destination" ).selectmenu();
+        } );
+    </script>
+</head>
+<body>
+<form action="#">
+    <fieldset>
+        <label for="destination">Sélectionnez une destination :</label>
+        <select name="destination" id="destination">
+            <option disabled selected>Choisissez une ville</option>
+            <option>Paris</option>
+            <option>New York</option>
+            <option selected="selected">Venise</option>
+            <option>Barcelone</option>
+            <option>Tokyo</option>
+        </select>
+    </fieldset>
+</form>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Mon script</title>
+    </head>
+    <body>
+		<h1>Vulputate Sollicitudin Condimentum Bibendum</h1>
+		<p id="para">Donec sed odio dui</p>
+		<script>
+			// Création du nouvel élément pour le remplacement
+			var citation = document.createElement("blockquote") ;
+			// Création du nouveau contenu de texte
+			var citationTexte = document.createTextNode("Cras justo odio...") ;
+			// Ajout du contenu dans le nouvel élément
+			citation.appendChild(citationTexte) ;
+			// Cibler l'élément à remplacer
+			var paragraphe = document.getElementById("para") ;
+			// Créer la référence du parent
+			var paragrapheParent = paragraphe.parentNode ;
+			// Effectuer le remplacement
+			paragrapheParent.replaceChild(citation,paragraphe) ;
+		</script>
+	</body>
+</html>

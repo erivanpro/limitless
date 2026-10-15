@@ -1,0 +1,218 @@
+----Format par défaut de la base de données
+--SQL Server
+SELECT GETDATE(); 
+--PostgreSQL
+SELECT current_date, current_time; 
+-- Oracle
+SELECT SYSDATE FROM DUAL;
+--MySQL
+SELECT NOW() 
+
+----Création table temporaire
+--SQL Server
+CREATE TABLE #TARIFS2021 (idTarif       INTEGER ,
+                     hotel         INTEGER,
+                     typeChambre   INTEGER,
+                     DateDebut     DATE,
+                     DateFin       DATE,
+                     Prix          MONEY);
+
+CREATE TABLE ##TARIFS2021 (idTarif       INTEGER ,
+                     hotel         INTEGER,
+                     typeChambre   INTEGER,
+                     DateDebut     DATE,
+                     DateFin       DATE,
+                     Prix          MONEY);
+
+--PostgreSQL
+ CREATE TEMPORARY TABLE TMP_TARIFS2021 (idTarif       INTEGER ,
+                     hotel         INTEGER,
+                     typeChambre   INTEGER,
+                     DateDebut     DATE,
+                     DateFin       DATE,
+                     Prix          MONEY);
+
+-- Oracle
+CREATE LOCAL TEMPORARY TABLE TMP_TARIFS2021 (idTarif       NUMBER(38,0) ,
+                     hotel         NUMBER(38,0),
+                     typeChambre   NUMBER(38,0),
+                     DateDebut     DATE,
+                     DateFin       DATE,
+                     Prix          DECIMAL(7,3)) 
+ON COMMIT PRESERVE ROWS;
+
+CREATE GLOBAL TEMPORARY TABLE TMP_TARIFS2021 (idTarif       NUMBER(38,0) ,
+                     hotel         NUMBER(38,0),
+                     typeChambre   NUMBER(38,0),
+                     DateDebut     DATE,
+                     DateFin       DATE,
+                     Prix          DECIMAL(7,3)) 
+ON COMMIT DELETE ROWS;
+
+--MySQL
+CREATE TEMPORARY TABLE TMP_TARIFS2021 (idTarif       INTEGER ,
+                     hotel         INTEGER,
+                     typeChambre   INTEGER,
+                     DateDebut     DATE,
+                     DateFin       DATE,
+                     Prix          DECIMAL(7,3));
+
+CREATE GLOBAL TEMPORARY TABLE TMP_TARIFS2021 (idTarif       INTEGER ,
+                     hotel         INTEGER,
+                     typeChambre   INTEGER,
+                     DateDebut     DATE,
+                     DateFin       DATE,
+                     Prix          DECIMAL(7,3));
+
+----Ajout de commentaires sur une table ou une colonne
+--Oracle et PostgreSQL
+COMMENT ON TABLE Tarifs IS 'Tarif par hotel et type de chambre';
+Ajouter un commentaire sur une colonne :
+COMMENT ON COLUMN Hotels.idHotel IS 'Numéro de l''hotel';
+Les commentaires sont stockés dans deux tables Oracle :
+user_tab_comments            Les commentaires sur les tables 
+user_col_comments            Les commentaires sur les colonnes
+
+--MySQL
+CREATE TABLE  Hotels(
+	idHotel int NOT NULL PRIMARY KEY COMMENT 'Numéro de l''hotel',
+	Libelle varchar(50) NULL COMMENT 'Dénomination de l''hotel' ,
+	Etoile varchar(5) NULL COMMENT 'Nombre d''étoiles obtenu par l''hotel'
+);
+
+SHOW FULL COLUMNS FROM Hotels.
+
+--SQL Server
+EXEC sys.sp_addextendedproperty @name=N'Description', @value=N'Liste des chambres' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Chambres'
+Pour les colonnes, la propriété étendue ‘description’ existe et peut-être incré-mentée en utilisant cette commande : 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'N° identifiant de chambre indépendant de l''hôtel' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Chambres', @level2type=N'COLUMN',@level2name=N'idChambre' ;
+
+----Création de table à partir d'une autre
+--SQL Server
+SELECT * INTO Chambres_SAUV
+FROM Chambres;
+
+--Oracle et PostgreSQL
+CREATE TABLE SAUV_Chambres AS SELECT * FROM Chambres;
+
+--MySQL
+CREATE TABLE SAUV_Chambres SELECT * FROM Chambres;
+
+----Utilisation de synonymes
+--Oracle
+CREATE SYNONYM PRIX FOR Tarifs;
+SELECT * FROM PRIX;
+
+----Les sequences
+--Oracle, PostgreSQL et SQL Server
+CREATE SEQUENCE S_NUMERO START WITH 5 INCREMENT BY 1
+MINVALUE 2 MAXVALUE 999999 CYCLE;
+
+--oracle
+SELECT S_NUMERO.NEXTVAL FROM DUAL; 
+SELECT S_NUMERO.CURRVAL FROM DUAL;
+
+--SQL Server
+SELECT current_value   
+FROM sys.sequences  
+WHERE name = 'S_NUMERO' ;  
+
+SELECT NEXT VALUE FOR S_NUMERO;
+
+--PostgreSQL
+SELECT * FROM S_NUMERO;
+SELECT nextval('S_NUMERO');
+SELECT currval('S_NUMERO');
+
+----Suppression de table
+DROP TABLE Chambres;
+
+----Vérifier l'existence d'un objet
+--SQL Server
+IF OBJECT_ID('Hotels') IS NULL
+CREATE TABLE Hotels   (idHotel     INTEGER, 
+                       Libelle     VARCHAR(50), 
+                       Etoile      VARCHAR(5));
+
+IF OBJECT_ID('Hotels') IS NOT NULL DROP TABLE Hotels
+
+--SQL Server et PostgreSQL
+DROP TABLE IF EXISTS Hotels;
+
+----Modification de table
+ALTER TABLE Chambres ADD Vue VARCHAR(20);
+ALTER TABLE Chambres DROP COLUMN Vue;
+
+----Renommer une table
+--Oracle
+RENAME Chambres TO SAUV_Chambres;
+
+--MySQL
+RENAME TABLE Chambres TO SAUV_Chambres;
+
+-- SQL server
+EXEC sp_rename 'Chambres', 'SAUV_Chambres';
+
+--PostgreSQL
+ALTER TABLE Chambres RENAME TO SAUV_Chambres;
+
+----Vider une table
+TRUNCATE TABLE Chambres;
+
+----Utilisation de vue
+CREATE VIEW V_Chambre_desc AS  
+SELECT Chambres.Hotel, Chambres.NumChambre, TypesChambre.TypeLit,
+       TypesChambre.NombreLit, TypesChambre.Description
+FROM Chambres, TypesChambre 
+WHERE Chambres.TypeChambre = TypesChambre.idTypeChambre;
+
+SELECT * FROM V_Chambres_desc;
+
+DROP VIEW V_Chambres_desc;
+
+----Utilisation d'index
+CREATE INDEX I2_TypeChambre ON Chambres (TypeChambre); 
+CREATE INDEX I3_TypHotel ON Chambres (TypeChambre, Hotel); 
+CREATE INDEX I4_NumChambre ON Chambres (NumChambre DESC);
+
+DROP INDEX I2_TypeChambre; 
+DROP INDEX I4_NumChambre;
+
+----Utilisation de valeurs par défaut
+CREATE TABLE Chambres (idChambre       INTEGER PRIMARY KEY, 
+                        Hotel          INTEGER,  
+                        TypeChambre    INTEGER DEFAULT 2,  
+                        NumChambre     VARCHAR(6), 
+                        Commentaire    VARCHAR(400));
+
+Une fois la table créée, on peut modifier une valeur par défaut ainsi (ne fonctionne pas dans MySQL) :
+ ALTER TABLE Chambres MODIFY TypeChambre DEFAULT 3;
+Ajouter une colonne et lui attribuer une valeur par défaut :
+ALTER TABLE Chambres ADD (Vue VARCHAR(20) DEFAULT ‘Mer’);
+
+----Clause UNIQUE
+CREATE TABLE Hotels    (idHotel       INTEGER PRIMARY KEY,  
+                        Libelle       VARCHAR(50) UNIQUE,  
+                        Etoile        VARCHAR(5));
+Modifier une colonne (ne fonctionne pas dans MySQL) :
+ALTER TABLE Hotels MODIFY (Libelle UNIQUE)
+
+----Utilisation de la clause CHECK
+CREATE TABLE Chambres  (idChambre       INTEGER PRIMARY KEY, 
+                        Hotel          INTEGER CHECK (VALUE BETWEEN 1 AND 999),  
+                        TypeChambre    CHECK (VALUE IN (SELECT idType-Chambre FROM TypesChambre)), ,  
+                        NumChambre     VARCHAR(6), 
+                        Commentaire    VARCHAR(400));
+
+---suppression d'une clé primaire
+--SQL Server, PostgreSQL, Oracle
+ALTER TABLE Hotels DROP CONSTRAINT PK_Hotels;
+
+--MySQL
+ALTER TABLE Hotels DROP PRIMARY KEY;
+
+
+
+
+
+

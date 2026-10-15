@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Ma page</title>
+    </head>
+    <body>
+		<form method="post" action="#">
+			<p>
+				<label for="nombre">Saisissez un nombre : </label>
+				<input id="nombre" class="input-number" type="text"/>
+			</p>
+		</form>
+		<script src="cleave.min.js"></script>
+		<script>
+			var cleave = new Cleave('.input-number', {
+			    numeral: true,
+				numeralDecimalScale: 2,
+				numeralDecimalMark: ',',
+				delimiter: ' '
+			});
+		</script>
+    </body>
+</html>

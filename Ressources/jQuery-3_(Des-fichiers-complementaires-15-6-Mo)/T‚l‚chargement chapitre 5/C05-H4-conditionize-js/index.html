@@ -1,0 +1,39 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>jQuery conditionize.js Plugin Demo</title>
+	<link href="style.css" rel="stylesheet" />
+</head>
+<body>
+<h2 style="margin-top:150px; text-align:center; color:#fff;">Etes-vous d'accord ?</h2>
+<div id="demo">
+	<label><input type="radio" name="example1" value="yes"><span></span> Oui</label>
+	<label><input type="radio" name="example1" value="no"><span></span> Non</label>
+	<!-- Première boîte conditionnelle -->
+	<div class="conditional" data-cond-option="example1" data-cond-value="yes" style="display: none;">
+		<label><input type="checkbox" name="example2"><span></span> Etes-vous sûr ?</label>
+		<label><input type="checkbox" name="example3"><span></span> Etes-vous asbolument sûr et certain ?</label>
+		<div class="conditional" data-cond-option="example2" data-cond-value="on" style="display: none;">
+			C'est parfait !
+		</div>
+		<div class="conditional" data-cond-option="example3" data-cond-value="on" style="display: none;">
+			Génial, nous le sommes aussi !
+		</div>
+	</div>
+	<!-- Deuxième boîte conditionnelle -->  
+	<div class="conditional" data-cond-option="example1" data-cond-value="no" style="display: none;">
+		<p>C'est dommage ! Voulez-vous changer d'avis ?</p>
+		<label><input type="radio" name="example4" value="yes"><span></span> Oui</label>
+		<label><input type="radio" name="example4" value="no"><span></span> Non</label>
+		<div class="conditional" data-cond-option="example4" data-cond-value="yes" style="display: none;">
+			C'est bien !
+		</div>
+	</div>
+</div>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script src="conditionize.jquery.js"></script>
+<script>
+	$('.conditional').conditionize();
+</script>
+</body>
+</html>

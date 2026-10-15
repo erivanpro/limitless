@@ -1,0 +1,341 @@
+----Fonctions numériques
+--SQL Server
+SELECT idTarif, DateDebut, Prix, ABS(Prix) AS ValeurAbsolue FROM Tarifs;
+
+SELECT idHotel, Libelle, ASCII(SUBSTRING(Libelle, 1, 1)) AS CODE FROM Hotels;
+
+SELECT idTarif, DateDebut, Prix, COS(Prix) AS Cosinus FROM Tarifs;
+
+SELECT idTarif, DateDebut, Prix, SIN(Prix) AS Sinus FROM Tarifs;
+
+SELECT idTarif, DateDebut, Prix, LOG(2, Prix) AS Log FROM Tarifs;
+
+SELECT idTarif, DateDebut, Prix, ROUND(Prix, 1) AS Arrondi FROM Tarifs;
+
+SELECT idTarif, DateDebut, Prix, SQRT(Prix) AS Racine FROM Tarifs;
+
+--PostgreSQL
+SELECT idTarif, DateDebut, Prix, ABS(Prix) AS ValeurAbsolue FROM Tarifs;
+
+SELECT idHotel, Libelle, ASCII(SUBSTRING(Libelle, 1, 1)) AS CODE FROM Hotels;
+SELECT idHotel, Libelle, ASCII(SUBSTR(Libelle, 1, 1)) AS CODE FROM Hotels;
+
+SELECT idTarif, DateDebut, Prix, COS(Prix) AS Cosinus FROM Tarifs;
+
+SELECT idTarif, DateDebut, Prix, SIN(Prix) AS Sinus FROM Tarifs;
+
+SELECT idTarif, DateDebut, Prix, LOG(2, Prix) AS Log FROM Tarifs;
+
+SELECT idTarif, DateDebut, Prix, ROUND(Prix, 1) AS Arrondi FROM Tarifs;
+SELECT idTarif, DateDebut, Prix, ROUND(Prix) AS Arrondi FROM Tarifs;
+
+SELECT idTarif, DateDebut, Prix, SQRT(Prix) AS Racine FROM Tarifs;
+ 
+-- Oracle
+SELECT idTarif, DateDebut, Prix, ABS(Prix) AS ValeurAbsolue FROM Tarifs;
+
+SELECT idHotel, Libelle, ASCII(SUBSTR(Libelle, 1, 1)) AS CODE FROM Hotels;
+
+SELECT idTarif, DateDebut, Prix, COS(Prix) AS Cosinus FROM Tarifs;;
+
+SELECT idTarif, DateDebut, Prix, SIN(Prix) AS Sinus FROM Tarifs;
+
+SELECT idTarif, DateDebut, Prix, LOG(2, Prix) AS Log FROM Tarifs;
+
+SELECT idTarif, DateDebut, Prix, MOD(Prix, 4) AS Modulo FROM Tarifs;
+
+SELECT idTarif, DateDebut, Prix, ROUND(Prix) AS Arrondi FROM Tarifs;
+SELECT idTarif, DateDebut, Prix, ROUND(Prix,1) AS Arrondi FROM Tarifs;
+
+SELECT idTarif, DateDebut, Prix, SQRT(Prix) AS Racine FROM Tarifs;
+
+--MySQL
+SELECT idTarif, DateDebut, Prix, ABS(Prix) AS ValeurAbsolue FROM Tarifs;
+
+SELECT idHotel, Libelle, ASCII(SUBSTRING(Libelle, 1, 1)) AS CODE FROM Hotels;
+SELECT idHotel, Libelle, ASCII(SUBSTR(Libelle, 1, 1)) AS CODE FROM Hotels;
+
+SELECT idTarif, DateDebut, Prix, COS(Prix) AS Cosinus FROM Tarifs;
+
+SELECT idTarif, DateDebut, Prix, SIN(Prix) AS Sinus FROM Tarifs;
+
+SELECT idTarif, DateDebut, Prix, LOG(2, Prix) AS Log FROM Tarifs;
+
+SELECT idTarif, DateDebut, Prix, MOD(Prix, 4) AS Modulo FROM Tarifs;
+
+SELECT idTarif, DateDebut, Prix, ROUND(Prix, 1) AS Arrondi FROM Tarifs;
+SELECT idTarif, DateDebut, Prix, ROUND(Prix) AS Arrondi FROM Tarifs;
+
+SELECT idTarif, DateDebut, Prix, SQRT(Prix) AS Racine FROM Tarifs;
+
+----Fonctions temporelles
+--SQL Server
+SELECT GETDATE() AS dateSession, GETUTCDATE() AS dateUTCSession, CURRENT_TIMESTAMP AS dateSession
+, SYSDATETIME() AS dateSystème, SYSUTCDATETIME() AS dateUTCSystème, SYSDATETIMEOFFSET() AS dateOffsetSystème;
+
+SELECT CAST(GETDATE() AS time), CAST(GETDATE() AS time(0)), CAST(GETDATE() AS time(7));
+
+SELECT DateDebut, CONVERT(CHAR(8), DateDebut, 3) as MaDate FROM Tarifs;
+
+SELECT DateDebut, CONVERT(CHAR(8), DateDebut, 3) as MaDate, DATEPART(Month, DateDebut) as Mois FROM Tarifs;
+SELECT DateDebut, CONVERT(CHAR(8), DateDebut, 3) as MaDate, Month(DateDebut) as Mois FROM Tarifs;
+
+SELECT Year(DateDebut) as Année FROM Tarifs;
+SELECT DATEPART(YEAR, DateDebut) as Année FROM Tarifs;
+
+SELECT CONVERT(CHAR(2), Day(DateDebut)) + ' ' + FORMAT(DateDebut, 'MMMM') + ' ' + CONVERT(CHAR(4),YEAR(DateDebut))
+ FROM Tarifs;
+ 
+ SELECT DATEPART(WEEK, '20210101') AS NumSemaine, DATEPART(ISO_WEEK, '20210101') AS NumSemaineIso;
+ 
+ SELECT DATEDIFF(DAY, '20220328', '20230815') as nbJours
+, DATEDIFF(MONTH, '20220328', '20230815') as nbMois
+, DATEDIFF(YEAR, '20220328', '20230815') as nbAnnée
+
+ 
+ SELECT EOMONTH('20220215', -1) as dernierJourDuMoisPrécédent, EOMONTH('20220215') as dernierJourDuMois;
+ 
+ SELECT DATEADD(DAY, -2, '20220328') AS DeuxJoursPrécédent
+, DATEADD(MONTH, 3, '20220328') AS ajoutMois
+, DATEADD(YEAR, 10, '20220328') AS ajoutAnnées
+
+SELECT DATEPART(DW, '20220328') AS NumJourSemaine, DATEPART(DAYOFYEAR, '20220328') AS NumJourAnnée;
+
+SELECT DATEFROMPARTS(2022, 8, 15) AS MaDate, DATETIME2FROMPARTS(2022, 8, 15, 8, 30, 0, 0, 0) AS MaDateHeure, TIMEFROMPARTS( 8, 30, 0, 0, 0) AS heure;
+
+Select PARSE('09 october 2022' AS date USING 'en-US') as US, PARSE('09 october 2022' AS date USING 'en-GB') as GB, PARSE('09 octobre 2022' AS date USING 'fr-FR') as FR;
+
+--PostgreSQL
+
+SELECT CURRENT_DATE, CURRENT_TIMESTAMP, LOCALTIMESTAMP, now(), transaction_timestamp(), statement_timestamp(), clock_timestamp(), timeofday();
+
+SELECT CURRENT_TIME, LOCALTIME;
+
+SELECT DATEDEBUT, TO_CHAR(DATEDEBUT,'DD/MM/YY') MaDate FROM Tarifs;
+
+SELECT TO_CHAR(DATEDEBUT,'DD/MM/YY') MaDate, TO_CHAR(DATEDEBUT,'MM') MOIS FROM Tarifs;
+
+SELECT TO_CHAR(DATEDEBUT,'YYYY') Année FROM Tarifs;
+
+SELECT TO_CHAR(DATEDEBUT,'DD MONTH YYYY') DATE_EN_CLAIR FROM Tarifs;
+
+SELECT '28/03/2022' AS MaDateDebut, '15/08/2023'AS MaDateFin, date '15/08/2023' - date '28/03/2022' AS NB_JOURS
+, age( '15/08/2023', '28/03/2022') AS AGE;
+
+--Oracle
+SELECT CURRENT_DATE, SYSDATE FROM DUAL;
+
+SELECT TO_CHAR(CURRENT_DATE,'DD/MM/YYYY') FROM DUAL;
+
+SELECT TO_CHAR(SYSDATE,'HH24:MI:SS') FROM DUAL;
+
+SELECT 3,
+      TRIM(TO_CHAR(TRUNC(TRUNC(3/60)/60),'999900') 
+|| ':' || MOD(TRUNC(3/60),60) 
+|| ':' ||  MOD(3,60)) AS HMS 
+FROM DUAL;
+
+SELECT CURRENT_TIMESTAMP FROM DUAL;
+
+SELECT TO_CHAR(CURRENT_TIMESTAMP, 'DD/MM/YYYY HH24:MI:SS') AS Date_et_heure FROM DUAL;
+
+SELECT DATEDEBUT, TO_CHAR(DATEDEBUT,'DD/MM/YY') MaDate FROM Tarifs;
+
+SELECT TO_CHAR(DATEDEBUT,'DD/MM/YY') MaDate, TO_CHAR(DATEDEBUT,'MM') MOIS FROM Tarifs;
+
+SELECT TO_CHAR(SYSDATE,'YYYY') ANNEE  FROM DUAL ;
+
+SELECT TO_CHAR(DATEDEBUT,'YYYY') Année FROM Tarifs;
+
+SELECT TO_CHAR(SYSDATE,'DD MONTH YYYY') DATE_EN_CLAIR FROM DUAL;
+
+SELECT TO_CHAR(DATEDEBUT,'DD MONTH YYYY') DATE_EN_CLAIR FROM Tarifs;
+
+SELECT TO_CHAR(TO_DATE('01/01/2021', 'DD/MM/YYYY'), 'WW') AS NumSemaine, TO_CHAR(TO_DATE('01/01/2021', 'DD/MM/YYYY'), 'IW') AS NumSemaineIso FROM DUAL;
+
+SELECT '28/03/2022' AS MaDateDebut, '15/08/2023'AS MaDateFin, TO_DATE('15/08/2023', 'DD/MM/YYYY') - TO_DATE('28/03/2022', 'DD/MM/YYYY')  AS NB_JOURS FROM DUAL;
+
+SELECT '28/03/2022' AS MaDateDebut, '15/08/2023'AS MaDateFin, TO_CHAR(MONTHS_BETWEEN(TO_DATE('15/08/2023', 'DD/MM/YYYY'), TO_DATE('28/03/2022', 'DD/MM/YYYY')))  AS NB_MOIS FROM DUAL;
+
+SELECT LAST_DAY(SYSDATE) FROM DUAL;
+
+SELECT SYSDATE, NEXT_DAY(SYSDATE,’LUNDI’) FROM DUAL;
+
+SELECT SYSDATE, ADD_MONTHS(SYSDATE,4) FROM DUAL;
+
+SELECT TO_CHAR(SYSDATE, ’DD/MM/YYYY HH24:MI’), ROUND(SYSDATE) FROM DUAL;
+
+SELECT TO_CHAR(SYSDATE, ’DD/MM/YYYY HH24:MI’), TRUNC(SYSDATE) FROM DUAL;
+
+--MySQL
+SELECT CURRENT_DATE,CURRENT_DATE(), CURDATE(), NOW() FROM DUAL;
+
+SELECT DATE_FORMAT(NOW(), '%d/%m/%Y');
+
+SELECT CURRENT_TIME;
+
+SELECT CURRENT_TIMESTAMP;
+
+SELECT DATE_FORMAT(current_timestamp, '%d/%m/%Y% à H:%i:%S') AS Date_et_heure;
+
+SELECT DATE_FORMAT(dateDebut,'%d/%c/%Y') maDate FROM tarifs;
+
+SELECT DATE_FORMAT(DateDebut,'%d/%c/%Y') maDate, DATE_FORMAT(DateDebut,'%c') MOIS FROM tarifs;
+
+SELECT DATE_FORMAT(DateDebut,'%Y') ANNEE FROM tarifs;
+
+SELECT DATE_FORMAT(DateDebut,'%d %b %Y') DATE_EN_CLAIR FROM tarifs;
+
+SELECT 
+TIMESTAMPDIFF(YEAR  , '20220328', '20230815' ) NB_ANNEES,  
+TIMESTAMPDIFF(MONTH , '20220328', '20230815' ) NB_MOIS,  
+TIMESTAMPDIFF(DAY   ,'20220328', '20230815' ) NB_JOURS;
+
+
+----Fonctions sur les chaînes de caractère
+--SQL Server
+SELECT LOWER('Ceci est un TEST') AS minuscule;
+SELECT UPPER('Ceci est un TEST') AS majuscule;
+
+SELECT '*' + LTRIM('   SUPPRESSION DES ESPACES A GAUCHE   ') + '*' AS SUPG;
+SELECT '*' + RTRIM('   SUPPRESSION DES ESPACES A DROITE   ') + '*' AS SUPD;
+
+SELECT SUBSTRING(Libelle, 1, 4) AS SUBS FROM Hotels;
+
+SELECT NumChambre, Commentaire, ISNULL(Commentaire, 'Vue sur le jar-din') AS Commentaires FROM Chambres;
+
+SELECT *, COALESCE(DateDebut, Datefin, '2045-12-31') AS Result FROM Tarifs
+where idTarif > 59;
+
+SELECT Hotel, TypeChambre, NULLIF(Hotel, TypeChambre) AS Comparaison FROM Chambres;
+ 
+--PostgreSQL
+SELECT LOWER('Ceci est un TEST') AS minuscule;
+SELECT UPPER('Ceci est un TEST') AS majuscule;
+
+SELECT '*'||LTRIM('   SUPPRESSION DES ESPACES A GAUCHE   ')||'*' AS SUPG;
+SELECT '*'||RTRIM('   SUPPRESSION DES ESPACES A DROITE   ')||'*' AS SUPD;
+SELECT '*'||TRIM('   SUPPRESSION DES ESPACES A DROITE ET A GAUCHE ')||'*' AS SUPDG;
+
+SELECT POSITION('EXEMPLE' IN 'CECI EST UN EXEMPLE POUR TROUVER LA POSITION D''UNE CHAINE') AS POSITION;
+
+SELECT LPAD('JE RAJOUTE DES POINTS A GAUCHE',50,'.') AS AGAUCHE;
+
+SELECT RPAD('JE RAJOUTE DES POINTS A DROITE',50,'.') AS ADROITE;
+
+SELECT SUBSTRING(Libelle, 1, 4) AS SUBS FROM Hotels;
+SELECT SUBSTR(Libelle, 1, 4) AS SUBS FROM Hotels;
+
+SELECT description FROM typeschambre
+WHERE description like '%wc%'
+
+SELECT description FROM typeschambre
+WHERE description COLLATE Latin1_General_CS_AI like '%wc%'
+
+SELECT description FROM typeschambre
+WHERE description COLLATE Latin1_General_CS_AI like '%WC%'
+ 
+-- Oracle
+SELECT LOWER('Ceci est un TEST') AS MINUSCULE FROM DUAL;
+SELECT UPPER('Ceci est un TEST') AS MAJUSCULE FROM DUAL;
+
+SELECT '*'||LTRIM('   SUPPRESSION DES ESPACES A GAUCHE   ')||'*' AS SUPG FROM DUAL;
+SELECT '*'||RTRIM('   SUPPRESSION DES ESPACES A DROITE   ')||'*' AS SUPD FROM DUAL;
+SELECT '*'||TRIM('   SUPPRESSION DES ESPACES A DROITE ET A GAUCHE ')||'*' AS SUPDG FROM DUAL;
+
+SELECT INSTR('CECI EST UN EXEMPLE POUR TROUVER LA POSITION D''UNE CHAINE','EXEMPLE') AS POSITION FROM DUAL;
+
+SELECT SUBSTR(DESCRIPTION,INSTR(DESCRIPTION,'large'),15) AS EXTRAIT FROM TypesChambre WHERE idTypeChambre = 7; 
+
+SELECT SUBSTR(RESUME,INSTR(RESUME,'agent'),25) AS EXTRAIT FROM FILM WHERE TITRE = 'NIKITA';
+
+SELECT LPAD('JE RAJOUTE DES POINTS A GAUCHE',50,'.') AS AGAUCHE FROM DUAL;
+
+SELECT RPAD('JE RAJOUTE DES POINTS A DROITE',50,'.') AS ADROITE FROM DUAL;
+
+SELECT SUBSTR(Libelle, 1, 4) AS SUBS FROM Hotels;
+
+--MySQL
+SELECT LCASE('Ceci est un TEST') AS MINUSCULE;
+SELECT UCASE('Ceci est un TEST') AS MAJUSCULE;
+
+SELECT CONCAT('*',LTRIM('   SUPPRESSION DES ESPACES A GAUCHE '),'*') AS SUPG FROM DUAL;
+SELECT CONCAT('*',RTRIM('   SUPPRESSION DES ESPACES A DROITE '),'*') AS SUPD FROM DUAL;
+SELECT CONCAT('*',TRIM('   SUPPRESSION DES ESPACES A DROITE ET A GAUCHE   '),'*') AS SUPDG FROM DUAL;
+
+SELECT INSTR('CECI EST UN EXEMPLE POUR TROUVER LA POSITION D''UNE CHAINE','EXEMPLE') AS POSITION FROM DUAL;
+
+SELECT SUBSTR(RESUME,INSTR(RESUME,'agent'),25) AS EXTRAIT FROM FILM WHERE TITRE = 'NIKITA';
+
+SELECT LPAD('JE RAJOUTE DES POINTS A GAUCHE',50,'.') AS AGAUCHE FROM DUAL;
+
+SELECT RPAD('JE RAJOUTE DES POINTS A DROITE',50,'.') AS ADROITE FROM DUAL;
+
+SELECT SUBSTRING(Libelle, 1, 4) AS SUBS FROM Hotels;
+SELECT SUBSTR(Libelle, 1, 4) AS SUBS FROM Hotels;
+
+-----Les principales fonctions de conversions
+--SQL Server
+SELECT CAST(Prix as char(6)) AS Prix, CAST(DateDebut as char(10)) AS DateDebut FROM Tarifs;
+SELECT CONVERT(char(6), Prix) AS Prix, CONVERT(char(10), DateDebut) AS DateDebut FROM Tarifs;
+
+SELECT CHARINDEX('EXEMPLE', 'CECI EST UN EXEMPLE POUR TROUVER LA POSITION D''UNE CHAINE') AS POSITION;
+
+SELECT REPLICATE('.', 50) + 'JE RAJOUTE DES POINTS A GAUCHE' AS AGAUCHE;
+SELECT 'JE RAJOUTE DES POINTS A DROITE' + REPLICATE('.', 50) AS ADROITE;
+
+SELECT Hotel, TypeChambre, CAST(NumChambre AS int) AS entier FROM Chambres;
+
+SELECT Hotel, TypeChambre, CONVERT(int, NumChambre) AS entier FROM Chambres;
+
+--PostgreSQL
+SELECT CAST(Prix as char(6)) AS Prix, CAST(DateDebut as char(10)) AS DateDebut FROM Tarifs;
+
+SELECT Hotel, TypeChambre, CAST(NumChambre AS int) AS entier FROM Chambres;
+ 
+-- Oracle
+
+
+SELECT TO_CHAR(PRIX) PRIX, TO_CHAR(DATEDEBUT,'DD/MM/YY') DateDebut FROM Tarifs;
+
+SELECT Hotel, TypeChambre, CAST(NumChambre AS int) AS entier FROM Chambres;
+
+SELECT NumChambre, Commentaire, NVL(Commentaire, 'Vue sur le jardin') AS Commentaires FROM Chambres;
+
+SELECT Hotel, TypeChambre, NULLIF(Hotel, TypeChambre) AS Comparaison FROM Chambres;
+
+--MySQL
+SELECT CAST(Prix as char(6)) AS Prix, CAST(DateDebut as char(10)) AS DateDebut FROM Tarifs;
+
+----Fonctions de fenêtrage
+--SQL Server, Oracle et PostgreSQL
+SELECT Hotel, typeChambre, Prix
+, RANK() OVER(ORDER BY Prix DESC) AS Numero
+, DENSE_RANK() OVER(ORDER BY Prix DESC) AS NumeroASuivre
+, ROW_NUMBER() OVER(ORDER BY Prix DESC) AS Suite FROM Tarifs;
+
+SELECT Hotel, typeChambre, Prix
+, RANK() OVER(PARTITION BY TypeChambre ORDER BY Prix DESC) AS Numero
+, DENSE_RANK() OVER(PARTITION BY TypeChambre ORDER BY Prix DESC) AS NumeroASuivre
+, ROW_NUMBER() OVER(PARTITION BY TypeChambre ORDER BY Prix DESC) AS Suite FROM Tarifs;
+
+SELECT Hotel, typeChambre, Prix
+, NTILE(21) OVER(ORDER BY Prix DESC) AS Numero FROM Tarifs;
+
+SELECT Hotel, typeChambre, Prix, YEAR(dateDebut) AS année
+, LAG(Prix, 1, 0) OVER(ORDER BY typeChambre, YEAR(dateDebut), Prix DESC) AS PrixPrécédent 
+, Prix - LAG(Prix, 1, 0) OVER(ORDER BY typeChambre, YEAR(dateDebut), Prix DESC) AS Différence FROM Tarifs;
+
+SELECT Hotel, typeChambre, Prix, YEAR(dateDebut) AS année
+, LEAD(Prix, 1, 0) OVER(ORDER BY typeChambre, YEAR(dateDebut), Prix DESC) AS PrixSuivant 
+, Prix - LEAD(Prix, 1, 0) OVER(ORDER BY typeChambre, YEAR(dateDebut), Prix DESC) AS Différence FROM Tarifs;
+ 
+--PostgreSQL
+ 
+-- Oracle
+
+--MySQL
+
+
+
+

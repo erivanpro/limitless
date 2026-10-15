@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>jQuery</title>
+<script src="js/jquery.js"></script>
+<script>
+	$(document).ready(function() {
+        $("#afficher").click(function(){
+			$("#cible").show("slow");
+		});
+        $("#masquer").click(function(){
+			$("#cible").hide(4000);
+		});
+	});
+</script>
+<style>
+    #cible {
+        width: 200px;
+        height: 200px;
+        background-color: #eee;
+        border: solid 2px #000;
+        text-align: center;
+    }
+</style>
+</head>
+<body>
+<button id="afficher">Afficher</button>
+<button id="masquer">Masquer</button>
+<div id="cible">
+    <p>Une boîte</p>
+</div>
+</body>
+</html>

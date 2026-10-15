@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<title>Le JavaScript picturefill.js</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="UTF-8" />
+	<script src="js/matchmedia.js"></script>
+	<script src="js/picturefill.js"></script>
+</head>
+<body>
+	<span data-picture="" data-alt="Une photo d'un chat">
+		<span data-src="chat-sm.jpg"></span>
+		<span data-src="chat-sm-x2.jpg" data-media="
+			(min-width: 992px) and (-webkit-min-device-pixel-ratio: 2.0),
+			(min-width: 992px) and (-o-min-device-pixel-ratio: 2.0),
+			(min-width: 992px) and (min--moz-device-pixel-ratio: 2.0),
+			(min-width: 992px) and (device-pixel-ratio: 2.0)"></span>
+		<span data-src="chat-tb.jpg" data-media="(min-width: 768px)"></span>
+		<span data-src="chat-tb-x2.jpg" data-media="
+			(min-width: 768px) and (-webkit-min-device-pixel-ratio: 2.0),
+			(min-width: 992px) and (-o-min-device-pixel-ratio: 2.0),
+			(min-width: 992px) and (min--moz-device-pixel-ratio: 2.0),
+			(min-width: 992px) and (device-pixel-ratio: 2.0)"></span>
+		<span data-src="chat-eo.jpg" data-media="(min-width: 992px)"></span>
+		<span data-src="chat-eo-x2.jpg" data-media="
+			(min-width: 992px) and (-webkit-min-device-pixel-ratio: 2.0),
+			(min-width: 992px) and (-o-min-device-pixel-ratio: 2.0),
+			(min-width: 992px) and (min--device-pixel-ratio: 2.0),
+			(min-width: 992px) and (device-pixel-ratio: 2.0)"></span>
+		<noscript>
+			<img src="chat-tb.jpg" alt="Un chat">
+		</noscript>
+	</span>
+</body>
+</html>

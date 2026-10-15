@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<title>Flexbox</title>
+	<meta charset="UTF-8" />
+	<style>
+        /* Structure générale */
+        #conteneur {
+            display: flex;
+            max-width: 1200px;
+            margin: 1em auto;
+            border: solid 1px #000;
+        }
+        /* Structure <article> */
+        article {
+            flex: 1;
+            margin: 0;
+            padding: 10px;
+        }
+        article h2 {
+            margin: 0;    
+        }
+        /* Structure pour <aside> */
+        aside {
+            display: flex;
+            flex-direction: column;
+            width: 300px;
+            border-left: solid 1px #000;
+        }
+        aside *:first-child, aside *:last-child {
+            background-color: #000;
+            color: #fff;
+            text-align: center;
+        }
+        aside *:last-child {
+            margin-top: auto;
+        }
+        aside > * {
+            margin: 0;
+            padding: 10px;
+        }
+	</style>
+</head>
+<body>
+<div id="conteneur">
+    <article>
+        <h2>Nullam id dolor id nibh ultricies vehicula ut id elit.</h2>
+        <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Nullam quis risus eget urna mollis ornare vel eu leo. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.</p>
+        <p>Etiam porta sem malesuada magna mollis euismod. Curabitur blandit tempus porttitor. Maecenas sed diam eget risus varius blandit sit amet non magna. Maecenas sed diam eget risus varius blandit sit amet non magna. Nullam id dolor id nibh ultricies vehicula ut id elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Curabitur blandit tempus porttitor.</p>
+        <h2>Nullam id dolor id nibh ultricies vehicula ut id elit.</h2>
+        <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Nullam quis risus eget urna mollis ornare vel eu leo. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.</p>
+        <p>Etiam porta sem malesuada magna mollis euismod. Curabitur blandit tempus porttitor. Maecenas sed diam eget risus varius blandit sit amet non magna. Maecenas sed diam eget risus varius blandit sit amet non magna. Nullam id dolor id nibh ultricies vehicula ut id elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Curabitur blandit tempus porttitor.</p>
+        <h2>Nullam id dolor id nibh ultricies vehicula ut id elit.</h2>
+        <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Nullam quis risus eget urna mollis ornare vel eu leo. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.</p>
+        <p>Etiam porta sem malesuada magna mollis euismod. Curabitur blandit tempus porttitor. Maecenas sed diam eget risus varius blandit sit amet non magna. Maecenas sed diam eget risus varius blandit sit amet non magna. Nullam id dolor id nibh ultricies vehicula ut id elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Curabitur blandit tempus porttitor.</p>
+    </article>
+    <aside>
+        <h2>Integer posuere</h2>
+        <p>Cras mattis consectetur purus sit amet fermentum. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.</p>
+        <h3>Aenean lacinia bibendum</h3>
+        <p>Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Donec id elit non mi porta gravida at eget metus.
+        <h3>Condimentum Mattis</h3>
+    </aside>
+</div>
+</body>
+</html>

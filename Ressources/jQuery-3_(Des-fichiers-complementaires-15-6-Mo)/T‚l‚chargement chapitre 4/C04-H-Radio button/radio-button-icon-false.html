@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <title>jQuery UI Radio Button</title>
+    <link rel="stylesheet" href="css/jquery-ui.min.css">
+    <link rel="stylesheet" href="css/jquery-ui.structure.min.css">
+    <link rel="stylesheet" href="css/jquery-ui.theme.min.css">
+    <script src="js/jquery.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <script>
+        $( function() {
+            $( "input" ).checkboxradio({
+                icon: false
+            });
+        } );
+    </script>
+</head>
+<body>
+<fieldset>
+    <legend>Sélectionnez une destination : </legend>
+    <label for="newyork">New York</label>
+    <input type="radio" name="ville" id="newyork">
+    <label for="paris">Paris</label>
+    <input type="radio" name="ville" id="paris">
+    <label for="venise">Venise</label>
+    <input type="radio" name="ville" id="venise">
+</fieldset>
+</body>
+</html>

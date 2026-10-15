@@ -1,0 +1,44 @@
+a {
+	color: #ED5E2F;
+}
+
+a:hover {
+	text-decoration: none;
+}
+
+h1 {
+	text-align: center;
+	margin: 0 0 25px;
+}
+
+.container {
+	width: 800px;
+	margin: 0 auto;
+	padding: 45px 0 0;
+}
+
+.buttons {
+	margin: 20px auto;
+}
+
+.button {
+	display: block;
+	background: #ED5E2F;
+	color: #FFF;
+	text-decoration: none;
+	width: 200px;
+	text-align: center;
+	padding: 10px;
+	margin: 15px auto;
+	font-size: 18px;
+	text-transform: uppercase;
+	font-weight: 300;
+}
+
+.button:hover {
+	background: #74A599;
+}
+
+.button:active {
+	background: #F6A953;
+}

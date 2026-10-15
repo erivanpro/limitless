@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>jQuery UI Tooltip</title>
+    <link rel="stylesheet" href="css/jquery-ui.min.css">
+    <link rel="stylesheet" href="css/jquery-ui.structure.min.css">
+    <link rel="stylesheet" href="css/jquery-ui.theme.min.css">
+    <script src="js/jquery.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <script>
+        $( function() {
+            var champnum = $( "#champ_num" ).spinner();
+            $( "#valeur" ).on( "click", function() {
+                alert( champnum.spinner( "value" ) );
+            });
+        });
+    </script>
+</head>
+<body>
+<p>
+    <label for="champ_num">Sélectionnez une valeur :</label>
+    <input id="champ_num" name="value">
+</p>
+<p>
+    <button id="valeur">Afficher la valeur saisie</button>
+</p>
+</body>
+</html>

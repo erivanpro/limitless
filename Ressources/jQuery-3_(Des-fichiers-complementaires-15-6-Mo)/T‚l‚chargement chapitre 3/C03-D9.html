@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>jQuery</title>
+<script src="js/jquery.js"></script>
+<script>
+	$(document).ready(function() {
+		$("p:has(em)").css("font-variant","small-caps");
+	});
+</script>
+<style>
+	.fond-gris {
+		background-color: #eee;
+	}
+</style>
+</head>
+<body>
+<p>Nullam id dolor id nibh ultricies vehicula ut id elit. Aenean <em>lacinia</em> bibendum nulla sed consectetur. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</p>
+<p> Sed posuere consectetur est at lobortis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+<p>Morbi leo risus, porta ac consectetur ac, <em>vestibulum</em> at eros. Maecenas faucibus mollis interdum. Donec id elit non mi porta gravida at eget metus.</p>
+<div>Vestibulum id ligula porta felis euismod semper. Lorem ipsum fusce dapibus, <em>tellus</em> ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</div>
+</body>
+</html>

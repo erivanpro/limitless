@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<title>Flexbox</title>
+	<meta charset="UTF-8" />
+	<style>
+        #boite-flexible {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            border: solid 1px #000;
+            height: 200px;
+        }
+        p {
+            margin: 0;
+            background-color: #eee;
+            border: solid 1px #000;
+            padding: 10px;
+        }
+        #p2 {
+            align-self: center;
+        }
+        #p4 {
+            align-self: flex-end;
+        }
+	</style>
+</head>
+<body>
+<div id="boite-flexible">
+    <p id="p1"><strong>Premier</strong>. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.</p>
+    <p id="p2"><strong>Deuxième</strong>. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</p>
+    <p id="p3"><strong>Troisième</strong>. Donec sed odio dui. Cras mattis consectetur purus sit amet fermentum.</p>
+    <p id="p4"><strong>Quatrième</strong>. Curabitur blandit tempus porttitor. Consectetur Parturient Pharetra</p>
+    <p id="p5"><strong>Cinquième</strong>. Etiam porta sem malesuada magna mollis euismod. Euismod Porta Mattis</p>
+</div>
+</body>
+</html>

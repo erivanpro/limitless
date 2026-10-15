@@ -1,0 +1,5 @@
+print( abs(-3) + max(3,4) )
+print( min(4,8,0,-2) )
+print( max( min(7,8), min(4,6) ) )
+print( round(8.324) + round(8.88))
+print( round(8.98795136,3) )

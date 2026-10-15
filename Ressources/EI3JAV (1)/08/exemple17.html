@@ -1,0 +1,30 @@
+<html>
+ <head>
+  <script>
+
+class Vehicule {
+ constructor( marque, modele ) {
+   this.marque = marque;
+   this.modele = modele;
+ }
+}
+
+class Robot {
+ constructor( vehicule, nom ) {
+  this.nom = nom;
+  Object.assign( this, vehicule );
+ }
+}
+
+function init() {
+ v = new Vehicule( "renault", "clio" );
+ r = new Robot( v, "automatique" );
+ alert( r.marque );
+}
+
+
+  </script>
+ </head>
+ <body onload="init()">
+ </body>
+</html>

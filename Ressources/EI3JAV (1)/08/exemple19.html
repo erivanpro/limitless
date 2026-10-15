@@ -1,0 +1,45 @@
+<html>
+ <head>
+  <script>
+
+class Vehicule {
+ constructor( marque, modele ) {
+   this.marque = marque;
+   this.modele = modele;
+ }
+}
+
+let v = new Vehicule( "Renault", "Clio3" );
+let proxy = new Proxy( v, { 
+  get( receiver, name ) {
+    if ( name in receiver ) {
+	  return "Voiture " + receiver[ name ];
+	} else {
+	 return null;
+	}
+  },
+  set( receiver, name, value ) {
+    if ( name == "marque" && value != receiver[ "marque" ] )
+	  throw "Cette marque n'est pas autorisée"
+	if ( name == "modele" ) {
+	  receive[ "modele" ] = value;
+	} else
+	 throw "Cette propriété n'est pas autorisée";
+  }
+  
+} );
+
+function init() {
+ alert( proxy.modele );
+ try {
+  proxy.marque = "Peugeot";
+ } catch( e ) {
+   alert( e );
+ }
+}
+
+  </script>
+ </head>
+ <body onload="init()">
+ </body>
+</html>

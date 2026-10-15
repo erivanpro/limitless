@@ -1,0 +1,33 @@
+<html>
+ <head>
+  <script>
+
+class Vehicule {
+ constructor( marque, modele ) {
+   this.marque = marque;
+   this.modele = modele;
+ }
+}
+
+let v = new Vehicule( "Renault", "Clio3" );
+let proxy = new Proxy( v, { 
+  get( receiver, name ) {
+    if ( name in receiver ) {
+	  return "Voiture " + receiver[ name ];
+	} else {
+	 return null;
+	}
+  }
+  
+} );
+
+function init() {
+ alert( proxy.modele );
+}
+
+
+  </script>
+ </head>
+ <body onload="init()">
+ </body>
+</html>

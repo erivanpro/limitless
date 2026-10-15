@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>jQuery</title>
+<script src="js/jquery.js"></script>
+<script>
+$(document).ready(function(){
+	$("div.point").hide();
+	$("p.chapitre").click(function(){
+		$(this).next("div.point").slideDown(300)
+		.siblings("div.point").slideUp("slow");
+	});
+});
+</script>
+<style>
+.menu {
+	width: 150px;
+}
+.chapitre {
+	padding: 5px;
+	cursor: pointer;
+	position: relative;
+	margin: 0 0 3px 0;
+	font-weight: bold;
+	border: 1px solid black;
+}
+.point a {
+	display: block;
+	color: black;
+	background-color: white;
+	padding-left: 30px;
+	text-decoration: none;
+}
+.point a:hover {
+	color: black;
+	text-decoration: underline;
+}
+</style>
+</head>
+<body>
+<div> 
+	<div class="menu"> 
+		<p class="chapitre">Chapitre 1</p>
+		<div class="point">
+			<a href="#">Point 1</a>
+			<a href="#">Point 2</a>
+			<a href="#">Point 3</a>
+		</div>
+		<p class="chapitre">Chapitre 2</p>
+		<div class="point">
+			<a href="#">Point 1</a>
+			<a href="#">Point 2</a>
+			<a href="#">Point 3</a>
+		</div>
+		<p class="chapitre">Chapitre 3</p>
+		<div class="point">
+			<a href="#">Point 1</a>
+			<a href="#">Point 2</a>
+			<a href="#">Point 3</a>
+		</div>
+	</div>	
+</div>
+</body>
+</html>

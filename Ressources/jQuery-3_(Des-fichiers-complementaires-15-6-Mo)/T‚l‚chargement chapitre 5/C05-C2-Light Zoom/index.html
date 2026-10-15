@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>jQuery Light Zoom Plugin Demo</title>
+	<link href="glassstyle.css" rel="stylesheet">
+	<script src="http://code.jquery.com/jquery-3.1.0.slim.min.js"></script>
+	<script src="lightzoom.js"></script>
+	<script>
+		$(document).ready(function () {
+			$('img.light-zoom').lightzoom({
+				zoomPower: 5,
+				glassSize: 300
+			});
+		});
+	</script>
+</head>
+<body style="text-align: center">
+<h1>Un canal à Venise</h1>
+<img class="light-zoom" width="800px" height="537px" src="venise.jpg">
+</body>
+</html>

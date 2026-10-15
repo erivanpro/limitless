@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<!--[if lte IE 9]><html class="lt-ie10"><![endif]-->
+<!--[if gt IE 9]><!--><html><!--<![endif]-->
+<head>
+	<title>simplemarquee demo</title>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width">
+	<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+	<script src="jquery.simplemarquee.js"></script>
+	<style>
+		.example-left, .example-right,
+		.example-enough-space, .example-options {
+			width: 400px;
+			padding: 5px;
+			border: 1px solid #333;
+		}
+		.example-top, .example-bottom {
+			width: 400px;
+			height: 75px;
+			padding: 5px;
+			border: 1px solid #333;
+		}
+	</style>
+</head>
+<body>
+	<h3>Défilement vers la gauche</h3>
+	<div class="example-left">
+		Cras mattis consectetur purus sit amet fermentum. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec sed odio dui.
+	</div>
+	<h3>Défilement vers la droite</h3>
+	<div class="example-right">
+		Cras justo odio, dapibus ac facilisis in, egestas eget quam. Maecenas faucibus mollis interdum. Etiam porta sem malesuada magna mollis euismod.
+	</div>
+	<h3>Défilement vers le haut</h3>
+	<div class="example-top">
+            Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Donec ullamcorper nulla non metus auctor fringilla. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Etiam porta sem malesuada magna mollis euismod. Nullam id dolor id nibh ultricies vehicula ut id elit. Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas eget quam.
+	</div>
+	<h3>Défilement vers le bas</h3>
+	<div class="example-bottom">
+		Vestibulum id ligula porta felis euismod semper. Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Donec sed odio dui. Vestibulum id ligula porta felis euismod semper.
+	</div>
+	<h3>Assez d'espace pour tout afficher</h3>
+	<div class="example-enough-space">
+		Curabitur blandit tempus porttitor.
+	</div>
+	<script>
+		$(document).ready(function () {
+			$('.example-left').simplemarquee({
+				speed: 100,
+				cycles: 2,
+				space: 50,
+				delayBetweenCycles: 4000,
+				handleHover: true,
+				easing: 'ease-in'
+			});
+
+			$('.example-right').simplemarquee({
+				direction: 'right'
+			});
+
+			$('.example-top').simplemarquee({
+				direction: 'top'
+			});
+
+			$('.example-bottom').simplemarquee({
+				direction: 'bottom'
+			});
+
+			$('.example-enough-space').simplemarquee();
+		});
+	</script>
+</body>
+</html>

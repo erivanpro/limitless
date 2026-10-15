@@ -1,0 +1,53 @@
+<html>
+ <head>
+  <script>
+function init() {
+ function recherche( chaine, valeur, de = 0, a = chaine.length ) {
+  let test = chaine.substring( de, a );
+  return test.indexOf( valeur ) > -1;
+ }
+ 
+ if ( recherche( "ma chaine", "ma" ) ) {
+  alert( "Ma trouvé" );
+ };
+ if ( !recherche( "ma chaine", "ma", 1 ) ) {
+  alert( "Ma pas trouvé" );
+ }
+ 
+ 
+ function concat( separateur, ...chaines ) {
+   let res = "";
+   for ( let i = 0; i < chaines.length; i++ ) {
+    if ( i > 0 )
+	 res += separateur;
+    res += chaines[ i ];
+   }
+   return res;
+ }
+ 
+ alert( concat( ".", "alexandre", "brillant" ) );
+ 
+ let renault = [ "clio", "zoé" ];
+ let peugeot = [ "208", "e-208" ];
+ 
+ let vehiculesElectriques = [ ...renault, ...peugeot ];
+ alert( vehiculesElectriques.length + " vehicules électriques" );
+ 
+function bonjour( {nom,prenom} ) {
+ alert( "Bonjour " + prenom + "." + nom );
+}
+ 
+var auteur = {
+ nom : "brillant",
+ prenom : "alexandre",
+ livre : "javascript"
+};
+
+bonjour( auteur );
+ 
+}
+  </script>
+ </head>
+ <body onload="init()">
+ </body>
+</html>

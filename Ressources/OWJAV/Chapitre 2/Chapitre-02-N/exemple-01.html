@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Mon script</title>
+    </head>
+    <body>
+        <script>
+			var anniversaire = new Date(1998,03,12,15,30,23) ;
+			var jourAnniversaire = anniversaire.getDay() ;
+			switch (jourAnniversaire) {
+				case 0:
+					alert("L\'anniversaire était un dimanche");
+				case 1:
+					alert("L\'anniversaire était un lundi");
+				case 2:
+					alert("L\'anniversaire était un mardi");
+				case 3:
+					alert("L\'anniversaire était un mercredi");
+				case 4:
+					alert("L\'anniversaire était un jeudi");
+				case 5:
+					alert("L\'anniversaire était un vendredi");
+				case 6:
+					alert("L\'anniversaire était un samedi");
+			}
+		</script>
+    </body>
+</html>

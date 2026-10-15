@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>jQuery Pretty Doughtnut Examples</title>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.1/Chart.min.js"></script>
+	<script src="pretty-doughtnut.js"></script>
+	<style>
+		canvas {
+			z-index: 100;
+		}
+		.labelPercentage {
+			font-size: x-large;
+		}
+		.labelText {
+ 			font-size: small;
+			color: #000;
+		}
+		.labelContainer {
+ 			display: block;
+			text-align: center;
+			width: 100px;
+			font-family: Helvetica;
+		}
+	</style>
+	<script>
+		$(window).load(function() {
+ 			doughnutWidget.options = {
+        container: $('#container'),
+				class: 'myClass',
+				cutout: 50
+			};
+  		doughnutWidget.render(data());
+		});
+		function init() {
+			doughnutWidget.render(data());
+		}
+		function data() {
+			var data = {
+				Nantes: {
+					val: 85,
+					color: '#57B4F2',
+					link: 'http://www.editions-eni.fr'
+				},
+				Rennes: {
+					val: 63,
+					color: '#6DED5C'
+				},
+				Angers: {
+					val: 34,
+					color: '#E63329'
+					}
+				};
+			return data;
+		}
+</script>
+</head>
+<body>
+<h1>Résultats de la consultation</h1>
+<div id="container" role="group"></div>
+</body>
+</html>

@@ -1,0 +1,22 @@
+{	
+	"articles":[
+		{
+			"titre": "Lorem Ipsum",
+			"contenu": "Aenean lacinia bibendum nulla sed consectetur. Maecenas faucibus mollis interdum. Sed posuere consectetur est at lobortis. Nullam quis risus eget urna mollis ornare vel eu leo. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Donec id elit non mi porta gravida at eget metus.",
+			"date": "08/06/2018",
+			"auteur": "Christophe"
+		},
+		{
+			"titre": "Cursus Malesuada Amet",
+			"contenu": "Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Donec sed odio dui. Maecenas sed diam eget risus varius blandit sit amet non magna. Nullam id dolor id nibh ultricies vehicula ut id elit. Curabitur blandit tempus porttitor. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Donec id elit non mi porta gravida at eget metus.",
+			"date": "11/06/2018",
+			"auteur": "Christine"
+		},
+		{
+			"titre": "Maecenas faucibus",
+			"contenu": "Vestibulum id ligula porta felis euismod semper. Aenean lacinia bibendum nulla sed consectetur. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Nulla vitae elit libero, a pharetra augue. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum.",
+			"date": "18/06/2018",
+			"auteur": "Mathis"
+		}
+	]
+}

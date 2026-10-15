@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+ <head>
+
+  <script>
+function init() {
+let t = function test(a,b) { return a+b;}
+alert( t(1,2) );
+let t2 = (a,b) => ( a+b );
+alert( t(2,2) );
+
+let a = [1,2,3,4,5];
+let b = [];
+a.forEach( v => b += -v );
+console.log( b );
+}
+
+
+  </script>
+
+ </head>
+ <body onload="init()">
+ </body>
+</html>

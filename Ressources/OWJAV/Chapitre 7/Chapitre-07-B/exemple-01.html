@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Ma page</title>
+    </head>
+    <body>
+		<script>
+			var chiensJSON = '{"Chien":"Canis","chien1":{"Nom":"Raja","Couleur":"Brun","Race":"Labrador"},"chien2":{"Nom":"Lord","Couleur":"Beige","Race":"Beagle"}}';
+			var lesChiens = JSON.parse(chiensJSON);
+			console.log(lesChiens.chien2.Nom);
+		</script>
+    </body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Ma page</title>
+	</head>
+	<body>
+		<div id="conteneur"></div>
+		<script id="template" type="text/x-handlebars-template">
+			{{#each chiens}}
+				<p>Nom du chien : {{{gras Nom}}}.</p>
+				<p>Couleur du chien : {{{gras Couleur}}}.</p>
+				{{> raceChien}}
+				{{#with Proprietaire}}
+					<p>Le propriétaire : {{PrenomPro}} {{NomPro}}.</p>
+				{{/with}}
+			{{/each}}
+		</script>
+		<script id="race" type="text/x-handlebars-template">
+			<p><em>Race du chien</em> : {{{gras Race}}}.</p>
+		</script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.11/handlebars.min.js"></script>
+		<script>
+			// Définir le helper pour mettre en gras
+			Handlebars.registerHelper('gras',function(texte){
+				return '<strong>'+texte+'</strong>' ;
+			})
+			// Définir le bloc externe
+			var laRace = document.getElementById('race').innerHTML ;
+			Handlebars.registerPartial('raceChien',laRace) ;
+			// Définir les données internes en JSON
+			var chiensJSON = {"chiens":[
+				{"Nom":"Raja","Couleur":"Brun","Race":"Labrador",
+				 	"Proprietaire": {"NomPro":"Durand","PrenomPro":"Paul"}
+				},
+				{"Nom":"Lord","Couleur":"Beige","Race":"Beagle",
+				 	"Proprietaire": {"NomPro":"Leconte","PrenomPro":"Valérie"}
+				},
+				{"Nom":"Yuky","Couleur":"Noir","Race":"Caniche",
+				 	"Proprietaire": {"NomPro":"Tralent","PrenomPro":"Julie"}
+				}
+			]} ;
+			// Définir et compiler le template
+			var leTemplate = document.getElementById('template').innerHTML ;
+			var compileTemplate = Handlebars.compile(leTemplate) ;
+			// Exécuter le rendu
+			var rendu = compileTemplate(chiensJSON);
+			// Définir le conteneur
+			var leConteneur = document.getElementById('conteneur') ;
+			// Afficher le rendu
+			leConteneur.innerHTML = rendu ;
+		</script>
+	</body>
+</html>

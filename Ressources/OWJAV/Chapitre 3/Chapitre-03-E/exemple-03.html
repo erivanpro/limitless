@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Mon script</title>
+    </head>
+    <body>
+		<h1>Vulputate Sollicitudin Condimentum Bibendum</h1>
+		<p id="para">Donec sed odio dui</p>
+		<script>
+			var paraInit = document.getElementById("para") ; 
+			var paraDuplique = paraInit.cloneNode(false) ;
+			paraDuplique.innerHTML="Nouveau paragraphe" ;
+			paraDuplique.setAttribute('id','newPara');
+			document.body.appendChild(paraDuplique) ;
+		</script>
+	</body>
+</html>

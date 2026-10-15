@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<title>Bootstrap Maxlength</title>
+	<meta charset="UTF-8" />
+	<link rel="stylesheet" type="text/css" media="screen" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/css/bootstrap.min.css">
+	<style>
+		body {
+			padding: 10px;
+		}
+	</style>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script src="bootstrap-maxlength.js"></script>
+	<script>
+		$(document).ready(function(){
+			$('input#thresholdconfig').maxlength({
+				threshold: 20
+			});
+			$('input#moreoptions').maxlength({
+				alwaysShow: true,
+				warningClass: "label label-success",
+				limitReachedClass: "label label-important"
+			});
+			$('input#alloptions').maxlength({
+				alwaysShow: true,
+				warningClass: "label label-success",
+				limitReachedClass: "label label-important",
+				preText: 'Il vous reste ',
+				separator: ' sur ',
+				postText: ' caractères.',
+				placement: 'top'
+			});
+		});
+	</script>
+</head>
+<body>
+<div class="wrapper">
+	<h3>Seuil d'affichage à 20 caractères restants :</h3>
+	<input type="text" maxlength="25" name="thresholdconfig" id="thresholdconfig">
+	<h3>Compteur toujours affiché :</h3>
+	<input type="text" maxlength="25" name="moreoptions" id="moreoptions">
+	<h3>Compteur personnalisé : </h3>
+	<input type="text" maxlength="25" name="alloptions" id="alloptions">
+</div>
+<span style="display: none; position: absolute; white-space: nowrap; z-index: 99999; top: 330px; left: 188px;" class="badge-success badge">18 / 25</span>
+<span style="display: none; position: absolute; white-space: nowrap; z-index: 99999; top: 430px; left: 191px;" class="label-success label">13 / 25</span>
+<span style="display: none; position: absolute; white-space: nowrap; z-index: 99999; top: 560px; left: 114px;" class="label-success label">You have 6 of 25 chars remaining.</span>
+</body>
+</html>

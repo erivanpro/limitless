@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Ma page</title>
+		<style>
+			.contenu {
+				border-left: solid 5px #eee;
+				padding-left: 10px;
+			}
+			.metadonnees {
+				font-size: small;
+				font-style: italic;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Les articles</h1>
+		<div id="conteneur"></div>
+		<script id="template" type="x-tmpl-mustache">
+			{{#articles}}
+				<h2 class="titre">{{titre}}</h2>
+				<p class="contenu">
+					{{contenu}}
+					<br>
+					<span class="metadonnees">Rédigé le {{date}} par {{auteur}}</span>
+				</p>
+			{{/articles}}
+		</script>
+		<script src="mustache.js"></script>
+		<script>
+			// Récupérer les données JSON extérieures
+			var lesArticles ;
+			function donneesJSON() {
+				var httpRequestArticles = new XMLHttpRequest();
+				httpRequestArticles.open("GET", "articles.json", true);
+				httpRequestArticles.setRequestHeader("Content-type", "application/json");
+				httpRequestArticles.onreadystatechange = function() {
+					if (httpRequestArticles.readyState == 4 && httpRequestArticles.status == 200) {
+						lesArticles = JSON.parse(httpRequestArticles.responseText);
+						afficheArticles();
+					}
+				}
+				httpRequestArticles.send(null);
+			}
+			donneesJSON();
+			
+			// Fonction d'affichage des données
+			function afficheArticles() {
+				// Définir le template
+				var leTemplate = document.getElementById('template').innerHTML ;
+				// Exécuter le rendu
+				var rendu = Mustache.render(leTemplate,lesArticles) ;
+				// Afficher le rendu
+				var leConteneur = document.getElementById('conteneur') ;
+				leConteneur.innerHTML = rendu;
+			}
+		</script>
+	</body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+ <head>
+
+  <script>
+
+function init() {
+ // setTimeout( function() { alert( "Bonjour" ); }, 3000 );
+ 
+
+ let p = new Promise( ( fait, erreur ) => (setTimeout( () => fait(), 3000 ) ) );
+ 
+ p.then( () => alert( "Bonjour") );
+ 
+}
+
+
+  </script>
+
+ </head>
+ <body onload="init()">
+ </body>
+</html>

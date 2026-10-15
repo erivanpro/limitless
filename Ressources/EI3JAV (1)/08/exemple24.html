@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+ <head>
+
+  <script>
+
+function init() {
+ let frNum = new Intl.NumberFormat( "fr-FR" );
+ let usNum = new Intl.NumberFormat( "en-US" );
+ let nombre = 3141567.314;
+ alert( "format en français = " + frNum.format( nombre ) );
+ alert( "format en anglais/us = " + usNum.format( nombre ) );
+ 
+ frNum = new Intl.NumberFormat( "fr-FR", { style : "currency", currency : "EUR" } );
+ alert( "Billet de " + frNum.format( 20 ) );
+ 
+ let frDate = new Intl.DateTimeFormat( "fr-FR" );
+ let enDate = new Intl.DateTimeFormat( "en-US" );
+ let date = new Date( 2020, 09, 20 );
+ alert( "Date en français = " + frDate.format( date ) );
+ alert( "Date en anglais = " + enDate.format( date ) );
+}
+
+
+  </script>
+
+ </head>
+ <body onload="init()">
+ </body>
+</html>

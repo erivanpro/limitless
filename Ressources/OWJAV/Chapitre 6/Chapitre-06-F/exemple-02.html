@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Ma page</title>
+		<style>
+			p {
+				margin: 80px;
+			}
+			span.tippy {
+				text-decoration: underline dotted;
+			}
+		</style>
+    </head>
+    <body>
+		<br>
+		<p>La place <span class="tippy" id="sanmarco" title="La place Saint-Marc à Venise">San Marco</span>, la place la plus visitée de Venise.</p>
+		<script src="https://unpkg.com/tippy.js/dist/tippy.all.min.js"></script>
+		<script>
+			tippy(
+				'#sanmarco',
+				{
+					arrow: true,
+					arrowType: 'round',
+					size: 'large',
+					animation: 'fade',
+					duration: [800, 200],
+					distance: 20,
+					followCursor: true
+				}
+			);
+		</script>
+    </body>
+</html>

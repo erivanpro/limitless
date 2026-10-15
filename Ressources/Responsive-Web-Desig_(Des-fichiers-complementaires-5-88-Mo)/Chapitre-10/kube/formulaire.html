@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Mon site avec Kube</title>
+	<meta charset="UTF-8" />
+	<link rel="stylesheet" href="css/kube.min.css" />
+	<style>
+        body {
+            margin: 10px;
+        }
+	</style>
+</head>
+<body>
+<h4>Formulaire</h4>
+<form method="post" action="" class="form">
+    <div class="form-item">
+        <label>Nom :</label>
+        <input type="text" name="nom" class="width-50"  />
+        <div class="desc">Saisissez votre nom</div>
+    </div>
+	<div class="form-item">
+        <label>eMail :</label>
+        <input type="email" name="nom" class="width-50" placeholder="Saisissez votre eMail"  />
+    </div>
+	<div class="form-item checkboxes">
+        <label>Choisissez une ou des options :</label>
+        <label><input type="checkbox"> Choix 1</label>
+        <label><input type="checkbox"> Choix 2</label>
+        <label><input type="checkbox"> Choix 3</label>
+        <label><input type="checkbox"> Choix 4</label>
+    </div>
+	<div class="form-item">
+        <label>Montant de l'achat :</label>
+        <div class="controls width-50">
+            <input type="text">
+            <span>&euro;</span>
+        </div>
+    </div>
+	<p><button class="btn width-20">Envoyer</button></p>
+</form>
+</body>
+</html>

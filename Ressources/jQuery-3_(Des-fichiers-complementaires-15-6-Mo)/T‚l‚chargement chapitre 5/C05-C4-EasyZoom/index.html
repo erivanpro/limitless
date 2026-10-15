@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>EasyZoom</title>
+	<link rel="stylesheet" href="css/example.css" />
+	<link rel="stylesheet" href="css/pygments.css" />
+	<link rel="stylesheet" href="css/easyzoom.css" />
+	<script src="http://code.jquery.com/jquery-3.1.0.min.js"></script>
+	<script src="js/easyzoom.js"></script>
+</head>
+<body>
+<div class="container">
+	<h3>Un canal à venise</h3>
+	<div class="easyzoom easyzoom--overlay">
+		<a href="images/venise_zoom.jpg">
+			<img src="images/venise_standard.jpg" alt="Venise" width="640" height="514" />
+		</a>
+	</div>
+</div>
+<script>
+	var $easyzoom = $('.easyzoom').easyZoom();
+</script>
+</body>
+</html>

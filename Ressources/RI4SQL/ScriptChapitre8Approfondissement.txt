@@ -1,0 +1,476 @@
+---Sous requêtes MySQL - Oracle - PostgreSQL - SQL Server
+
+SELECT hotels.libelle, numchambre FROM Chambres
+INNER JOIN hotels ON hotels.idhotel =chambres.hotel
+where typechambre = (SELECT idtypechambre FROM typeschambre
+where description = '1 lit simple avec douche');
+
+SELECT hotels.libelle
+, numchambre
+,(SELECT description FROM typeschambre
+where idtypechambre = chambres.typechambre) descchambre
+FROM Chambres
+INNER JOIN hotels ON hotels.idhotel =chambres.hotel
+WHERE hotels.idhotel = 3;
+
+SELECT hotels.libelle, numchambre FROM Chambres
+INNER JOIN hotels ON hotels.idhotel =chambres.hotel
+where typechambre IN (SELECT idtypechambre FROM typeschambre
+where description IN ('1 lit simple avec douche', '1 lit double avec douche'));
+
+SELECT hotels.libelle, numchambre FROM Chambres
+INNER JOIN hotels ON hotels.idhotel =chambres.hotel
+where EXISTS (SELECT idtypechambre FROM typeschambre
+WHERE description IN ('1 lit simple avec douche', '1 lit double avec douche') 
+AND chambres.typechambre = typeschambre.idtypechambre);
+
+INSERT INTO CHAMBRES VALUES (29, 4, 2, 8, null);
+
+SELECT hotels.libelle, numchambre, typechambre FROM CHAMBRES
+INNER JOIN hotels ON chambres.hotel =hotels.idhotel
+AND hotels.idhotel = 4
+WHERE EXISTS (SELECT * FROM chambres C1 WHERE C1.typechambre =chambres.typechambre
+AND c1.numchambre <> chambres.numchambre);
+
+
+
+--SQL Server
+SELECT PAYS.IDENT_PAYS FROM PAYS WHERE 
+PAYS.LIBELLE = 'FRANCE';
+
+sp_configure 'show advanced options', 1
+GO
+RECONFIGURE
+GO
+sp_configure 'Ad Hoc Distributed Queries', 1
+GO
+RECONFIGURE
+
+INSERT INTO OPENROWSET('Microsoft.ACE.OLEDB.12.0', 'Text;DATABASE=C:\Test\;HDR=YES', 'Select * from Film.csv')
+(Titre, Genre1, Distributeur)
+SELECT Titre, Genre1, Distbiuteur FROM FILM
+
+INSERT INTO OPENROWSET('Microsoft.ACE.OLEDB.12.0', 'Excel 12.0;DATABASE=C:\Test\Film.xls', 'Select * from [Sheet1$]')
+(Titre, Genre1, Distributeur)
+SELECT Titre, Genre1, Distbiuteur FROM FILM
+
+sp_configure 'show advanced options', 1
+GO
+RECONFIGURE
+GO
+sp_configure 'xp_cmdshell', 1
+GO
+RECONFIGURE
+
+EXEC xp_cmdshell 'SQLCMD -S . -d CINEMA -Q "SELECT Titre, Genre1, Distbiuteur FROM FILM" -s "," -o "C:\Test\Film.csv"';
+
+CREATE TABLE [FILMImport](
+	[TITRE] [varchar](50) NULL,
+	[GENRE1] [varchar](20) NULL,
+	[DISTRIBUTEUR] [varchar](50) NULL,
+)
+
+BULK INSERT FILMImport
+   FROM 'C:\Test\Film.csv'
+   WITH
+      (
+        FIELDTERMINATOR = ',',
+        ROWTERMINATOR = '\n'
+)
+
+create table timport(c1 int identity, c2 xml)
+
+insert into timport(c2)
+select * from OPENROWSET(BULK 'C:\Test\Film.xml', SINGLE_BLOB) as t
+
+SELECT t2.item.query('.')
+ FROM timport
+ CROSS APPLY c2.nodes('/list/FILM') as t2(item)
+
+SELECT t2.item.value('./Titre[1]', 'varchar(50)') as titre
+ , t2.item.value('./Genre[1]', 'varchar(20)') as Genre
+ , t2.item.value('./Distributeur[1]', 'varchar(50)') as distributeur
+ FROM timport
+ CROSS APPLY c2.nodes('/list/FILM') as t2(item)
+
+ insert into FILMImport
+SELECT t2.item.value('./Titre[1]', 'varchar(50)') as titre
+ , t2.item.value('./Genre[1]', 'varchar(20)') as Genre
+ , t2.item.value('./Distributeur[1]', 'varchar(50)') as distributeur
+ FROM timport
+ CROSS APPLY c2.nodes('/list/FILM') as t2(item)
+
+ DROP TABLE timport
+ 
+ exec sp_helpdb
+exec sp_help 'Hotels'
+exec sp_helpdb 'RESAHOTEL'
+exec sp_linkedservers
+
+select DB_NAME()
+select db_id()
+select db_name(2)
+select DB_ID('RESAHOTEL')
+select SUSER_NAME()
+select getdate()
+select SYSDATETIME()
+select HOST_NAME() --machine
+
+select @@SERVERNAME --instance
+select @@VERSION
+
+ 
+-- Oracle
+SELECT PAYS.IDENT_PAYS FROM PAYS WHERE 
+PAYS.LIBELLE = 'FRANCE';
+
+SELECT SUBSTR(FILM.TITRE,1,20) TITRE, FILM.DATE_SORTIE, 
+       SUBSTR((REAL.NOM||' '||REAL.PRENOM),1,25) REALISATEUR, 
+       SUBSTR(RTRIM(ACTEUR.NOM||' '||ACTEUR.PRENOM),1,25) ACTEUR, 
+       ACTEUR.DATE_NAISSANCE NE,ACTEUR.NB_FILM NBFILMS, 
+       STAT.BUDGET,STAT.NB_ENTREE_FRANCE NBENTREE 
+FROM   FILM FILM, REALISATEUR REAL, CASTING CAST, 
+       ACTEUR ACTEUR, STATISTIQUE STAT
+WHERE  
+   FILM.IDENT_REALISATEUR = REAL.IDENT_REALISATEUR AND 
+   FILM.IDENT_FILM        = CAST.IDENT_FILM AND 
+   FILM.IDENT_FILM        = STAT.IDENT_FILM AND 
+   CAST.IDENT_ACTEUR      = ACTEUR.IDENT_ACTEUR AND 
+   ACTEUR.NATIONALITE = (SELECT PAYS.IDENT_PAYS FROM PAYS WHERE 
+                          PAYS.LIBELLE = 'FRANCE')  
+ORDER BY FILM.TITRE, ACTEUR.NOM;
+
+SELECT SUBSTR(FILM.TITRE,1,20) TITRE, FILM.DATE_SORTIE, 
+       SUBSTR((REAL.NOM||' '||REAL.PRENOM),1,25) REALISATEUR, 
+       SUBSTR(RTRIM(ACTEUR.NOM||' '||ACTEUR.PRENOM),1,25) ACTEUR, 
+       ACTEUR.DATE_NAISSANCE NE,ACTEUR.NB_FILM NBFILMS, 
+       STAT.BUDGET,STAT.NB_ENTREE_FRANCE NBENTREE, 
+       (SELECT PAYS.LIBELLE FROM PAYS WHERE PAYS.IDENT_PAYS = 
+ACTEUR.NATIONALITE) PAYS 
+FROM   FILM FILM, REALISATEUR REAL, CASTING CAST, 
+       ACTEUR ACTEUR, STATISTIQUE STAT 
+WHERE  
+   FILM.IDENT_REALISATEUR = REAL.IDENT_REALISATEUR AND 
+   FILM.IDENT_FILM        = CAST.IDENT_FILM AND 
+   FILM.IDENT_FILM        = STAT.IDENT_FILM AND 
+   CAST.IDENT_ACTEUR      = ACTEUR.IDENT_ACTEUR 
+ORDER BY FILM.TITRE, ACTEUR.NOM;
+
+SELECT SUBSTR(FILM.TITRE,1,20) TITRE, FILM.DATE_SORTIE, 
+       SUBSTR((REAL.NOM||' '||REAL.PRENOM),1,25) REALISATEUR, 
+       SUBSTR(RTRIM(ACTEUR.NOM||' '||ACTEUR.PRENOM),1,25) ACTEUR, 
+       ACTEUR.DATE_NAISSANCE NE,ACTEUR.NB_FILM NBFILMS, 
+       STAT.BUDGET,STAT.NB_ENTREE_FRANCE NBENTREE 
+FROM   FILM FILM, REALISATEUR REAL, CASTING CAST, 
+       ACTEUR ACTEUR, STATISTIQUE STAT 
+WHERE  
+   FILM.IDENT_REALISATEUR = REAL.IDENT_REALISATEUR AND 
+   FILM.IDENT_FILM        = CAST.IDENT_FILM AND 
+   FILM.IDENT_FILM        = STAT.IDENT_FILM AND 
+   CAST.IDENT_ACTEUR      = ACTEUR.IDENT_ACTEUR AND 
+   ACTEUR.NATIONALITE IN (SELECT PAYS.IDENT_PAYS FROM PAYS WHERE 
+                          PAYS.LIBELLE IN ('USA', 'ALGERIE')) 
+ORDER BY FILM.TITRE, ACTEUR.NOM;
+
+SELECT SUBSTR(FILM.TITRE,1,20) TITRE, FILM.DATE_SORTIE, 
+       SUBSTR((REAL.NOM||' '||REAL.PRENOM),1,25) REALISATEUR, 
+       SUBSTR(RTRIM(ACTEUR.NOM||' '||ACTEUR.PRENOM),1,25) ACTEUR, 
+       ACTEUR.DATE_NAISSANCE NE,ACTEUR.NB_FILM NBFILMS, 
+       STAT.BUDGET,STAT.NB_ENTREE_FRANCE NBENTREE 
+FROM   FILM FILM, REALISATEUR REAL, CASTING CAST, 
+       ACTEUR ACTEUR, STATISTIQUE STAT 
+WHERE 
+   FILM.IDENT_REALISATEUR = REAL.IDENT_REALISATEUR AND 
+   FILM.IDENT_FILM        = CAST.IDENT_FILM AND 
+   FILM.IDENT_FILM        = STAT.IDENT_FILM AND 
+   CAST.IDENT_ACTEUR      = ACTEUR.IDENT_ACTEUR AND 
+   EXISTS (SELECT PAYS.IDENT_PAYS FROM PAYS WHERE 
+                 PAYS.LIBELLE IN ('USA', 'ALGERIE') AND 
+                 PAYS.IDENT_PAYS = ACTEUR.NATIONALITE ) 
+ORDER BY FILM.TITRE, ACTEUR.NOM;
+
+SELECT SUBSTR(FILM.TITRE,1,20) TITRE, FILM.DATE_SORTIE, 
+       SUBSTR((REAL.NOM||' '||REAL.PRENOM),1,25) REALISATEUR, 
+       SUBSTR(RTRIM(ACT1.NOM||' '||ACT1.PRENOM),1,25) ACTEUR, 
+       ACT1.DATE_NAISSANCE NE,ACT1.NB_FILM NBFILMS, 
+       STAT.BUDGET,STAT.NB_ENTREE_FRANCE NBENTREE 
+FROM   FILM FILM, REALISATEUR REAL, CASTING CAST, 
+       ACTEUR ACT1, STATISTIQUE STAT 
+WHERE  
+   FILM.IDENT_REALISATEUR = REAL.IDENT_REALISATEUR AND 
+   FILM.IDENT_FILM        = CAST.IDENT_FILM AND 
+   FILM.IDENT_FILM        = STAT.IDENT_FILM AND 
+   CAST.IDENT_ACTEUR      = ACT1.IDENT_ACTEUR AND 
+   EXISTS (SELECT * FROM ACTEUR ACT2 WHERE ACT2.PRENOM = 
+ACT1.PRENOM  
+                                       AND ACT2.NOM <> ACT1.NOM) 
+ORDER BY FILM.TITRE, ACT1.NOM;
+
+INSERT INTO ACTEUR VALUES 
+(13,'HUPPERT','ISABELLE',TO_DATE('16/03/1953','DD/MM/YYYY'),102,1);
+
+CREATE TABLE FILM (IDENT_FILM        INTEGER, 
+                   TITRE             VARCHAR(50), 
+                   GENRE1            VARCHAR(20), 
+                   GENRE2            VARCHAR(20), 
+                   DATE_SORTIE       DATE, 
+                   PAYS              SMALLINT, 
+                   IDENT_REALISATEUR INTEGER, 
+                   DISTRIBUTEUR      VARCHAR(50), 
+                   RESUME            VARCHAR(2000));
+
+				   INSERT INTO FILM VALUES 
+(1,'SUBWAY','POLICIER','DRAME',TO_DATE('10/04/1985','DD/MM/YYYY'), 
+1,1,'GAUMONT','Conte les aventures de la population souterraine 
+dans les couloirs du métro parisien'); 
+ 
+INSERT INTO FILM VALUES 
+(2,'NIKITA','DRAME','ROMANTIQUE',TO_DATE('21/02/1990','DD/MM/YYYY' 
+),1,1,'GAUMONT','Nikita condamnée à la prison à perpétuité est 
+contrainte à travailler secrètement pour le gouvernement en tant 
+que agent hautement qualifié des services secrets.'); 
+ 
+INSERT INTO FILM VALUES (3,'STAR WARS 6 : LE RETOUR DU 
+JEDI','ACTION','SF',TO_DATE('19/10/1983','DD/MM/YYYY'),2,2,'20th 
+Century Fox ','L''Empire galactique est plus puissant que jamais : 
+la construction de la nouvelle arme, l''Etoile de la Mort, menace 
+l''univers tout entier.'); 
+ 
+INSERT INTO FILM VALUES 
+(4,'AVATAR','ACTION','SF',TO_DATE('16/10/2009','DD/MM/YYYY'),2,3,' 
+20th Century Fox ','Malgré sa paralysie, Jake Sully, un ancien 
+marine immobilisé dans un fauteuil roulant, est resté un 
+combattant au plus profond'); 
+ 
+INSERT INTO FILM VALUES (5,'BIENVENUE CHEZ LES 
+CH''TIS','COMEDIE','',TO_DATE('27/02/2008','DD/MM/YYYY'),1,4,'PATH 
+E','Philippe Abrams est directeur de la poste de Salon-de-Provence 
+est muté dans le Nord.');
+
+     LOAD DATA 
+     INFILE  'Charge_film.dat' 
+     BADFILE 'Charge_film.dat.bad' 
+     DISCARDFILE 'Charge_film.dsc' 
+     DISCARDMAX 999 
+     TRUNCATE 
+     INTO TABLE FILM 
+     FIELDS TERMINATED BY ',' 
+     (IDENT_FILM,TITRE,GENRE1,GENRE2, 
+      DATE_SORTIE,PAYS,IDENT_REALISATEUR ,DISTRIBUTEUR,RESUME )
+
+sqlldr data=Charge_film.dat control=Charge_film.csv 
+                            log=Charge_film.log 
+                            bad=Charge_film.bad 
+                            discard=Charge_film.dsc 
+userid=user/passwd
+
+     LOAD DATA 
+     INFILE  'Charge_film_fixe.dat' 
+     BADFILE 'Charge_film_fixe.dat.bad' 
+     DISCARDFILE 'Charge_film_fixe.dsc' 
+     DISCARDMAX 999 
+     TRUNCATE 
+     INTO TABLE FILM 
+     (IDENT_FILM        POSITION (  1 :  1 ) INTEGER EXTERNAL, 
+      TITRE             POSITION (  2 : 32 ) CHAR, 
+      GENRE1            POSITION ( 33 : 40 ) CHAR, 
+      GENRE2            POSITION ( 41 : 50 ) CHAR, 
+      DATE_SORTIE       POSITION ( 51 : 58 ) 
+"TO_DATE(:DATE_SORTIE,'DD/MM/YY')", 
+      PAYS              POSITION ( 59 : 59 ) INTEGER EXTERNAL, 
+      IDENT_REALISATEUR POSITION ( 60 : 60 ) INTEGER EXTERNAL, 
+      DISTRIBUTEUR      POSITION ( 61 : 77 ) CHAR, 
+      RESUME            POSITION ( 78 : 239) CHAR) 
+  
+sqlldr data=Charge_film_fixe.dat control=Charge_film_fixe.csv 
+log=Charge_film_fixe.log bad=Charge_film_fixe.bad 
+discard=Charge_film_fixe.dsc userid=user/passwd
+
+exp <user/mot de passe> file=FILM.dmp TABLES=FILM LOG=FILM.log
+
+exp <user/mot de passe> file=FILM.dmp TABLES=FILM LOG=FILM.log 
+query="'where IDENT_FILM > 3'
+
+exp parfile=param_chgt_film.prm
+
+imp <user/mot de passe> file=FILM.dmp TABLES=FILM 
+LOG=IMPORTFILM.log FROMUSER=<user> TOUSER=<user>
+
+SET HEADING OFF FEEDBACK OFF ECHO OFF VERIFY OFF SPACE 0 PAGESIZE 
+0 TERMOUT OFF WRAP OFF 
+SET LINESIZE  300 
+SET COLSEP ";" 
+ 
+SPOOL Extrait_Acteurs.TXT 
+SELECT * FROM ACTEUR; 
+SPOOL OFF 
+SET TERMOUT ON
+
+
+DELETE FROM PLAN_TABLE WHERE STATEMENT_ID='TEST-PERF'; 
+      
+EXPLAIN PLAN SET STATEMENT_ID='TEST-PERF' INTO PLAN_TABLE FOR 
+SELECT Hotels.libelle
+, Chambres.NumChambre
+, TypesChambre.TypeLit
+, TypesChambre.NombreLit
+, TypesChambre.Description
+FROM Chambres, TypesChambre, HOTELS 
+WHERE Chambres.TypeChambre = TypesChambre.idTypeChambre 
+and hotels.idhotel = chambres.Hotel
+AND nombrelit in (1, 3);
+
+SET LINES 132 
+SET PAGES 50 
+SET LONG 500 
+COL PLAN FOR A45 
+COL AUTRE FOR A85 WRAP 
+SELECT OBJECT_NAME,OPERATION||' '||OPTIONS||' '||OBJECT_NAME 
+        ||' '||DECODE(ID,0,'COST = '||POSITION) PLAN 
+        FROM PLAN_TABLE WHERE STATEMENT_ID = 'TEST-PERF';
+
+CREATE INDEX I_NBLIT ON TYPESCHAMBRE (NOMBRELIT);
+
+SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY);
+
+SELECT TYPELIT, 
+       NOMBRELIT, 
+       DESCRIPTION 
+FROM  TYPESCHAMBRE  
+WHERE TYPELIT = 'lit double';
+
+CREATE INDEX I_TYPE ON TYPESCHAMBRE (TYPELIT);
+
+SELECT /*+ INDEX(TYPESCHAMBRE I_TYPE) */  
+       TYPELIT, 
+       NOMBRELIT, 
+       DESCRIPTION 
+FROM  TYPESCHAMBRE  
+WHERE TYPELIT = 'lit double'
+
+SELECT /*+ FULL(TYPESCHAMBRE ) */  
+       TYPELIT, 
+       NOMBRELIT, 
+       DESCRIPTION 
+FROM  TYPESCHAMBRE  
+WHERE TYPELIT = 'lit double'
+
+SELECT TITRE,LENGTH (RTRIM(TITRE))AS LONGUEUR_TITRE FROM FILM 
+ORDER BY LENGTH (RTRIM(TITRE)), TITRE;
+
+SELECT * FROM ACTEUR A WHERE A.ROWID > ANY 
+(SELECT B.ROWID FROM ACTEUR B WHERE A.PRENOM = B.PRENOM AND  A.NOM 
+= B.NOM);
+
+DELETE FROM ACTEUR A WHERE A.ROWID > ANY 
+(SELECT B.ROWID FROM ACTEUR B WHERE A.PRENOM = B.PRENOM AND  A.NOM 
+= B.NOM);
+
+COLUMN VARIAB1 NOPRINT 
+COLUMN VARIAB2 NOPRINT 
+SELECT 'A' VARIAB1, 0 VARIAB2, 'SELECT ' 
+  FROM DUAL 
+UNION 
+SELECT 'B', COLUMN_ID, DECODE(COLUMN_ID, 1, '    ', '  , ') 
+         || DECODE(DATA_TYPE,'DATE','TO_CHAR('||'"'|| 
+         COLUMN_NAME||'"'||',''YYYYMMDDHH24MISS'') '||'"'|| 
+         COLUMN_NAME||'"'  ,'"'||COLUMN_NAME||'"') 
+  FROM USER_TAB_COLUMNS 
+ WHERE TABLE_NAME=UPPER('FILM') 
+UNION 
+SELECT 'C', 0, 'FROM FILM' 
+  FROM DUAL 
+UNION 
+SELECT 'D', 0, ';' 
+  FROM DUAL 
+ ORDER BY 1,2 
+/
+
+
+--MySQL
+-- MySQL dump 10.13  Distrib 5.1.54, for Win32 (ia32) 
+-– 
+-- Host: localhost    Database: TEST 
+-- ------------------------------------------------------ 
+-- Server version        5.1.54-community 
+ 
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */; 
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */; 
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */; 
+/*!40101 SET NAMES utf8 */; 
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */; 
+/*!40103 SET TIME_ZONE='+00:00' */; 
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */; 
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, 
+FOREIGN_KEY_CHECKS=0 */; 
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, 
+SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */; 
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */; 
+ 
+-– 
+-- Table structure for table `film` 
+-– 
+ 
+DROP TABLE IF EXISTS `film`; 
+/*!40101 SET @saved_cs_client     = @@character_set_client */; 
+/*!40101 SET character_set_client = utf8 */; 
+CREATE TABLE `film` ( 
+  `IDENT_FILM` int(11) DEFAULT NULL, 
+  `TITRE` varchar(50) DEFAULT NULL, 
+  `GENRE1` varchar(20) DEFAULT NULL, 
+  `GENRE2` varchar(20) DEFAULT NULL, 
+  `DATE_SORTIE` date DEFAULT NULL, 
+  `PAYS` smallint(6) DEFAULT NULL, 
+  `IDENT_REALISATEUR` int(11) DEFAULT NULL, 
+  `DISTRIBUTEUR` varchar(50) DEFAULT NULL, 
+  `RESUME` varchar(2000) DEFAULT NULL 
+) ENGINE=InnoDB DEFAULT CHARSET=latin1; 
+/*!40101 SET character_set_client = @saved_cs_client */; 
+ 
+-– 
+-- Dumping data for table `film` 
+-– 
+ 
+LOCK TABLES `film` WRITE; 
+/*!40000 ALTER TABLE `film` DISABLE KEYS */; 
+INSERT INTO `film` VALUES (1,'SUBWAY','POLICIER','DRAME','1985-04- 
+10',1,1,'GAUMONT','Conte les aventures de la population 
+souterraine dans les couloirs du mâ€štro parisien'), 
+(2,'NIKITA','DRAME','ROMANTIQUE','1990-02- 
+21',1,1,'GAUMONT','Nikita condamnâ€še â€¦ la prison â€¦ 
+perpâ€štuitâ€š est contrainte  â€¦ travailler secrÅ tement pour le 
+gouvernement en tant que \nagent hautement qualifiâ€š des services 
+secrets.'),(3,'STAR WARS 6 : LE RETOUR DU 
+JEDI','ACTION','SF','1983-10-19',2,2,'20th Century Fox 
+','L\'Empire galactique est plus puissant que jamais : la 
+construction de la nouvelle arme, l\'Etoile de la Mort, menace 
+l\'univers tout entier.'),(4,'AVATAR','ACTION','SF','2009-10- 
+16',2,3,'20th Century Fox ','Malgrâ€š sa paralysie, Jake Sully, un 
+ancien marine immobilisâ€š dans un fauteuil roulant, est restâ€š 
+un combattant au plus profond'),(5,'BIENVENUE CHEZ LES 
+CH\'TIS','COMEDIE','','2008-02-27',1,4,'PATHE','Philippe Abrams 
+est directeur de la poste de Salon-de-Provence est mutâ€š dans le 
+Nord.'),(6,'DIE HARD 4','ACTION','','2007-07-04',2,5,'Twentieth 
+Century Fox Film Corporation','Pour sa quatriÅ me aventure, 
+l\'inspecteur John McClane se trouve confrontâ€š â€¦ un nouveau 
+genre de terrorisme. Le râ€šseau informatique national qui 
+contrâ€œle absolument toutes les communications, les transports et 
+l\'â€šnergie des Etats-Unis, est dâ€štruit de faâ€¡on 
+systâ€šmatique, plongeant le pays dans le chaos.'); 
+/*!40000 ALTER TABLE `film` ENABLE KEYS */; 
+UNLOCK TABLES; 
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */; 
+ 
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */; 
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */; 
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */; 
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */; 
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */; 
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */; 
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+ 
+
+mysql -hlocalhost -u <user> -p<mot de passe> <Nom base de données>
+< FILM.dmp
+
+SELECT * FROM ACTEUR INTO OUTFILE 'C:\\Extrait_Acteurs.TXT';

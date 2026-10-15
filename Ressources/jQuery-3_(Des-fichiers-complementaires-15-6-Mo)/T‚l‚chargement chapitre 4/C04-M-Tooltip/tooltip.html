@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>jQuery UI Tooltip</title>
+    <link rel="stylesheet" href="css/jquery-ui.min.css">
+    <link rel="stylesheet" href="css/jquery-ui.structure.min.css">
+    <link rel="stylesheet" href="css/jquery-ui.theme.min.css">
+    <script src="js/jquery.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <script>
+        $( function() {
+            $( document ).tooltip();
+        } );
+    </script>
+    <style>
+        .aide {
+            display: inline-block;
+            border-bottom: dashed 1px black;
+            font-family: courier, "courier new", sans-serif;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<p>Vous utilisez le <span class="aide" title="C'est un environnement de développement constitué de composants prêt à l'emploi">framework</span> JavaScript qui s'apelle <span class="aide" title="C'est une librairie JavaScript qui facilite le développement interactif des sites web">jQuery</span></p>
+</body>
+</html>

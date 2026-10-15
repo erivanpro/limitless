@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1">
+	<link rel="stylesheet" type="text/css" href="css/imgslider.min.css">
+	<style>
+		#images{
+			width:800px;
+			margin:auto;
+		}
+	</style>
+	<script src="http://code.jquery.com/jquery-3.1.0.min.js"></script>
+	<script src="js/imgslider.min.js"></script>
+</head>
+<body>
+	<div id="images" >
+		<div class="slider responsive">
+			<div class="left image">
+				<img src="./img/venise-c.jpg"/>
+			</div>
+			<div class="right image">
+				<img src="./img/venise-nb.jpg"/>
+			</div>
+		</div>
+	</div>
+	<script>
+		$('.slider').slider({
+			instructionText: "Cliqué et glissé",
+			initialPosition: .3
+		});
+	</script>
+</body>
+</html>

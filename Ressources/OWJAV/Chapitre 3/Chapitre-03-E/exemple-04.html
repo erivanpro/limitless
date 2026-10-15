@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Mon script</title>
+    </head>
+    <body>
+		<ul id="liste">
+			<li id="un">Lorem</li>
+			<li id="deux">Ipsum</li>
+			<li id="trois">Sollicitudin</li>
+			<li id="quatre">Vulputate</li>
+		</ul>
+		<script>
+			var nouveauLi = document.createElement("li") ;
+			nouveauLi.innerHTML = "Nouvel item" ;
+			var liTrois = document.getElementById("trois") ;
+			var parentUl = liTrois.parentNode ;
+			parentUl.insertBefore(nouveauLi, liTrois);
+		</script>
+	</body>
+</html>

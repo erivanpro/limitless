@@ -1,0 +1,25 @@
+<html>
+ <head>
+  <script>
+
+class Personne {
+ constructor( nom, prenom ) {
+  this.nom = nom;
+  this.prenom = prenom;
+  this.bonjour = this.bonjour.bind( this );
+ }
+ bonjour() {
+  alert( "Bonjour " + this.prenom );
+ }
+}
+
+function init() {
+ let p = new Personne( "brillant", "alexandre" );
+ setTimeout( p.bonjour, 1000 );
+}
+
+  </script>
+ </head>
+ <body onload="init()">
+ </body>
+</html>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<title>Les images responsive</title>
+	<meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+<body>
+    <h3>Une avocette à Noirmoutier</h3>
+    <p>
+        <picture>
+            <source srcset="avocette-large.jpg" media="(min-width: 1200px)">
+            <source srcset="avocette-medium.jpg" media="(min-width: 900px)">
+            <img src="avocette-small.jpg">
+        </picture>
+    </p>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Ma page</title>
+    </head>
+    <body>
+		<h3>Données Saisies</h3>
+		<fieldset>
+			<legend>Civilité</legend>
+			<p>
+				<input type="radio" id="monsieur" value="Monsieur" name="civilite" />
+				<label for="monsieur">Monsieur</label>
+			</p>
+			
+			<p>
+				<input type="radio" id="madame" value="Madame" name="civilite" />
+				<label for="madame">Madame</label>
+			</p>
+			
+			<p>
+				<input type="radio" id="mademoiselle" value="Mademoiselle" name="civilite" />
+				<label for="mademoiselle">Mademoiselle</label>
+			</p>
+		</fieldset>
+		<p>
+			<label for="nom">Nom : </label>
+			<input id="nom" name="nom" type="text">
+		</p>
+		<p>
+			<label for="prenom">Prénom : </label>
+			<input id="prenom" name="prenom" type="text">
+		</p>
+		<p>
+			<button onclick="gererData()">Envoyer</button>
+		</p>
+		<h3>Données stockées</h3>
+		<p>La civilité est : <span id="laCivilite"></span>.</p>
+		<p>Le nom est : <span id="leNom"></span>.</p>
+		<p>Le prénom est : <span id="lePrenom"></span>.</p>
+		<script>
+			/* Fonction de stockage sur le bouton */
+			function gererData() {
+				/* Récupérer le bouton radio coché */
+				var la_civilite ;
+				var les_civilites=document.getElementsByName("civilite");
+				for(i=0;i<les_civilites.length;i++) { 
+					if (les_civilites[i].checked==true) {
+							la_civilite = les_civilites[i].value ;
+						}
+				}
+				/* Stocker les saisies */
+				localStorage.setItem("Nom", document.getElementById("nom").value) ;
+				localStorage.setItem("Prénom", document.getElementById("prenom").value) ;
+				localStorage.setItem("Civilité", la_civilite) ;
+				/* Récupérer et affichage des données */
+				document.getElementById("leNom").innerHTML = localStorage.getItem("Nom") ;
+				document.getElementById("lePrenom").innerHTML = localStorage.getItem("Prénom") ;
+				document.getElementById("laCivilite").innerHTML = localStorage.getItem("Civilité") ;
+			}
+		</script>
+    </body>
+</html>

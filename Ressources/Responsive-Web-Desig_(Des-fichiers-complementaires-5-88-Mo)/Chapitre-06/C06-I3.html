@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<title>Colonnes multiples</title>
+	<meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<style>
+        /* Mise en forme commune*/
+        nav {
+	       text-align: center;
+        }
+        a {
+            display: inline-block;
+            padding: 5px 10px;
+            text-decoration: none;
+            color: #000;
+            border: 1px solid #000;
+            border-radius: 5px;
+            margin: 0 10px;
+        }
+        /* Media Queries */
+        @media screen and (max-width: 960px){
+            nav {
+                columns: 3;
+            }
+            a {
+                width: 90%;
+                margin: 10px 0;
+            }
+        }
+        @media screen and (max-width: 480px){
+            nav {
+                columns: 2;
+            }
+        }
+        @media screen and (max-width: 320px){
+            nav {
+                columns: 1;
+            }
+            a {
+                margin: 5px 0;
+                border-radius: 0;
+            }
+        }
+	</style>
+</head>
+<body>
+<nav>
+    <a href="#">Lien 1</a>
+    <a href="#">Lien 2</a>
+    <a href="#">Lien 3</a>
+    <a href="#">Lien 4</a>
+    <a href="#">Lien 5</a>
+    <a href="#">Lien 6</a>
+</nav>
+</body>
+</html>

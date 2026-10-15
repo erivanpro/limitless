@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>jQuery UI Dialog</title>
+    <link rel="stylesheet" href="css/jquery-ui.min.css">
+    <link rel="stylesheet" href="css/jquery-ui.structure.min.css">
+    <link rel="stylesheet" href="css/jquery-ui.theme.min.css">
+    <script src="js/jquery.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <style>
+        .ui-progressbar {
+            position: relative;
+        }
+        .etiquette {
+            position: absolute;
+            left: 50%;
+            top: 4px;
+            font-weight: bold;
+            text-shadow: 1px 1px 0 #fff;
+        }
+    </style>
+    <script>
+        $( function() {
+            var barre_progression = $( "#barre_progres" ),
+            barre_etiquette = $( ".etiquette" );
+            barre_progression.progressbar({
+                value: false,
+                change: function() {
+                    barre_etiquette.text( barre_progression.progressbar( "value" ) + "%" );
+                },
+                complete: function() {
+                    barre_etiquette.text( "Terminé !" );
+                }
+            });
+            function progress() {
+                var valeur = barre_progression.progressbar( "value" ) || 0;
+                barre_progression.progressbar( "value", valeur + 2 );
+                if ( valeur < 99 ) {
+                    setTimeout( progress, 80 );
+                }
+            }
+            setTimeout( progress, 2000 );
+        } );
+    </script>
+</head>
+<body>
+<div id="barre_progres"><div class="etiquette">Chargement...</div></div>
+</body>
+</html>

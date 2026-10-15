@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>jQuery UI</title>
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <style>
+  	#photos {
+  		list-style-type: none;
+  	}
+  	#photos li {
+  		margin: 10px;
+  		padding: 10px;
+		float: left;
+		border: 1px solid #333;
+	}
+	#photos .ui-selected {
+		background-color: #000;
+	}
+  </style>
+  <script src="js/jquery.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script>
+  $( function() {
+    $( "#photos" ).selectable();
+  } );
+  </script>
+</head>
+<body>
+<ul id="photos">
+	<li><img src="photos/Aerial01.jpg" /></li>
+	<li><img src="photos/Aerial02.jpg" /></li>
+	<li><img src="photos/Aerial03.jpg" /></li>
+	<li><img src="photos/Aerial04.jpg" /></li>
+	<li><img src="photos/Aerial05.jpg" /></li>
+	<li><img src="photos/Aerial06.jpg" /></li>
+	<li><img src="photos/Aerial07.jpg" /></li>
+	<li><img src="photos/Aerial08.jpg" /></li>
+	<li><img src="photos/Aerial09.jpg" /></li>
+</ul>
+</body>
+</html>

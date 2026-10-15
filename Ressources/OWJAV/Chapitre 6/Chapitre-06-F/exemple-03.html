@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Ma page</title>
+		<style>
+			p {
+				margin: 80px;
+			}
+			span.tippy {
+				text-decoration: underline dotted;
+			}
+		</style>
+    </head>
+    <body>
+		<p>La Basilique <span class="tippy" id="salute">Santa Maria della Salute</span>.</p>
+		<div id="contenuSalute" style="display: none;">
+			<h3>Santa Maria della Salute</h3>
+			<img src="salute.jpg" alt="Santa Maria della Salute" />
+		</div>
+		<script src="https://unpkg.com/tippy.js/dist/tippy.all.min.js"></script>
+		<script>
+			tippy(
+				'#salute',
+				{
+					html: '#contenuSalute'
+				}
+			);
+		</script>
+    </body>
+</html>

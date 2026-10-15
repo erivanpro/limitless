@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>jQuery UI Autocomplete</title>
+    <link rel="stylesheet" href="css/jquery-ui.min.css">
+    <link rel="stylesheet" href="css/jquery-ui.structure.min.css">
+    <link rel="stylesheet" href="css/jquery-ui.theme.min.css">
+    <script src="js/jquery.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <script>
+    $( function() {
+        var les_villes = [
+            "Angers",
+            "Aurillac",
+            "Beauvais",
+            "Bordeaux",
+            "Caen",
+            "Carcassonne",
+            "Chambéry",
+            "Gap",
+            "Laon",
+            "Laval",
+            "Nancy",
+            "Nanterre",
+            "Nantes",
+            "Orléans",
+            "Rennes",
+            "La Roche-sur-Yon",
+            "La Rochelle",
+            "Saint-Brieuc",
+            "Saint-Étienne",
+            "Toulouse",
+            "Tours"
+        ];
+        $( "#ville" ).autocomplete({
+            source: les_villes
+        });
+    } );
+  </script>
+</head>
+<body>
+<div class="ui-widget">
+    <label for="ville">Ville : </label>
+    <input id="ville">
+</div>
+</body>
+</html>

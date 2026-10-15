@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="author" content="Dmitri Voronianski">
+	<title>jQuery plugin Avgrund</title>
+	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="css/avgrund.css">
+	<!--[if lt IE 9]>
+		<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+</head>
+<body>
+	<div class="container">
+		<h1>Cras Venenatis Mollis</h1>
+		<p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Sed posuere consectetur est at lobortis.</p>
+		<div class="buttons">
+			<a href="#" id="show" class="button left">Complément</a>
+		</div>
+		<p>Cras mattis consectetur purus sit amet fermentum. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Maecenas faucibus mollis interdum. Curabitur blandit tempus porttitor. Nullam quis risus eget urna mollis ornare vel eu leo.</p>
+		<h3>Donec sed odio dui</h3>
+		<p>Aenean lacinia bibendum nulla sed consectetur. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed posuere consectetur est at lobortis. Sed posuere consectetur est at lobortis. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.</p>
+		<p><img src="img/toscane.jpg" alt="" /></p>
+	</div>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+	<script src="js/jquery.avgrund.js"></script>
+	<script>
+	$(function() {
+		$('#show').avgrund({
+			height: 200,
+			holderClass: 'custom',
+			showClose: true,
+			showCloseText: 'Fermer',
+			onBlurContainer: '.container',
+			template: '<h4>Pour tout complément, cliquez sur le lien :</h4>' +
+			'<p>' +
+			'<a href="http://www.editions-eni.fr" target="_blank">Editions ENI</a>' +
+			'<p>Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Nulla vitae elit libero, a pharetra augue.</p>'
+		});
+	});
+	</script>
+</body>
+</html>

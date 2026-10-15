@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>jQuery</title>
+<script src="js/jquery.js"></script>
+<script>
+	$(document).ready(function() {
+		$("span").click(function(){
+			var couleur = $(this).css("color");
+			$("#affiche").html("La couleur est : "+couleur+".");
+		});
+	});
+</script>
+</head>
+<body>
+<p>Nullam id dolor id nibh ultricies vehicula ut id elit. <span style="color: #F00;">Aenean lacinia</span> bibendum nulla sed consectetur. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. <span style="color: #0F0;">Sed posuere consectetur</span> est at lobortis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut <span style="color: #00F;">fermentum massa</span> justo sit amet risus.</p>
+<p id="affiche"></p>
+</body>
+</html>

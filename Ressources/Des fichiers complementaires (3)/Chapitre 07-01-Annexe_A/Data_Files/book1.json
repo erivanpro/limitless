@@ -1,0 +1,14 @@
+{
+    "Titre": "Data Science avec Microsoft Azure",
+    "Author": "M.Khichane",
+    "Year": "2018",
+    "nbPages": "346",
+    "Language": "Français",
+    "Field": "Data Science",
+    "Technologies": [
+        "Azure",
+        "Azure ML",
+        "PowerBI",
+        "R"
+    ]
+}

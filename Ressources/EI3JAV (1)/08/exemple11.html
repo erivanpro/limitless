@@ -1,0 +1,39 @@
+<html>
+ <head>
+  <script>
+class Personne {
+ constructor( nom, prenom ) {
+   this.nom = nom;
+   this.prenom = prenom;
+ }
+ hello() {
+  alert( "Bonjour " + this.nom + " " + this.prenom );
+ }
+}
+
+class Employe extends Personne {
+ constructor( nom, prenom, poste ) {
+   super( nom, prenom );
+   this.poste = poste;
+ }
+ affectation() {
+  alert( "Vous êtes affecté à " + this.poste );
+ }
+ hello() {
+  super.hello();
+  this.affectation();
+ }
+ static chomage( nom, prenom ) {
+  return new Employe( nom, prenom, "chomeur" );
+ }
+}
+
+function init() {
+ let e = Employe.chomage( "brillant", "alexandre" );
+ e.hello();
+}
+  </script>
+ </head>
+ <body onload="init()">
+ </body>
+</html>

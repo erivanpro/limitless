@@ -1,0 +1,21 @@
+<html>
+ <head>
+  <script>
+
+var obj = {
+ nom : "brillant",
+ prenom : "alexandre",
+ bonjour : function() {
+  alert( "Bonjour " + this.prenom );
+ }
+};
+
+function init() {
+ setTimeout( obj.bonjour, 1000 );
+}
+
+  </script>
+ </head>
+ <body onload="init()">
+ </body>
+</html>

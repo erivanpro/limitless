@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Mon script</title>
+    </head>
+    <body>
+    	<div id="destinations">
+		
+		</div>
+        <script>
+			// Création des deux nouveaux éléments
+			var nouvelEnTeteH2 = document.createElement('h2') ;
+			var nouvelleListe = document.createElement('ul') ;
+			// Ajout du texte dans les deux nouveaux éléments
+			nouvelEnTeteH2.innerHTML = "Nouvelles destinations" ;
+			nouvelleListe.innerHTML = "<li>Venise</li><li>Madrid</li><li>Londres</li>" ;
+			// Localisation des ajouts
+			document.getElementById('destinations').appendChild(nouvelEnTeteH2) ;
+			document.getElementById('destinations').appendChild(nouvelleListe) ;
+		</script>
+    </body>
+</html>

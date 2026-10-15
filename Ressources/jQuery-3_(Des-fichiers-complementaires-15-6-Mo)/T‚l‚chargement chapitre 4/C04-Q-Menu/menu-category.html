@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>jQuery UI Menu</title>
+    <link rel="stylesheet" href="css/jquery-ui.min.css">
+    <link rel="stylesheet" href="css/jquery-ui.structure.min.css">
+    <link rel="stylesheet" href="css/jquery-ui.theme.min.css">
+    <script src="js/jquery.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <script>
+        $( function() {
+            $( "#menu_principal" ).menu({
+                items: "> :not(.ui-widget-header)"
+            });
+        } );
+    </script>
+    <style>
+        .ui-menu {
+            width: 150px;
+        }
+    </style>
+</head>
+<body>
+<ul id="menu_principal">
+    <li class="ui-widget-header"><div>Livre</div></li>
+    <li><div>Roman</div></li>
+    <li><div>Polar</div></li>
+    <li><div>Fantasy</div></li>
+    <li class="ui-widget-header"><div>Musique</div></li>
+    <li><div>Classique</div></li>
+    <li><div>Jazz</div></li>
+    <li><div>Rock</div></li>
+</ul>
+</body>
+</html>

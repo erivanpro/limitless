@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<title>Grid Layout</title>
+	<meta charset="UTF-8" />
+	<style>
+        #grille {
+            display: grid;
+            grid-template-columns: [LC1] 300px [LC2] 300px [LC3] 300px [LC4];
+            grid-template-rows: [LR1] 150px [LR2] 150px [LR3] 150px [LR4];
+            border: solid 1px #000;
+        }
+        .p1 {
+            grid-column : LC1;
+            grid-row: LR1;
+        }
+        .p2 {
+            grid-column : LC3;
+            grid-row: LR2;
+        }
+        .p3 {
+            grid-column : LC3;
+            grid-row: LR1;
+        }
+        .p4 {
+            grid-column : LC2;
+            grid-row: LR2;
+        }
+        .p5 {
+            grid-column : LC2;
+            grid-row: LR1;
+        }
+        .p6 {
+            grid-column : LC1;
+            grid-row: LR2;
+        }
+        .p7 {
+            grid-column : LC1;
+            grid-row: LR3;
+        }
+        .p8 {
+            grid-column : LC2;
+            grid-row: LR3;
+        }
+        .p9 {
+            grid-column : LC3;
+            grid-row: LR3;
+        }
+	</style>
+</head>
+<body>
+<div id="grille">
+    <p class="p1">P1. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Curabitur blandit tempus porttitor. Nulla vitae elit libero, a pharetra augue. Maecenas faucibus mollis interdum. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper.</p>
+    <p class="p2">P2. Maecenas faucibus mollis interdum. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Nulla vitae elit libero, a pharetra augue. Curabitur blandit tempus porttitor. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</p>
+    <p class="p3">P3. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+    <p class="p4">P4. Nulla vitae elit libero, a pharetra augue. Curabitur blandit tempus porttitor. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Maecenas faucibus mollis interdum. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper.</p>
+    <p class="p5">P5. Maecenas faucibus mollis interdum. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.</p>
+    <p class="p6">P6. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Aenean lacinia bibendum nulla sed consectetur. Nullam quis risus eget urna mollis ornare vel eu leo. Cras mattis consectetur purus sit amet fermentum.</p>
+    <p class="p7">P7. Donec ullamcorper nulla non metus auctor fringilla. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+    <p class="8">P8. Maecenas faucibus mollis interdum. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Cras mattis consectetur purus sit amet fermentum.</p>
+    <p class="9">P9. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+</div>
+</body>
+</html>

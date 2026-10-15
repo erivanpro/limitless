@@ -1,0 +1,652 @@
+-----Ordre SELECT
+
+SELECT NombreLit, Description FROM TypesChambre;
+
+SELECT * FROM TypesChambre;
+
+SELECT Hotels.Libelle
+, Hotels.Etoile
+, Chambres.NumChambre
+, TypesChambre.Description
+FROM Chambres, Hotels, TypesChambre;
+
+
+-----options DISTINCT et ALL
+SELECT NombreLit, TypeLit, Description FROM TypesChambre;
+
+SELECT DISTINCT NombreLit, TypeLit, Description FROM TypesChambre;
+
+SELECT NombreLit, TypeLit FROM TypesChambre;
+
+SELECT DISTINCT NombreLit, TypeLit FROM TypesChambre;
+
+----les tris
+SELECT hotel
+, typeChambre
+, DateDebut
+, prix
+FROM Tarifs
+ORDER BY DateDebut, prix DESC;
+
+SELECT hotel
+, typeChambre
+, DateDebut
+, prix 
+FROM Tarifs
+ORDER BY 3, 4 DESC;
+
+----	Les options TOP, LIMIT, OFFSET ou ROWNUM
+--SQL SERVER pour les 10 premières puis les 10 dernières lignes
+
+SELECT TOP 10 idTarif, hotel, typechambre, dateDebut, DateFin, Prix FROM Tarifs;
+
+SELECT TOP 10 idTarif, hotel, typechambre, dateDebut, DateFin, Prix FROM Tarifs ORDER BY idTarif DESC;
+
+--PostgreSQL
+Les 10 premières lignes
+
+SELECT idTarif, hotel, typechambre, dateDebut, DateFin, Prix FROM Tarifs LIMIT 10;
+
+Les 10 premières lignes à partir de la 5ème ligne.
+
+SELECT idTarif, hotel, typechambre, dateDebut, DateFin, Prix FROM Tarifs LIMIT 10 OFFSET 5;
+
+Les 10 dernières lignes
+
+SELECT idTarif, hotel, typechambre, dateDebut, DateFin, Prix FROM Tarifs ORDER BY idTarif DESC LIMIT 10;
+
+--MySql
+
+Les 10 premières lignes
+
+SELECT idTarif, hotel, typechambre, dateDebut, DateFin, Prix FROM Tarifs LIMIT 10;
+
+Les 10 premières lignes à partir de la 5ème ligne.
+
+SELECT idTarif, hotel, typechambre, dateDebut, DateFin, Prix FROM Tarifs LIMIT 10 OFFSET 5;
+ou
+
+SELECT idTarif, hotel, typechambre, dateDebut, DateFin, Prix FROM Tarifs LIMIT 5, 10; pas avec PostgreSQL
+Les 10 dernières lignes
+
+SELECT idTarif, hotel, typechambre, dateDebut, DateFin, Prix FROM Tarifs ORDER BY idTarif DESC LIMIT 10;
+
+-- Oracle
+
+SELECT idTarif, hotel, typechambre, dateDebut, DateFin, Prix FROM Tarifs
+WHERE ROWNUM <= 10
+ORDER BY ROWNUM DESC;
+
+---- Les alias
+--SQL Server, PostgreSQL et MySQL
+SELECT NombreLit, Description FROM TypesChambre TYP;
+
+SELECT NombreLit, Description FROM TypesChambre AS TYP;
+
+SELECT CH.NumChambre
+, TYP.NombreLit
+, TYP.TypeLit
+FROM Chambres CH, TypesChambre TYP;
+
+SELECT CH.NumChambre
+, TYP.NombreLit
+, TYP.TypeLit
+FROM Chambres AS CH, TypesChambre AS TYP;
+
+SELECT hotel C1, typeChambre C2, Prix FROM Tarifs T;
+
+SELECT hotel AS C1, typeChambre AS C2, Prix FROM Tarifs T;
+
+SELECT C1 = hotel, C2 = typeChambre, Prix FROM Tarifs T; SQL Server uniquement
+
+
+SELECT hotel C1, typeChambre C2, Prix * 1.2 PUTTC FROM Tarifs T;
+
+SELECT CH.NumChambre
+	, TYP.NombreLit
+	, T.Prix
+FROM Chambres CH
+	, TypesChambre TYP
+	, Tarifs T
+WHERE CH.TypeChambre = TYP.idTypeChambre;
+ 
+-- Oracle
+SELECT NombreLit, Description FROM TypesChambre TYP;
+
+SELECT CH.NumChambre
+, TYP.NombreLit
+, TYP.TypeLit
+FROM Chambres CH, TypesChambre TYP;
+
+SELECT hotel C1, typeChambre C2, Prix FROM Tarifs T;
+
+SELECT hotel AS C1, typeChambre AS C2, Prix FROM Tarifs T;
+
+SELECT hotel C1, typeChambre C2, Prix * 1.2 PUTTC FROM Tarifs T;
+
+SELECT CH.NumChambre
+	, TYP.NombreLit
+	, T.Prix
+FROM Chambres CH
+	, TypesChambre TYP
+	, Tarifs T
+WHERE CH.TypeChambre = TYP.idTypeChambre
+AND T.TypeChambre = TYP.idTypeChambre;
+
+----clause WHERE
+SELECT idChambre, Hotel, NumChambre FROM Chambres WHERE TypeChambre = 3;
+
+SELECT CH.idChambre, CH.Hotel, CH.NumChambre FROM Chambres CH  
+WHERE CH.TypeChambre IN (3, 6)
+AND idChambre > 5
+AND EXISTS
+	(SELECT Libelle FROM Hotels HT WHERE HT.idHotel = CH.Hotel);
+
+----- commentaires
+/* Sélection des chambres de type 3 et 6 avec un id supérieur à 5
+dont l'hôtel est référencé */
+
+--SQL Server et PostgreSQL
+--Sélection des chambres de type 3 et 6 avec un id supérieur à 5
+-- dont l'hôtel est référencé
+
+----Oracle et MySQL
+# Sélection des chambres de type 3 et 6 avec un id supérieur à 5
+# dont l'hôtel est référencé
+
+----jointures
+--SQL Server
+SELECT Libelle, description  FROM hotels, typeschambre;
+
+SELECT H.Libelle, TYP.Description, T.Prix, CH.NumChambre
+FROM Tarifs AS T 
+, Hotels AS H  
+, TypesChambre AS TYP
+, Chambres AS CH
+WHERE H.idHotel = T.hotel
+AND TYP.idTypeChambre = T.typeChambre
+AND CH.Hotel = H.idHotel
+AND CH.TypeChambre = TYP.idTypeChambre;
+
+SELECT H.Libelle, TYP.Description, T.Prix, CH.NumChambre
+FROM Tarifs AS T INNER JOIN Hotels AS H ON H.idHotel = T.hotel
+INNER JOIN TypesChambre AS TYP ON TYP.idTypeChambre = T.typeChambre
+INNER JOIN Chambres AS CH ON CH.Hotel = H.idHotel AND CH.TypeChambre = TYP.idTypeChambre;
+
+SELECT H.Libelle, TYP.Description, T.Prix, CH.NumChambre
+FROM Tarifs AS T LEFT OUTER JOIN Hotels AS H ON H.idHotel = T.hotel
+LEFT OUTER JOIN TypesChambre AS TYP ON TYP.idTypeChambre = T.typeChambre
+LEFT OUTER JOIN Chambres AS CH ON CH.Hotel = H.idHotel AND CH.TypeChambre = TYP.idTypeChambre;
+
+SELECT H.Libelle, TYP.Description, T.Prix, CH.NumChambre
+FROM Tarifs AS T FULL OUTER JOIN Hotels AS H ON H.idHotel = T.hotel
+FULL OUTER JOIN TypesChambre AS TYP ON TYP.idTypeChambre = T.typeChambre
+FULL OUTER JOIN Chambres AS CH ON CH.Hotel = H.idHotel AND CH.TypeChambre = TYP.idTypeChambre;
+
+SELECT Libelle, description FROM hotels CROSS JOIN typeschambre;
+
+--PostgreSQL
+SELECT Libelle, description  FROM hotels, typeschambre;
+
+SELECT H.Libelle, TYP.Description, T.Prix, CH.NumChambre
+FROM Tarifs AS T 
+, Hotels AS H  
+, TypesChambre AS TYP
+, Chambres AS CH
+WHERE H.idHotel = T.hotel
+AND TYP.idTypeChambre = T.typeChambre
+AND CH.Hotel = H.idHotel
+AND CH.TypeChambre = TYP.idTypeChambre;
+
+SELECT H.Libelle, TYP.Description, T.Prix, CH.NumChambre
+FROM Tarifs AS T INNER JOIN Hotels AS H ON H.idHotel = T.hotel
+INNER JOIN TypesChambre AS TYP ON TYP.idTypeChambre = T.typeChambre
+INNER JOIN Chambres AS CH ON CH.Hotel = H.idHotel AND CH.TypeChambre = TYP.idTypeChambre;
+
+SELECT H.Libelle, TYP.Description, T.Prix, CH.NumChambre
+FROM Tarifs AS T LEFT OUTER JOIN Hotels AS H ON H.idHotel = T.hotel
+LEFT OUTER JOIN TypesChambre AS TYP ON TYP.idTypeChambre = T.typeChambre
+LEFT OUTER JOIN Chambres AS CH ON CH.Hotel = H.idHotel AND CH.TypeChambre = TYP.idTypeChambre;
+
+SELECT H.Libelle, TYP.Description, T.Prix, CH.NumChambre
+FROM Tarifs AS T FULL OUTER JOIN Hotels AS H ON H.idHotel = T.hotel
+FULL OUTER JOIN TypesChambre AS TYP ON TYP.idTypeChambre = T.typeChambre
+FULL OUTER JOIN Chambres AS CH ON CH.Hotel = H.idHotel AND CH.TypeChambre = TYP.idTypeChambre;
+
+SELECT H.Libelle, TYP.Description, T.Prix, CH.NumChambre
+FROM Tarifs T NATURAL JOIN Hotels H 
+NATURAL JOIN TypesChambre TYP 
+NATURAL JOIN Chambres CH;
+
+SELECT Libelle, description FROM hotels CROSS JOIN typeschambre;
+
+-- Oracle
+SELECT Libelle, description  FROM hotels, typeschambre;
+
+SELECT H.Libelle, TYP.Description, T.Prix, CH.NumChambre
+FROM Tarifs T 
+, Hotels H  
+, TypesChambre TYP
+, Chambres CH
+WHERE H.idHotel = T.hotel
+AND TYP.idTypeChambre = T.typeChambre
+AND CH.Hotel = H.idHotel
+AND CH.TypeChambre = TYP.idTypeChambre;
+
+SELECT H.Libelle, TYP.Description, T.Prix, CH.NumChambre
+FROM Tarifs T INNER JOIN Hotels H ON H.idHotel = T.hotel
+INNER JOIN TypesChambre TYP ON TYP.idTypeChambre = T.typeChambre
+INNER JOIN Chambres CH ON CH.Hotel = H.idHotel AND CH.TypeChambre = TYP.idTypeChambre;
+
+SELECT H.Libelle, TYP.Description, T.Prix, CH.NumChambre
+FROM Tarifs T LEFT OUTER JOIN Hotels H ON H.idHotel = T.hotel
+LEFT OUTER JOIN TypesChambre TYP ON TYP.idTypeChambre = T.typeChambre
+LEFT OUTER JOIN Chambres CH ON CH.Hotel = H.idHotel AND CH.TypeChambre = TYP.idTypeChambre;
+
+SELECT H.Libelle, TYP.Description, T.Prix, CH.NumChambre
+FROM Tarifs  T FULL OUTER JOIN Hotels H ON H.idHotel = T.hotel
+FULL OUTER JOIN TypesChambre TYP ON TYP.idTypeChambre = T.typeChambre
+FULL OUTER JOIN Chambres CH ON CH.Hotel = H.idHotel AND CH.TypeChambre = TYP.idTypeChambre;
+
+SELECT H.Libelle, TYP.Description, T.Prix, CH.NumChambre
+FROM Tarifs T 
+, Hotels H  
+, TypesChambre TYP
+, Chambres CH
+WHERE H.idHotel(+) = T.hotel
+AND TYP.idTypeChambre(+) = T.typeChambre 
+AND CH.Hotel = H.idHotel(+)
+AND CH.TypeChambre(+) = TYP.idTypeChambre;
+
+SELECT H.Libelle, TYP.Description, T.Prix, CH.NumChambre
+FROM Tarifs T NATURAL JOIN Hotels H 
+NATURAL JOIN TypesChambre TYP 
+NATURAL JOIN Chambres CH;
+
+SELECT Libelle, description FROM hotels CROSS JOIN typeschambre;
+
+--MySQL
+SELECT Libelle, description  FROM hotels, typeschambre;
+
+SELECT H.Libelle, TYP.Description, T.Prix, CH.NumChambre
+FROM Tarifs AS T 
+, Hotels AS H  
+, TypesChambre AS TYP
+, Chambres AS CH
+WHERE H.idHotel = T.hotel
+AND TYP.idTypeChambre = T.typeChambre
+AND CH.Hotel = H.idHotel
+AND CH.TypeChambre = TYP.idTypeChambre;
+
+SELECT H.Libelle, TYP.Description, T.Prix, CH.NumChambre
+FROM Tarifs AS T INNER JOIN Hotels AS H ON H.idHotel = T.hotel
+INNER JOIN TypesChambre AS TYP ON TYP.idTypeChambre = T.typeChambre
+INNER JOIN Chambres AS CH ON CH.Hotel = H.idHotel AND CH.TypeChambre = TYP.idTypeChambre;
+
+SELECT H.Libelle, TYP.Description, T.Prix, CH.NumChambre
+FROM Tarifs AS T LEFT OUTER JOIN Hotels AS H ON H.idHotel = T.hotel
+LEFT OUTER JOIN TypesChambre AS TYP ON TYP.idTypeChambre = T.typeChambre
+LEFT OUTER JOIN Chambres AS CH ON CH.Hotel = H.idHotel AND CH.TypeChambre = TYP.idTypeChambre;
+
+SELECT H.Libelle, TYP.Description, T.Prix, CH.NumChambre
+FROM Tarifs T NATURAL JOIN Hotels H 
+NATURAL JOIN TypesChambre TYP 
+NATURAL JOIN Chambres CH;
+
+SELECT Libelle, description FROM hotels CROSS JOIN typeschambre;
+
+----Les regroupements
+SELECT DISTINCT Prix FROM Tarifs;
+
+SELECT Prix FROM Tarifs GROUP BY Prix;
+
+SELECT TypeChambre, description, COUNT(idChambre) AS NbChambres
+FROM Chambres INNER JOIN TypesChambre ON TypesChambre.idTypeChambre = Chambres.TypeChambre
+GROUP BY TypeChambre, description;
+
+SELECT Chambres.TypeChambre, description, DateDebut, SUM(prix) as CA
+FROM Chambres INNER JOIN TypesChambre ON TypesChambre.idTypeChambre = Chambres.TypeChambre
+INNER JOIN Tarifs ON Chambres.Hotel = Tarifs.hotel AND Chambres.TypeChambre = Tarifs.typeChambre
+GROUP BY DateDebut, Chambres.TypeChambre, description;
+
+SELECT COUNT(idTarif) FROM Tarifs;
+
+SELECT SUM(Prix) FROM Tarifs;
+
+SELECT TypeChambre, description, COUNT(idChambre) AS NbChambres
+FROM Chambres INNER JOIN TypesChambre ON TypesChambre.idTypeChambre = Chambres.TypeChambre
+WHERE Hotel <> 2
+GROUP BY TypeChambre, description;
+
+SELECT COUNT(DISTINCT Commentaire) AS NbCommentaires FROM Chambres;
+
+SELECT COUNT(Commentaire) AS NbCommentaires FROM Chambres;
+
+SELECT COUNT(1) AS NbChambres FROM Chambres;
+
+SELECT typeChambre, SUM(Prix) AS PRIX_CUMULE
+FROM Tarifs
+GROUP BY typeChambre;
+
+SELECT SUM(Prix) AS PRIX_CUMULE
+FROM Tarifs;
+
+SELECT MAX(Prix) AS PRIX_MAX
+FROM Tarifs;
+
+SELECT TypeChambre, description, MIN(Prix) AS PRIX_MIN, MAX(Prix) AS PRIX_MAX, COUNT(1) AS NbTarifs
+FROM Tarifs INNER JOIN TypesChambre ON TypesChambre.idTypeChambre = Tarifs.typeChambre
+GROUP BY TypeChambre, description;
+
+-----AVG(prix) ne fonctionne pas avec postgresql car la colonne prix est de type money
+SELECT TypeChambre, description, MIN(Prix) AS PRIX_MIN, MAX(Prix) AS PRIX_MAX, AVG(prix) AS PrixMoyen
+FROM Tarifs INNER JOIN TypesChambre ON TypesChambre.idTypeChambre = Tarifs.typeChambre
+GROUP BY TypeChambre, description;
+
+SELECT TypeChambre, description, COUNT(idChambre) AS NbChambres
+FROM Chambres INNER JOIN TypesChambre ON TypesChambre.idTypeChambre = Chambres.TypeChambre
+GROUP BY TypeChambre, description
+HAVING COUNT(idChambre) < 4 ;
+
+SELECT TypeChambre, description, MIN(Prix) AS PRIX_MIN, MAX(Prix) AS PRIX_MAX, AVG(prix) AS PrixMoyen
+FROM Tarifs INNER JOIN TypesChambre ON TypesChambre.idTypeChambre = Tarifs.typeChambre
+GROUP BY TypeChambre, description
+HAVING MIN(Prix) > 70;
+
+----conditions
+--SQL Server
+SELECT TypeChambre, description, DateDebut
+, CASE DateDebut 
+	WHEN '2021-04-01' THEN 'été 2021'
+	WHEN '2021-04-16' THEN 'été 2021'
+	WHEN '2021-10-01' THEN 'Hiver 2022'
+	ELSE 'Hiver 2022'
+END AS Saison
+FROM Tarifs INNER JOIN TypesChambre ON TypesChambre.idTypeChambre = Tarifs.typeChambre
+ORDER BY typeChambre, DateDebut;
+
+SELECT TypeChambre, description, DateDebut
+, CASE  
+	WHEN DateDebut >= '2021-04-01' AND DateDebut < '2021-10-01' THEN 'été 2021'
+	WHEN DateDebut >= '2021-10-01' AND DateDebut < '2022-04-01' THEN 'hiver 2022'
+END AS Saison
+FROM Tarifs INNER JOIN TypesChambre ON TypesChambre.idTypeChambre = Tarifs.typeChambre
+ORDER BY typeChambre, DateDebut;
+
+SELECT TypeChambre, description, DateDebut
+, IIF (DateDebut < '2021-10-01', 'été 2021', 'Hiver 2022') as Saison
+FROM Tarifs INNER JOIN TypesChambre ON TypesChambre.idTypeChambre = Tarifs.typeChambre
+ORDER BY typeChambre, DateDebut;
+
+--PostgreSQL et MySQL
+SELECT TypeChambre, description, DateDebut
+, CASE DateDebut 
+	WHEN '2021-04-01' THEN 'été 2021'
+	WHEN '2021-04-16' THEN 'été 2021'
+	WHEN '2021-10-01' THEN 'Hiver 2022'
+	ELSE 'Hiver 2022'
+END AS Saison
+FROM Tarifs INNER JOIN TypesChambre ON TypesChambre.idTypeChambre = Tarifs.typeChambre
+ORDER BY typeChambre, DateDebut;
+
+SELECT TypeChambre, description, DateDebut
+, CASE  
+	WHEN DateDebut >= '2021-04-01' AND DateDebut < '2021-10-01' THEN 'été 2021'
+	WHEN DateDebut >= '2021-10-01' AND DateDebut < '2022-04-01' THEN 'hiver 2022'
+END AS Saison
+FROM Tarifs INNER JOIN TypesChambre ON TypesChambre.idTypeChambre = Tarifs.typeChambre
+ORDER BY typeChambre, DateDebut;
+
+-- Oracle --> à revoir
+SELECT TypeChambre, description, DateDebut
+, CASE TO_CHAR(DateDebut)
+	WHEN TO_CHAR('2021-04-01') THEN 'été 2021'
+	WHEN TO_CHAR('2021-04-16') THEN 'été 2021'
+	WHEN TO_CHAR('2021-10-01') THEN 'Hiver 2022'
+	ELSE 'Hiver 2022'
+END AS Saison
+FROM Tarifs INNER JOIN TypesChambre ON TypesChambre.idTypeChambre = Tarifs.typeChambre
+ORDER BY typeChambre, DateDebut;
+
+-----concaténation
+--SQL Server
+SELECT Libelle, Etoile
+, Libelle + ' ' + Etoile AS Hotel 
+FROM Hotels;
+
+SELECT Libelle, Etoile
+, CONCAT(Libelle, ' ', Etoile) AS Hotel 
+FROM Hotels;
+
+--PostgreSQL
+SELECT Libelle, Etoile
+, Libelle || ' ' || Etoile AS Hotel 
+FROM Hotels;
+
+SELECT Libelle, Etoile
+, CONCAT(Libelle, ' ', Etoile) AS Hotel 
+FROM Hotels;
+
+-- Oracle
+SELECT Libelle, Etoile
+, Libelle || ' ' || Etoile AS Hotel 
+FROM Hotels;
+
+SELECT Libelle, Etoile
+, CONCAT(Libelle, Etoile) AS Hotel
+FROM Hotels;
+
+--MySQL
+SELECT 'conc' 'até' 'nation';
+
+SELECT Libelle, Etoile
+, CONCAT(Libelle, ' ', Etoile) AS Hotel 
+FROM Hotels;
+
+SELECT Libelle, Etoile
+, CONCAT_WS(' ', Libelle, Etoile, idHotel) AS Hotel 
+FROM Hotels;
+
+-----choix
+--SQL Server uniquement
+SELECT CHOOSE(3 ,'petit déjeuner inclus', 'demi-pension', 'pension complète') as Choix;
+
+-----Opérateurs ensemblistes
+SELECT Etoile FROM Hotels_FR
+UNION
+SELECT Etoile FROM Hotels_GB;
+
+SELECT Etoile FROM Hotels_FR
+UNION ALL
+SELECT Etoile FROM Hotels_GB;
+
+SELECT Libelle, Etoile FROM Hotels_FR
+UNION
+SELECT Libelle, Etoile FROM Hotels_GB;
+
+SELECT Libelle, Etoile FROM Hotels_FR
+WHERE Etoile <> '***'
+UNION
+SELECT Libelle, Etoile FROM Hotels_GB;
+
+SELECT Libelle, Etoile FROM Hotels_FR
+WHERE Etoile <> '***'
+UNION
+SELECT Libelle, Etoile FROM Hotels_GB
+WHERE Etoile <> '***';
+
+SELECT Libelle, Etoile FROM Hotels_FR
+WHERE Etoile <> '***'
+UNION
+SELECT Libelle, Etoile FROM Hotels_GB
+WHERE Etoile <> '***'
+ORDER BY Etoile;
+
+SELECT Libelle, Etoile FROM Hotels_FR
+INTERSECT
+SELECT Libelle, Etoile FROM Hotels_GB;
+
+SELECT Libelle, Etoile FROM Hotels_FR
+WHERE Etoile <> '***'
+INTERSECT
+SELECT Libelle, Etoile FROM Hotels_GB
+WHERE Etoile <> '***';
+
+SELECT Libelle, Etoile FROM Hotels_FR AS H1
+WHERE EXISTS (SELECT Libelle, Etoile FROM Hotels_GB AS H2
+				WHERE H1.Libelle = H2.Libelle
+				AND H1.Etoile = H2.Etoile);
+	
+SELECT Libelle, Etoile FROM Hotels_FR H1
+WHERE NOT EXISTS (SELECT Libelle, Etoile FROM Hotels_GB H2
+				WHERE H1.Libelle = H2.Libelle
+				AND H1.Etoile = H2.Etoile);
+				
+--SQL server, PostgreSQL et MySQL
+SELECT Libelle, Etoile FROM Hotels_FR
+EXCEPT
+SELECT Libelle, Etoile FROM Hotels_GB;
+
+SELECT Libelle, Etoile FROM Hotels_GB
+EXCEPT
+SELECT Libelle, Etoile FROM Hotels_FR;
+
+SELECT Libelle, Etoile FROM Hotels_FR AS H1
+WHERE NOT EXISTS (SELECT Libelle, Etoile FROM Hotels_GB AS H2
+				WHERE H1.Libelle = H2.Libelle
+				AND H1.Etoile = H2.Etoile);
+				
+---- Les opérateurs
+SELECT Prix, Prix * 3 AS Prix3Nuits
+FROM Tarifs;
+
+SELECT TypeChambre, description, prix
+FROM Tarifs INNER JOIN TypesChambre ON TypesChambre.idTypeChambre = Tarifs.TypeChambre
+WHERE prix > 70;
+
+SELECT TypeChambre, description, DateDebut
+FROM Tarifs INNER JOIN TypesChambre ON TypesChambre.idTypeChambre = Tarifs.TypeChambre
+WHERE DateDebut BETWEEN '2021-04-01' AND '2021-10-01'
+AND hotel NOT IN (1, 2)
+ORDER BY typeChambre, DateDebut;
+
+SELECT TypeChambre, description, DateDebut
+FROM Tarifs INNER JOIN TypesChambre ON TypesChambre.idTypeChambre = Tarifs.TypeChambre
+WHERE DateDebut > '2021-04-01' AND DateDebut < '2021-10-01'
+AND hotel NOT IN (1, 2)
+ORDER BY typeChambre, DateDebut;
+
+SELECT * FROM Hotels
+WHERE Libelle like '%s%';
+
+SELECT * FROM Hotels
+WHERE Libelle like 's%';
+
+SELECT * FROM Hotels
+WHERE Libelle like 'S%';
+
+SELECT * FROM Hotels
+WHERE Libelle like '%s';
+
+SELECT * FROM Hotels
+WHERE Libelle like '__s%';
+
+-----L'ordre INSERT
+--SQL Server, PostgreSQL et MySQL
+INSERT INTO Tarifs
+VALUES
+(57, 1, 1, '2022-04-15', '2022-09-30', 58.49);
+
+INSERT INTO Tarifs
+(idTarif, hotel, typeChambre, DateDebut, DateFin, Prix)
+VALUES
+(58, 1, 2, '2022-04-15', '2022-09-30', 69.99);
+
+INSERT INTO Tarifs
+(idTarif, hotel, typeChambre, DateDebut, DateFin, Prix)
+VALUES
+(59, 1, 3, '2022-04-15', '2022-09-30', 81.49),
+(60, 1, 4, '2022-04-15', '2022-09-30', 69.99),
+(61, 1, 5, '2022-04-15', '2022-09-30', 81.49);
+
+INSERT INTO Tarifs
+(idTarif, hotel, typeChambre)
+VALUES
+(62, 1, 6);
+
+INSERT INTO Chambres
+SELECT idChambre + 28, Hotel, TypeChambre, NumChambre + 6, NULL
+FROM Chambres_SAV
+WHERE hotel = 1;
+
+-- Oracle
+INSERT INTO Tarifs
+VALUES
+(57, 1, 1, TO_DATE('2022-04-15', 'YYYY-MM-DD'), TO_DATE('2022-09-30', 'YYYY-MM-DD'), 58.49);
+
+INSERT INTO Tarifs
+(idTarif, hotel, typeChambre, DateDebut, DateFin, Prix)
+VALUES
+(58, 1, 2, TO_DATE('2022-04-15', 'YYYY-MM-DD'), TO_DATE('2022-09-30', 'YYYY-MM-DD'), 69.99);
+
+INSERT INTO Tarifs
+(idTarif, hotel, typeChambre)
+VALUES
+(62, 1, 6);
+
+INSERT INTO chambres
+SELECT idChambre.NEXTVAL, Hotel, TypeChambre, NumChambre.NEXTVAL, NULL
+FROM SAV_Chambres
+WHERE hotel = 1;
+
+----Suppression de lignes
+DELETE FROM Chambres;
+
+DELETE FROM Chambres
+WHERE idChambre > 28;
+
+DELETE FROM Chambres
+WHERE Hotel NOT IN (SELECT idHotel FROM Hotels);
+
+----modification de lignes
+UPDATE Tarifs SET Prix = 99;
+
+UPDATE Tarifs SET Prix = 68.99
+WHERE idTarif = 3;
+
+UPDATE Tarifs SET Prix = 58.99
+WHERE hotel = 1	AND Prix BETWEEN 50 AND 60;
+
+UPDATE Tarifs SET Prix = Prix * 1.20
+, DateFin = '2022-04-01'
+WHERE hotel = 1	AND Prix BETWEEN 50 AND 60 AND DateDebut = '2021-10-01';
+
+UPDATE Tarifs SET Prix = NULL
+WHERE Prix > 99;
+
+----MERGE
+--SQL Server et Oracle
+SELECT idTarif, Prix, Commentaire FROM Tarifs
+INNER JOIN Hotels ON Hotels.idHotel = Tarifs.hotel
+INNER JOIN Chambres ON Hotels.idHotel = Chambres.Hotel AND Chambres.TypeChambre = Tarifs.typeChambre
+WHERE Commentaire IS NOT NULL AND Commentaire <> '';
+
+SELECT idTarif, Prix FROM Tarifs
+WHERE idTarif BETWEEN 2 AND 4;
+
+MERGE INTO Tarifs
+USING (SELECT idHotel, TypeChambre, Commentaire FROM Hotels 
+		INNER JOIN Chambres ON Hotels.idHotel = Chambres.Hotel
+		) Source
+ ON (Source.idHotel = Tarifs.hotel
+	AND Source.TypeChambre = Tarifs.typeChambre
+	AND Commentaire IS NOT NULL AND Commentaire <> '')
+WHEN MATCHED THEN
+	UPDATE SET Prix = Prix * 1.15;
+
+
+
+
+
+
+

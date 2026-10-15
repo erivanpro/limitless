@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>jQuery DiffWidget.js</title>
+	<link href="diffWidget.css" rel="stylesheet">
+	<script src="http://code.jquery.com/jquery-3.1.0.min.js"></script>
+	<script src="diffWidget.js"></script>
+	<script>
+		$( function() {
+			$('#venise').diffWidget({
+				'top': 'images/grand-canal-init.jpg',
+				'bottom': 'images/grand-canal-achures.jpg',
+				'position': '50%'
+			});
+		})    
+	</script>
+	<style type="text/css">
+		.main-wrapper {
+			margin: 20px auto;
+			width: 960px;
+		}
+	</style>
+</head>
+<body>
+<div class="main-wrapper">
+	<h3>Le Grand Canal à Venise</h3>
+	<div id="venise"></div>
+</div>
+</body>
+</html>
