@@ -725,9 +725,9 @@ export const translate = {
     // Assistance Section
     help: 'Aide',
     howDoesRentingWorkTitle: 'Comment fonctionne la location ?',
-    howDoesHostingWorkTitle: "Comment fonctionne l'hébergement ?",
+    howDoesHostingWorkTitle: "Comment mettre en location ma voiture ?",
     howRentingWorksPageHeading: 'Comment fonctionne la location',
-    howHostingWorksPageHeading: "Comment fonctionne l'hébergement",
+    howHostingWorksPageHeading: "Comment gagner de l'argent en tant qu'hôte",
     rentingMadeEasy: 'Location simplifiée',
     rentingMadeEasyDesc:
       "Réservez la voiture parfaite pour votre voyage en quelques clics. Profitez d'une expérience de location fluide sans les tracas d'un bureau de location.",

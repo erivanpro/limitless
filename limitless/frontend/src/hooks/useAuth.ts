@@ -43,11 +43,6 @@ export const useAuth = (params?: any) => {
     state => state.showWindow,
   );
 
-
-
-
-
-  
   const loginMutation = useMutation({
     mutationFn: loginService,
     onError: (error: ErrorResponse) => {
@@ -105,37 +100,6 @@ export const useAuth = (params?: any) => {
     },
   });
 
-
-   
-  
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   const signupMutation = useMutation({
     mutationFn: signupService,
     onError: (error: ErrorResponse) => {
@@ -175,22 +139,6 @@ export const useAuth = (params?: any) => {
       }
     },
   });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   const logoutMutation = useMutation({
     mutationFn: logoutService,
@@ -253,25 +201,6 @@ export const useAuth = (params?: any) => {
     },
   });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   // TODO
   // remove this and re use request otp with success handler from parent to handle navigation
   const resendOtpMutation = useMutation({
@@ -307,21 +236,6 @@ export const useAuth = (params?: any) => {
     },
   });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   const VerifyOtpMutation = useMutation({
     mutationFn: verifyOtpService,
     onError: (error: ErrorResponse) => {
@@ -354,17 +268,6 @@ export const useAuth = (params?: any) => {
     },
   });
 
-    
-
-
-
-
-
-
-
-
-
-
   const resetPasswordMutation = useMutation({
     mutationFn: resetPasswordService,
     onError: (error: ErrorResponse) => {
@@ -394,16 +297,6 @@ export const useAuth = (params?: any) => {
       }
     },
   });
-
-    
-  
-
-
-
-
-
-
-
 
   const updateDrivingDetailsMutation = useMutation({
     mutationFn: updateDrivingDetailsService,
@@ -440,21 +333,6 @@ export const useAuth = (params?: any) => {
     },
   });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   const changePasswordMutation = useMutation({
     mutationFn: changePasswordService,
     onError: (error: ErrorResponse) => {
@@ -485,19 +363,6 @@ export const useAuth = (params?: any) => {
     },
   });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
   const uploadImagesMutation = useMutation({
     mutationFn: uploadImagesService,
     onError: (error: any) => {
@@ -517,21 +382,6 @@ export const useAuth = (params?: any) => {
       });
     },
   });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   const setProfileMutation = useMutation({
     // mutationFn: updateProfileService,
@@ -569,18 +419,6 @@ export const useAuth = (params?: any) => {
       }
     },
   });
-
-
-
-
-
-
-
-
-
-
-
-
 
   const updateProfileMutation = useMutation({
     // mutationFn: updateProfileService,

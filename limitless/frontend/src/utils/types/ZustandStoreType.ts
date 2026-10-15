@@ -19,7 +19,7 @@ export interface UserStoreType {
   setIsFcmToken: (value: boolean) => void;
   setAppAccentColor: (value: string) => void;
   hasSeenOnboarding?: boolean;
-  fcmToken?: string|undefined|any
+  fcmToken?: string | undefined | any;
   setFcmToken?: (value: string) => void;
 }
 

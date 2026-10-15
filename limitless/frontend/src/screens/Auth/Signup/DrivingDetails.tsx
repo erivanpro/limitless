@@ -1,6 +1,6 @@
-import {ActivityIndicator, ScrollView, StyleSheet, View} from 'react-native';
-import React, {FC, useEffect, useState} from 'react';
-import {widthPercentageToDP} from 'react-native-responsive-screen';
+import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
+import React, { FC, useEffect, useState } from 'react';
+import { widthPercentageToDP } from 'react-native-responsive-screen';
 import {
   CustomButton,
   CustomImagePickerSheet,
@@ -10,17 +10,17 @@ import {
   InfoModal,
   InputLabelRow,
 } from '../../../components';
-import {FieldValues, useForm} from 'react-hook-form';
-import {RFValue} from 'react-native-responsive-fontsize';
+import { FieldValues, useForm } from 'react-hook-form';
+import { RFValue } from 'react-native-responsive-fontsize';
 
 import useUserStore from '../../../service/store/user.store';
-import {useAuth} from '../../../hooks/useAuth';
+import { useAuth } from '../../../hooks/useAuth';
 import Toast from 'react-native-toast-message';
-import {WebView} from 'react-native-webview';
-import {navigateReplace, navigateReset} from '../../../utils/navigation';
-import {COLORS, IMAGES} from '../../../utils/theme';
-import {UserDetailsType} from '../../../utils/types/apiResponseType';
-import {useTranslate} from '../../../hooks/useTranslate';
+import { WebView } from 'react-native-webview';
+import { navigateReplace, navigateReset } from '../../../utils/navigation';
+import { COLORS, IMAGES } from '../../../utils/theme';
+import { UserDetailsType } from '../../../utils/types/apiResponseType';
+import { useTranslate } from '../../../hooks/useTranslate';
 import useCenterMessageWindowStore from '../../../service/store/centerMessageWindow.store';
 
 type DrivingDetailsProps = {
@@ -34,13 +34,13 @@ const DrivingDetails: FC<DrivingDetailsProps> = ({
   webViewUrl,
   setWebViewUrl,
 }) => {
-  const {t} = useTranslate();
-  const {userDetails} = useUserStore();
+  const { t } = useTranslate();
+  const { userDetails } = useUserStore();
   const showCenterMessageWindow = useCenterMessageWindowStore(
     state => state.showWindow,
   );
 
-  const {control, handleSubmit, reset} = useForm({
+  const { control, handleSubmit, reset } = useForm({
     defaultValues: userDetails as UserDetailsType,
   });
 
@@ -51,7 +51,7 @@ const DrivingDetails: FC<DrivingDetailsProps> = ({
     url: '',
   });
   let accountId: any = userDetails?.host?.stripe_account_id;
-
+  
   useEffect(() => {
     if (
       userDetails?.user_type.includes('host') &&
@@ -62,7 +62,7 @@ const DrivingDetails: FC<DrivingDetailsProps> = ({
   }, []);
   console.log(userDetails?.user_type, userDetails?.host_onboarding_status);
   const HandleSuccessCallback = (url?: string) => {
-    setIsModalVisible({visible: false, url: ''});
+    setIsModalVisible({ visible: false, url: '' });
     if (url) {
       setStripeLoading(true);
       setWebViewUrl(url);
@@ -71,13 +71,12 @@ const DrivingDetails: FC<DrivingDetailsProps> = ({
 
     navigateReplace('RootStack');
   };
-  const {setDrivingDetails, setDrivingDetailsLoading, reCreateStripe} = useAuth(
-    {
+  const { setDrivingDetails, setDrivingDetailsLoading, reCreateStripe } =
+    useAuth({
       successCallback: HandleSuccessCallback,
       modalVisible: setIsModalVisible,
       accountId: accountId,
-    },
-  );
+    });
 
   useEffect(() => {
     // reset(userDetails);
@@ -112,7 +111,8 @@ const DrivingDetails: FC<DrivingDetailsProps> = ({
 
   const [licenseImage, setLicenseImage] = useState<string | undefined>();
 
-  const RETURN_URL = 'https://limitless-backend-production-578b.up.railway.app/';
+  const RETURN_URL =
+    'https://limitless-backend-production-578b.up.railway.app/';
 
   const [stripeLoading, setStripeLoading] = useState(false);
 
@@ -123,7 +123,7 @@ const DrivingDetails: FC<DrivingDetailsProps> = ({
         text1: t('success'),
         text2: t('profileCreated'),
       });
-      setIsModalVisible({visible: false, url: ''});
+      setIsModalVisible({ visible: false, url: '' });
       navigateReset('RootStack');
     }
   };
@@ -141,14 +141,15 @@ const DrivingDetails: FC<DrivingDetailsProps> = ({
       ) : !!webViewUrl ? (
         <WebView
           onLoad={() => setStripeLoading(false)}
-          style={{flex: 1}}
-          source={{uri: webViewUrl}}
+          style={{ flex: 1 }}
+          source={{ uri: webViewUrl }}
           onNavigationStateChange={HandleNavigationStateChange}
         />
       ) : (
         <ScrollView
           style={styles.scrollViewContainer}
-          contentContainerStyle={styles.contentContainerStyle}>
+          contentContainerStyle={styles.contentContainerStyle}
+        >
           <CustomText
             color={COLORS.black}
             fontSize="S26"
@@ -181,7 +182,7 @@ const DrivingDetails: FC<DrivingDetailsProps> = ({
             control={control}
             name="expiry_date"
             isDatePickerVisible={isDatePickerVisible}
-            rules={{required: t('licenseExpiryRequired')}}
+            rules={{ required: t('licenseExpiryRequired') }}
             showDatePicker={() => setIsDatePickerVisible(true)}
             hideDatePicker={() => setIsDatePickerVisible(false)}
             handleConfirm={() => {
@@ -195,7 +196,7 @@ const DrivingDetails: FC<DrivingDetailsProps> = ({
             license
             source={
               licenseImage && typeof licenseImage === 'string'
-                ? {uri: licenseImage}
+                ? { uri: licenseImage }
                 : licenseImage
             }
             onChange={img => setLicenseImage(img as any)}

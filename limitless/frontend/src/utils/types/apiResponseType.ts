@@ -4,7 +4,7 @@ export interface ApiResponse<T> {
   success?: boolean;
   error?: ErrorType | any;
 }
-export type ImageUploadResponseType = {url: string; message: string};
+export type ImageUploadResponseType = { url: string; message: string };
 export interface ErrorType {
   response: {
     data: {

@@ -80,13 +80,12 @@ export const IMAGES = {
   assistance1: require('../assets/images/home/assistance_1.png'),
   assistance2: require('../assets/images/home/assistance_2.png'),
   assistanceThumbnail1: require('../assets/images/home/assistance_1_thumbnail.png'),
-  assistanceThumbnail2: require('../assets/images/home/banner.jpg'),
+  assistanceThumbnail2: require('../assets/images/home/bannerx.png'),
   transmission: require('../assets/images/home/transmission.png'),
-  assistanceThumbnailBanner: require('../assets/images/home/assistance_2_thumbnail.png'),
+  assistanceThumbnailBanner: require('../assets/images/home/3dx.png'),
   calendarIcon: require('../assets/images/home/calendar.png'),
   // hosting
   hostingCar: require('../assets/images/hosting/hosting_car.png'),
-
   // setting
   myOrder: require('../assets/images/setting/my_order.png'),
   orderFromCar: require('../assets/images/setting/my_car_order.png'),

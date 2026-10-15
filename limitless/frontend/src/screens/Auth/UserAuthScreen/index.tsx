@@ -66,14 +66,15 @@ const styles = StyleSheet.create({
     paddingTop: widthPercentageToDP(10),
   },
   signupBtnContainer: {
-    backgroundColor: COLORS.neutral400,
+    backgroundColor: '#F5F5F5',
     marginVertical: widthPercentageToDP(5),
   },
   siginBtnContainer: {
     backgroundColor: 'transparent',
   },
   signupBtnText: {
-    color: COLORS.white,
+    color: COLORS.black,
+    fontWeight: '500',
   },
   authIcon: {
     alignSelf: 'center',

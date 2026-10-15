@@ -129,19 +129,19 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: widthPercentageToDP(5),
   },
-  ordersButton: {
-    backgroundColor: COLORS.neutral50,
-    borderWidth: 1,
-    borderColor: COLORS.neutral200,
-    borderRadius: 10,
-    minHeight: widthPercentageToDP(10),
-    paddingHorizontal: widthPercentageToDP(3),
-    paddingVertical: widthPercentageToDP(2),
-  },
-  ordersButtonText: {
-    color: COLORS.neutral700,
-    fontSize: widthPercentageToDP(3),
-  },
+ ordersButton: {
+  backgroundColor: '#F5F5F5',
+  borderWidth: 0,
+  borderRadius: 200,
+  minHeight: widthPercentageToDP(10),
+  paddingHorizontal: widthPercentageToDP(3),
+  paddingVertical: widthPercentageToDP(2),
+},
+
+ordersButtonText: {
+  color: COLORS.neutral700,
+  fontSize: widthPercentageToDP(3),
+},
   separator: {
     height: 1,
     backgroundColor: COLORS.neutral100,

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Linking, StyleSheet, View } from 'react-native';
 import { CustomButton, CustomImage, Row } from '../../../../components';
-import { COLORS, IMAGES } from '../../../../utils/theme';
+import { COLORS, FONT, IMAGES } from '../../../../utils/theme';
 import { widthPercentageToDP } from 'react-native-responsive-screen';
 import { CustomIcon } from '../../../../components/CustomIcon';
 import { navigate } from '../../../../utils/navigation';
@@ -43,10 +43,13 @@ const HomeHeader = () => {
         source={IMAGES.logoBlack}
         width={widthPercentageToDP(13)}
         height={widthPercentageToDP(13)}
+        style={{
+          display: 'none',
+          opacity: 0,
+        }}
         onPressImage={() => navigate('Home')}
       />
 
-      
       <Row>
         <CustomButton
           title={t('myOrders')}
@@ -97,17 +100,19 @@ const styles = StyleSheet.create({
     marginRight: RFValue(10),
   },
   ordersButton: {
-    backgroundColor: COLORS.neutral50,
-    borderWidth: 1,
+    backgroundColor: '#F5F5F5',
     borderColor: COLORS.neutral200,
-    borderRadius: RFValue(7),
-    minHeight: widthPercentageToDP(6),
-    paddingHorizontal: widthPercentageToDP(1.6),
-    marginRight: RFValue(6),
+    borderRadius: 999,
+    minHeight: widthPercentageToDP(9),
+    paddingHorizontal: widthPercentageToDP(4),
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: RFValue(8),
   },
   ordersButtonText: {
     color: COLORS.neutral700,
-    fontFamily: 'Poppins-Medium',
-    fontSize: RFValue(7),
+    fontSize: 9,
+    fontFamily: 'PlusJakartaSans-Medium',
+    textAlign: 'center',
   },
 });

@@ -65,7 +65,7 @@ const PaymentScreen = () => {
     <StripeProvider
       merchantIdentifier="merchant.identifier" // required for Apple Pay
       publishableKey={
-        'pk_test_51QZuAAISay562RG8p9pJKIkB84ciz0pJW1YqcNsWEHezpXvq05gjUymLgplIre9r8l9SHBCsfyUSwQ8QY5be1xuN00S4cXw1Zo'
+        'pk_live_51QZuAAISay562RG8tSG9uVkPITGjNnjPjIEfBuZ5KjXs1YWDmLvhkq2QeVtmUKv6k3rbA32qjP9oQ9A0kpteppBI00TDfBDQda'
       }>
       <CustomWrapper backgroundColor={COLORS.white}>
         <CustomHeader
