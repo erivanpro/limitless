@@ -1,0 +1,1192 @@
+LIMITLESS BACKEND APPLICATION EXPLANATION
+=========================================
+
+This file explains what the backend does, what each router/controller was
+created for, how the user and host flows work, and how the frontend should
+interact with the API.
+
+Project type
+------------
+
+This is a NestJS backend for a car rental marketplace called Limitless.
+The app lets people register as renters/users, hosts, or both. Users can
+search cars, book cars, pay with Stripe, chat with hosts, receive push and
+in-app notifications, and leave reviews. Hosts can complete onboarding,
+connect Stripe Express, publish cars, receive bookings, chat with renters,
+and receive payouts after bookings complete.
+
+Main technologies used:
+
+- NestJS for the API structure.
+- TypeORM with PostgreSQL/PostGIS for database access and location searches.
+- JWT authentication for users and admins.
+- Stripe for customer payment methods, payment intents, refunds, and host
+  connected accounts.
+- AWS S3 for uploaded media.
+- Firebase Admin / FCM for push notifications.
+- Socket.IO for real-time chat.
+- Swagger at /docs for API documentation.
+
+Application startup and global behavior
+---------------------------------------
+
+src/main.ts starts the NestJS app on process.env.PORT or 8000.
+
+Global behavior:
+
+- CORS is enabled for all origins.
+- Allowed HTTP methods are GET, POST, PUT, DELETE, PATCH, and OPTIONS.
+- A global ValidationPipe is enabled with whitelist, forbidNonWhitelisted,
+  and transform. This means the frontend must send only fields defined in DTOs.
+- Swagger is mounted at /docs.
+- request-ip middleware is enabled.
+- rawBody is enabled because Stripe webhooks need the original raw request body.
+
+src/app.module.ts wires together the whole app:
+
+- ConfigModule loads .env plus app, SMTP, and database config loaders.
+- DatabaseModule connects to PostgreSQL.
+- AuthModule handles user auth and admin auth.
+- UserModule handles user profiles, onboarding, device tokens, orders, etc.
+- HostModule handles host data used by other modules.
+- CarModule handles car publishing, filtering, details, map data, and status.
+- BookingModule handles booking validation, booking details, cancellation,
+  and reviews.
+- ChatModule handles chat REST routes and Socket.IO chat events.
+- NotificationModule handles notification storage and Firebase push delivery.
+- UploadModule handles media uploads to S3.
+- StripeModule handles Stripe customers, setup intents, payment intents,
+  Connect accounts, webhooks, refunds, and payouts.
+- TermsAndConditionsModule handles help center FAQ data.
+- AdminModule handles admin login, user listing, approval, and rejection.
+- CronModule handles scheduled booking and car status automation.
+
+Authentication model
+--------------------
+
+There are two JWT strategies:
+
+- jwt_user: used by JwtUserGuard. It validates a normal user token from the
+  Authorization: Bearer <token> header and loads the UserEntity with host
+  relation.
+- jwt_admin: used by JwtAdminGuard. It validates an admin token from the
+  Authorization: Bearer <token> header and loads the AdminEntity.
+
+RoleGuard is used with @Roles(...) for user role authorization. User roles are
+stored as an array in UserEntity.user_type. A user can have:
+
+- "user"
+- "host"
+- both "user" and "host"
+
+This is important: a host is still stored in the user table, and the host table
+adds host-specific Stripe data and relations.
+
+Main data model
+---------------
+
+UserEntity
+
+- Stores identity and login data: first_name, last_name, full_name, email,
+  phone_number, password.
+- Stores Stripe customer id for renter payments.
+- Stores user_type array: user, host, or both.
+- Stores separate onboarding statuses:
+  user_onboarding_status
+  host_onboarding_status
+- Stores selected language: ENGLISH or FRENCH.
+- Stores personal verification data: DOB, profile picture, ID card URLs,
+  address, city, country.
+- Stores driving verification data: license number, license image, expiry date.
+- Stores current location as a PostGIS geography point.
+- Stores approval status: is_verified, is_rejected, rejection_reason.
+- Stores notification preference: Push or InApp.
+- Has relations to OTPs, HostEntity, FCM tokens, bookings, notifications,
+  chat membership, and sent chat messages.
+
+HostEntity
+
+- Belongs to one user.
+- Stores Stripe Connect account id, Stripe onboarding link, and dashboard login
+  link.
+- Has many cars.
+- Has many bookings through its cars.
+
+CarEntity
+
+- Belongs to a host.
+- Stores public listing data: name, images, brand, description, vehicle type,
+  prices, features, passenger count, luggage capacity, policy flags.
+- Stores availability window: available_start_date_time and
+  available_end_date_time.
+- Stores pickup/dropoff addresses and geocoded PostGIS points.
+- Stores status flags: is_unpublished, isBooked, is_verified.
+- Has many bookings.
+
+BookingEntity
+
+- Connects a user, host, and car.
+- Stores start/end time, amount, status, payment method details, Stripe charge,
+  transfer group, Stripe fees, refund state, cancellation reason, review stars,
+  review message, and whether rating is still pending.
+- Booking statuses are Upcoming, Ongoing, Completed, and Cancelled.
+
+ChatEntity, UserChatsEntity, ChatMessageEntity
+
+- ChatEntity is the conversation.
+- UserChatsEntity links users to a chat and stores their side of the chat type:
+  As Customer or As Host.
+- ChatMessageEntity stores individual messages.
+- Chat membership can be soft deleted per user.
+
+NotificationEntity
+
+- Stores in-app notification data: message, navigate_to, resource_id, user.
+- Push notifications are also sent through Firebase when the user preference
+  allows push.
+
+FAQEntity and LegalDocumentEntity
+
+- Store help center/legal content. The current exposed route returns FAQ/help
+  center data grouped by category.
+
+AdminEntity
+
+- Stores admin email and password.
+
+User vs host concept
+--------------------
+
+The app uses one UserEntity for both renters and hosts. The role is controlled
+by UserEntity.user_type.
+
+User/renter role:
+
+- Searches and views cars.
+- Saves payment methods and pays for bookings.
+- Books cars.
+- Cancels upcoming bookings if allowed.
+- Chats with hosts as a customer.
+- Reviews completed bookings.
+- Receives booking, payment, refund, reminder, and chat notifications.
+
+Host role:
+
+- Completes personal and driving details.
+- Gets a HostEntity record.
+- Gets a Stripe Express connected account.
+- Completes Stripe onboarding.
+- Waits for admin approval.
+- Publishes cars.
+- Manages car details and publish/unpublish state.
+- Views bookings for owned cars.
+- Chats with renters as a host.
+- Receives booking notifications and payouts after bookings complete.
+
+Because roles are stored in an array, a user can start as a renter and later
+become a host, or start as a host and still have renter capability added by
+host driving-details onboarding.
+
+Frontend integration basics
+---------------------------
+
+Base API:
+
+- Local default port: http://localhost:8000
+- Swagger docs: http://localhost:8000/docs
+
+Headers:
+
+- Authenticated REST routes use:
+  Authorization: Bearer <jwt_token>
+- Stripe webhook routes use:
+  Stripe-Signature: <stripe_signature>
+- Upload route uses multipart/form-data.
+
+Validation:
+
+- The backend rejects fields that are not defined in DTOs.
+- The frontend should send exactly the expected body/query fields.
+- Many query values are transformed into numbers by DTOs, such as skip, take,
+  page, limit, and some IDs.
+
+Pagination:
+
+- Most list routes use skip and take.
+- Responses commonly return hasMore so the frontend can support infinite scroll
+  or "load more" behavior.
+
+Languages:
+
+- Several routes accept or use selected language: ENGLISH or FRENCH.
+- The backend localizes many success and error messages based on
+  user.selected_language.
+
+Media upload:
+
+- The frontend uploads images first through POST /upload?folder=...
+- The backend returns S3 image URLs.
+- The frontend then sends those URLs in user profile, driving details, or car
+  registration requests.
+
+Real-time chat:
+
+- Socket.IO namespace: /chat
+- The socket connection must include the bearer token in the authorization
+  header.
+- The frontend uses joinRoom first, then sendMessage.
+
+Admin flow:
+
+- Admin has a separate token and separate guard from normal users.
+- Admin reviews users/hosts and approves or rejects them.
+- A user/host cannot book or publish cars unless approved.
+
+All routers/controllers
+=======================
+
+1. Auth router: /auth
+---------------------
+
+Created for normal user authentication and password recovery.
+
+POST /auth/login
+
+- Body: email, password, language.
+- Checks the user by email, validates the password, updates selected language,
+  and returns { user, token }.
+- Frontend uses this for normal app login.
+
+POST /auth/request-otp
+
+- Body: email, reason, language.
+- Currently only supports FORGOT_PASSWORD.
+- Generates an OTP and sends it by email.
+- Frontend uses this when the user starts forgot password.
+
+POST /auth/verify-otp
+
+- Body: email, otp, reason, language.
+- Verifies the OTP.
+- For forgot password, returns user, token, and message.
+- Frontend uses this before allowing password reset.
+
+POST /auth/reset-password
+
+- Body: email, otp, password, confirmPassword, language.
+- Validates OTP again, rejects same password, hashes the new password, and
+  updates the user password.
+- Frontend uses this as the final forgot-password step.
+
+2. Admin auth router: /admin/auth
+---------------------------------
+
+Created for admin authentication through the core auth module.
+
+POST /admin/auth/login
+
+- Body: email, password.
+- Current implementation uses the shared user AuthService login method, so it
+  checks the user table rather than AdminService/AdminEntity.
+
+Note: there is also POST /admin/login in the Admin router. That route uses
+AdminService and is the clearer admin-panel login path.
+
+3. User router: /user
+---------------------
+
+Created for registration, onboarding, account management, user location,
+notification tokens/preferences, password changes, and order lists.
+
+GET /user/me
+
+- Requires user JWT.
+- Returns the authenticated user from the token.
+- Frontend uses this after login/app start to restore the session and know
+  roles, onboarding status, verification status, Stripe customer id, and host
+  data.
+
+GET /user/orders
+
+- Requires user JWT.
+- Query: skip, take, status.
+- Returns bookings for the logged-in renter/user role.
+- Used by the renter booking history screen.
+- Cancelled is intentionally not accepted here; status should be Upcoming,
+  Ongoing, or Completed.
+
+GET /user/orders/mycars
+
+- Requires user JWT.
+- Query: skip, take, status.
+- Returns bookings made on the logged-in host's cars.
+- Used by the host booking/orders screen.
+- Cancelled is intentionally not accepted here; status should be Upcoming,
+  Ongoing, or Completed.
+
+GET /user/:id
+
+- Requires user JWT.
+- Returns a public/safe user profile by id with host relation.
+- Removes password before returning.
+- Used when the frontend needs to view another user/host profile.
+
+POST /user
+
+- Public route.
+- Body: first_name, last_name, email, password, confirmPassword, phone_number,
+  user_type, language.
+- Registers the account, creates a Stripe customer, stores the selected role,
+  sets both user and host onboarding status to Personal_Details_Pending, and
+  returns { user, token, message }.
+- Created as the first onboarding/register step.
+
+POST /user/fcm-token
+
+- Requires user JWT.
+- Body: fcmToken.
+- Stores the device FCM token for push notifications.
+- Frontend calls this after login or when Firebase returns a device token.
+
+POST /user/language
+
+- Requires user JWT.
+- Body: language.
+- Updates selected_language.
+- Frontend calls this when the user changes app language.
+
+POST /user/personal-details
+
+- Requires user JWT.
+- Body: user_type, profile_picture, date_of_birth, emergency_contact,
+  id_card_front, id_card_back, country, city, address.
+- For user role: updates profile/identity fields and moves
+  user_onboarding_status to Driving_Details_Pending.
+- For host role: updates profile/identity fields, moves
+  host_onboarding_status to Driving_Details_Pending, creates HostEntity if
+  missing, creates a Stripe connected account, and stores stripe_account_id.
+- Frontend uses this after uploading the needed image files.
+
+POST /user/driving-details
+
+- Requires user JWT.
+- Body: user_type, license_number, expiry_date, license_image.
+- Rejects expired licenses.
+- For user role: stores driving details and moves user_onboarding_status to
+  Verification_Pending.
+- For host role: ensures the account also has user role, stores driving details,
+  moves host_onboarding_status to Stripe_Onboarding_Pending, moves
+  user_onboarding_status to Verification_Pending, generates a Stripe onboarding
+  link, and returns stripeLink.
+- Frontend uses stripeLink to send hosts into Stripe Express onboarding.
+
+POST /user/logout
+
+- Public route.
+- Body: id, optional fcm_token.
+- Removes the device FCM token when provided.
+- Frontend calls this on logout so the device stops receiving push messages for
+  that account.
+
+POST /user/preference
+
+- Requires user JWT.
+- Body: preference = Push or InApp.
+- Updates notification preference.
+- If preference is InApp, NotificationService stores notifications but skips
+  Firebase push.
+
+PATCH /user/personal-details
+
+- Requires user JWT.
+- Body: editable profile fields.
+- Updates profile data.
+- If the user was rejected, editing profile resets is_rejected to false and
+  is_verified to false so admin can review again.
+
+PATCH /user/driving-details
+
+- Requires user JWT.
+- Body: expiry_date and user_type from the partial driving details DTO.
+- Updates driving details and resets rejected state when needed.
+
+PATCH /user/location
+
+- Requires user JWT.
+- Body: location { lat, long }.
+- Stores the current location as a PostGIS point.
+- Used by frontend so car filtering/map can prioritize nearby cars.
+
+PATCH /user/change-password
+
+- Requires user JWT.
+- Body: old_password, new_password, confirm_password.
+- Validates old password, prevents same password, hashes and stores new
+  password.
+
+4. Admin router: /admin
+-----------------------
+
+Created for the admin panel: admin login, browsing users, and approving or
+rejecting user/host verification.
+
+POST /admin/login
+
+- Body: email, password.
+- Logs in an admin using AdminService and returns an admin JWT.
+- Frontend admin panel should use this route.
+
+GET /admin/users
+
+- Query: page, limit, search, role, status.
+- Returns paginated users with basic profile/verification information.
+- Supports role filter, status filter (Approved, Pending, Rejected), and search
+  by name/email/phone.
+- Intended for the admin users table.
+- Note: this route currently has ApiBearerAuth docs but no JwtAdminGuard in the
+  controller, so it is not protected by code.
+
+GET /admin/user/:id
+
+- Requires admin JWT.
+- Returns a single user with host relation, without password.
+- Used by admin detail/review screen.
+
+POST /admin/reject-user
+
+- Requires admin JWT.
+- Body: id, rejection_reason.
+- Marks user rejected, stores reason, sends rejection email, and sends an admin
+  push notification.
+- Used by admin verification review.
+
+POST /admin/approve-user/:id
+
+- Requires admin JWT.
+- Marks user verified, sends approval email, and sends admin push notification.
+- After approval, the user can book cars and the host can publish cars.
+
+5. Host router: /host
+---------------------
+
+Created as a module placeholder for host-specific routes.
+
+Current state:
+
+- The controller exists at /host.
+- It injects HostService.
+- It currently exposes no HTTP endpoints.
+- Host functionality is currently reached through /user onboarding, /car host
+  routes, /booking host routes, and /stripe host routes.
+
+6. Car router: /car
+-------------------
+
+Created for car marketplace listing, search, map, host car management, and car
+detail pages.
+
+GET /car/host
+
+- Requires user JWT and host role.
+- Query: skip, take.
+- Returns the logged-in host's cars with basic listing fields and hasMore.
+- Used by the host "my cars" screen.
+
+GET /car/filter
+
+- Public route, optional Authorization header.
+- Query can include vehicle_type, features, minimum_seats, total_price,
+  less_than_five_years, gearbox, engine_type, brand, start_date_time,
+  end_date_time, address, skip, take.
+- Returns published cars matching filters with host rating, car rating, pickup
+  and dropoff coordinates.
+- If a user token is provided, the backend excludes cars owned by that user's
+  host account and can use the user's stored location.
+- If no address/token location is available, it defaults location filtering
+  around Paris coordinates.
+- Used by frontend car search/listing screens.
+
+GET /car/:id/bookings
+
+- Public route.
+- Returns valid Ongoing/Upcoming booking date/time ranges for a car.
+- Used by frontend date/time pickers to block already-booked ranges.
+
+GET /car/map
+
+- Public route, optional Authorization header.
+- Returns car ids and pickup coordinates for the map.
+- Uses authenticated user's location when token is supplied; otherwise defaults
+  to Paris-area filtering.
+
+GET /car/:id
+
+- Public route, optional Authorization header.
+- Query: optional chat_type.
+- Returns full car details, host summary, host stars, car review star counts,
+  and existing chat if the token/chat_type can identify one.
+- Used by car detail screen.
+
+GET /car/map/:id
+
+- Public route.
+- Returns compact car details for a selected map marker plus host rating.
+
+POST /car
+
+- Requires user JWT and host role.
+- Body includes all car listing fields: name, images, brand, description,
+  price_per_day, price_per_hour, vehicle_type, manufacturing country,
+  registration city, color, mileage, engine_type, transmission_type,
+  fuel_economy, available_start_date_time, available_end_date_time,
+  pickup_address, dropoff_address, features, maximum_passengers,
+  luggage_capacity, insurance_included, pet_policy, smoking_policy.
+- Validates host onboarding and admin approval before allowing publishing.
+- Rejects rejected or still-in-review hosts.
+- Validates availability dates and requires at least 12 hours when start/end
+  are on the same day.
+- Geocodes pickup/dropoff addresses and stores PostGIS points.
+- Used by host publish-car flow.
+
+PATCH /car/:id
+
+- Requires user JWT and host role.
+- Body is partial car registration DTO.
+- Only allows the owning host to edit.
+- Rejects edits when the car has an ongoing/upcoming booking.
+- Revalidates availability dates and geocodes updated addresses.
+- Used by host edit-car flow.
+
+PATCH /car/unpublish/:id
+
+- Requires user JWT and host role.
+- Query: status = Unpublish or Republish.
+- For Unpublish: if a booking is pending, returns notice and does not unpublish;
+  otherwise sets is_unpublished true.
+- For Republish: requires the car to currently be unpublished and sets
+  is_unpublished false.
+- Used by host publish/unpublish toggle.
+
+7. Booking router: /booking
+---------------------------
+
+Created for booking validation, booking details, cancellation, and reviews.
+Actual booking creation happens after Stripe payment succeeds.
+
+GET /booking/:id
+
+- Requires user JWT and host role.
+- Returns booking detail for host view, including car info, renter info, payment
+  summary, and chat as As Host.
+- Used by host booking detail screen.
+
+GET /booking/user/:id
+
+- Requires user JWT and user role.
+- Returns booking detail for renter view by combining booking info with car
+  details and chat as As Customer.
+- Used by renter booking detail screen.
+
+POST /booking
+
+- Requires user JWT and user role.
+- Body: car_id, start_date_time, end_date_time.
+- This does not create the booking yet. It validates whether the booking can be
+  made and calculates the payable amount.
+- Validates user approval, car existence, car published status, self-owned car
+  prevention, car availability window, booking overlap, and minimum 2-hour
+  booking span.
+- Returns { isBookingValidated: true, extra_details } including payable_amount.
+- Frontend calls this before creating a Stripe payment intent.
+
+POST /booking/review
+
+- Requires user JWT and user role.
+- Body: booking_id, stars, review_message.
+- Allows review only when the booking is Completed and rating is still pending.
+- Stores review and marks is_rating_pending false.
+- Sends notification to the host.
+- Used by the post-booking review UI.
+
+PATCH /booking/cancel/:id
+
+- Requires user JWT and user role.
+- Body: cancellation_reason.
+- Allows cancellation only for the renter's Upcoming booking.
+- Rejects cancellation if booking starts within 24 hours.
+- Creates a Stripe refund.
+- On successful refund, marks booking Cancelled, frees the car, and notifies
+  host and user.
+
+8. Stripe router: /stripe
+-------------------------
+
+Created for payment methods, booking payments, host Stripe Connect onboarding,
+webhooks, refunds, and payout-related operations.
+
+GET /stripe/payment-methods
+
+- Requires user JWT.
+- Query: customer_id, limit.
+- Lists Stripe payment methods for a Stripe customer.
+- Used by frontend payment-method selection screens.
+
+GET /stripe/account/:id
+
+- Public route.
+- Returns a Stripe account by account id.
+- Useful for debugging or checking host account state.
+
+POST /stripe/account/:id
+
+- Requires user JWT and host role.
+- Param id is host id.
+- Creates a Stripe Express connected account for the host and stores the
+  stripe_account_id.
+- Usually this is also triggered during host personal-details onboarding if the
+  HostEntity is newly created.
+
+POST /stripe/account-link
+
+- Requires user JWT and host role.
+- Query: accountId.
+- Creates a Stripe onboarding account link and stores it on the HostEntity.
+- Frontend redirects the host to the returned onboardingLink.
+
+POST /stripe/setup-intent
+
+- Requires user JWT and user role.
+- Body: customer_id, payment_method_id.
+- Creates and confirms a Stripe SetupIntent to attach/save a card for off-session
+  usage.
+- Frontend uses this when adding a card.
+
+POST /stripe/payment-intent
+
+- Requires user JWT and user role.
+- Body: car_id, car_name, start_date_time, end_date_time, payable_amount,
+  user_id, payment_method_id.
+- Adds the logged-in user's stripe_customer_id and creates a Stripe PaymentIntent
+  in EUR, confirmed off-session.
+- Stores booking metadata inside Stripe metadata.
+- Returns clientSecret.
+- Important: the BookingEntity is created later from the Stripe webhook after
+  payment_intent.succeeded.
+
+POST /stripe/webhook
+
+- Public Stripe webhook endpoint.
+- Requires Stripe-Signature header and raw body.
+- Handles:
+  payment_intent.succeeded:
+    sends payment notification to renter and calls BookingService.BookCarWithPayment
+    to create the booking.
+  charge.updated:
+    retrieves Stripe fee and stores it on the booking.
+  charge.refunded:
+    marks booking refunded and sends refund email.
+  payment_intent.payment_failed, transfer.created, transfer.updated,
+  refund.created:
+    currently logged.
+- Frontend does not call this route. Stripe calls it.
+
+POST /stripe/webhook/connect
+
+- Public Stripe Connect webhook endpoint.
+- Requires Stripe-Signature header and raw body.
+- Handles account.updated:
+  when transfers capability is active, generates a dashboard login link, updates
+  host_onboarding_status to Verification_Pending, and stores the dashboard link.
+- Frontend does not call this route. Stripe calls it.
+
+DELETE /stripe/payment-method/:id
+
+- Requires user JWT.
+- Detaches a Stripe payment method.
+- Used by frontend when a user removes a saved card.
+
+9. Chat router: /chat
+---------------------
+
+Created for chat history and chat deletion. Real-time sending is handled by the
+Socket.IO gateway.
+
+GET /chat
+
+- Requires user JWT.
+- Query: chat_type, skip, take, optional search.
+- Returns chats for the logged-in user in either As Customer or As Host mode.
+- Includes the other user and last message.
+- Soft-deleted chats reappear if a newer message exists after deletion.
+- Used by chat inbox screens.
+
+GET /chat/:id/messages
+
+- Requires user JWT.
+- Query: skip, take.
+- Returns paginated messages for a chat.
+- If the user deleted the chat previously, only messages after deletion are
+  returned.
+- Used by chat conversation screen.
+
+DELETE /chat/:id
+
+- Requires user JWT.
+- Soft deletes the chat membership for that user.
+- Does not delete the chat for the other participant.
+- Used by frontend delete/hide chat action.
+
+10. Chat WebSocket gateway: namespace /chat
+-------------------------------------------
+
+Created for real-time chat.
+
+Connection:
+
+- Namespace: /chat
+- CORS: all origins.
+- Auth: authorization header with Bearer token.
+- SocketAuthMiddleware validates the socket token.
+
+Event: joinRoom
+
+- Payload: chat_id, receiver_id, chat_type.
+- Uses token to identify sender.
+- Prevents chatting with yourself.
+- Finds existing chat by id or participants/type, or creates a new chat.
+- Joins the socket room named by chat id.
+- Emits joinedRoom with roomId.
+- Frontend should call this before sending a message.
+
+Event: sendMessage
+
+- Payload: message, sender_id, chat_id.
+- Checks sender is a participant.
+- Creates ChatMessageEntity.
+- If receiver is not currently in the socket room and has FCM tokens, sends a
+  new-message notification.
+- Emits newMessage to the chat room.
+
+Event: error
+
+- Emits error details back to the client.
+
+11. Notification router: /notification
+--------------------------------------
+
+Created for user notification inbox.
+
+GET /notification
+
+- Requires user JWT.
+- Query: skip, take.
+- Returns the logged-in user's notifications ordered newest first with hasMore.
+- Used by notification inbox/bell screen.
+
+Notification behavior:
+
+- NotificationService always creates an in-app NotificationEntity.
+- If the user preference is InApp, it does not send Firebase push.
+- If preference allows push and FCM tokens exist, it sends multicast push.
+- Invalid/unregistered FCM tokens are removed.
+
+12. Upload router: /upload
+--------------------------
+
+Created for uploading media to S3 before sending URLs to other routes.
+
+POST /upload
+
+- Content-Type: multipart/form-data.
+- Query: folder = cars, profile, or documents.
+- Field: files, up to 7 files.
+- Controller allows 100MB in interceptor, but S3Service enforces images only
+  and a 1MB max file size per file.
+- Returns array of S3 URLs.
+- Frontend should upload images first, then use returned URLs in user/car DTOs.
+
+13. Terms and conditions router: /terms-and-conditions
+------------------------------------------------------
+
+Created for help center/FAQ content.
+
+GET /terms-and-conditions
+
+- Query: optional search.
+- Returns sections grouped by HOSTS, RENTERS, INSURANCE, and LEGAL.
+- Each section contains FAQ items with id, title, and answer.
+- Used by frontend help center or support pages.
+
+14. Cron module
+---------------
+
+Created for automatic backend maintenance tasks. These are not frontend routes.
+
+Every 5 minutes: updateUpcomingBookingstoOngoing
+
+- Finds Upcoming bookings.
+- When start_date_time has arrived, marks booking Ongoing and sets car.isBooked
+  true.
+
+Every 10 minutes: triggerCompleteBooking
+
+- Finds Ongoing bookings.
+- When end_date_time has passed, marks booking Completed, transfers host payout
+  through Stripe Connect, sets car.isBooked false, and notifies user/host.
+- Host payout uses a 15 percent platform cut and sends the rest to the connected
+  account.
+
+Every day at 10 PM: reviewReminderNotification
+
+- Finds Completed bookings where is_rating_pending is true.
+- Sends review reminder notifications to renters.
+
+Every 5 minutes: unpublishExpiredCars
+
+- Finds published cars whose available_end_date_time has passed.
+- Sets is_unpublished true and notifies the host.
+
+Important app flows
+===================
+
+1. Normal renter registration and onboarding flow
+-------------------------------------------------
+
+1. Frontend calls POST /user with user_type = user.
+2. Backend hashes password, creates Stripe customer, creates UserEntity, and
+   returns JWT.
+3. Frontend uploads profile/ID/license media through POST /upload.
+4. Frontend calls POST /user/personal-details with user_type = user.
+5. Backend moves user_onboarding_status to Driving_Details_Pending.
+6. Frontend calls POST /user/driving-details with user_type = user.
+7. Backend stores license data and moves user_onboarding_status to
+   Verification_Pending.
+8. Admin reviews the user in the admin panel.
+9. Admin calls POST /admin/approve-user/:id or POST /admin/reject-user.
+10. After approval, user.is_verified is true and the renter can book cars.
+
+2. Host registration and onboarding flow
+----------------------------------------
+
+1. Frontend calls POST /user with user_type = host.
+2. Backend creates UserEntity and Stripe customer, and returns JWT.
+3. Frontend uploads profile/ID/license media through POST /upload.
+4. Frontend calls POST /user/personal-details with user_type = host.
+5. Backend creates HostEntity if missing, creates Stripe Express account, stores
+   stripe_account_id, and moves host_onboarding_status to
+   Driving_Details_Pending.
+6. Frontend calls POST /user/driving-details with user_type = host.
+7. Backend stores license data, moves host_onboarding_status to
+   Stripe_Onboarding_Pending, generates Stripe onboarding link, and returns
+   stripeLink.
+8. Frontend redirects the host to stripeLink.
+9. Stripe sends account.updated to POST /stripe/webhook/connect.
+10. Backend sees active transfers capability, stores dashboard login link, and
+    moves host_onboarding_status to Verification_Pending.
+11. Admin approves or rejects the host/user.
+12. After approval, host can publish cars.
+
+3. Host publishes a car
+-----------------------
+
+1. Frontend uploads car images through POST /upload?folder=cars.
+2. Frontend calls POST /car with host JWT and returned image URLs.
+3. Backend checks the host has HostEntity, completed host onboarding enough,
+   is not rejected, and is approved.
+4. Backend validates availability dates.
+5. Backend geocodes pickup/dropoff addresses.
+6. Backend saves CarEntity with location points.
+7. Car appears in /car/filter and /car/map when published and available.
+
+4. Renter searches and views cars
+---------------------------------
+
+1. Frontend optionally calls PATCH /user/location to store current location.
+2. Frontend calls GET /car/filter with filters and optional bearer token.
+3. Backend filters by publish status, location, vehicle fields, price, date
+   window, features, and excludes the user's own host cars when token exists.
+4. Frontend calls GET /car/:id for detail page.
+5. Frontend calls GET /car/:id/bookings to disable unavailable booking slots.
+6. Frontend can call GET /car/map and GET /car/map/:id for map UI.
+
+5. Booking and payment flow
+---------------------------
+
+1. User chooses car and date/time range.
+2. Frontend calls POST /booking.
+3. Backend validates approval, availability, overlap, minimum booking span, and
+   self-owned car rules.
+4. Backend returns payable_amount and details, but no booking is created yet.
+5. Frontend chooses/saves a payment method:
+   - POST /stripe/setup-intent can save a card.
+   - GET /stripe/payment-methods lists cards.
+6. Frontend calls POST /stripe/payment-intent with booking metadata and selected
+   payment_method_id.
+7. Stripe confirms the payment intent.
+8. Stripe calls POST /stripe/webhook with payment_intent.succeeded.
+9. Backend creates BookingEntity through BookingService.BookCarWithPayment,
+   stores card/charge/transfer data, and notifies the host.
+10. User and host see the booking in:
+    - GET /user/orders for renter
+    - GET /user/orders/mycars for host
+
+6. Booking lifecycle after payment
+----------------------------------
+
+1. New booking is Upcoming if start time is in the future, otherwise Ongoing.
+2. Cron changes Upcoming to Ongoing when start time arrives and marks the car
+   booked.
+3. Cron changes Ongoing to Completed when end time passes, frees the car,
+   transfers payout to host, and notifies both sides.
+4. Completed booking keeps is_rating_pending true until the renter reviews it.
+5. Renter calls POST /booking/review to add stars/message.
+6. Backend marks is_rating_pending false and notifies the host.
+
+7. Cancellation and refund flow
+-------------------------------
+
+1. Renter opens an Upcoming booking.
+2. Frontend calls PATCH /booking/cancel/:id with cancellation_reason.
+3. Backend verifies the booking belongs to the renter, is Upcoming, and starts
+   more than 24 hours from now.
+4. Backend creates Stripe refund using stripe_charge_id.
+5. If refund succeeds, backend marks booking Cancelled, frees the car, notifies
+   host and renter.
+6. Stripe charge.refunded webhook marks is_refunded true and sends refund email.
+
+8. Chat flow
+------------
+
+1. Frontend gets or creates chat context from car detail or booking detail.
+2. Frontend connects to Socket.IO namespace /chat with Authorization header.
+3. Frontend emits joinRoom with receiver_id, optional/current chat_id, and
+   chat_type.
+4. Backend finds or creates the chat and joins the socket room.
+5. Frontend emits sendMessage with message, sender_id, chat_id.
+6. Backend saves the message and emits newMessage to the room.
+7. If receiver is not currently in the room, backend sends push notification.
+8. REST routes /chat and /chat/:id/messages are used to load inbox/history.
+
+9. Notification flow
+--------------------
+
+1. Frontend registers device token with POST /user/fcm-token.
+2. Backend stores token under the user.
+3. Business events call NotificationService:
+   - payment completed
+   - booking created
+   - booking cancelled
+   - refund completed
+   - booking completed
+   - drop-off complete
+   - review pending
+   - review completed
+   - new chat message
+   - expired car unpublished
+4. NotificationService stores an in-app notification.
+5. If user preference is Push and tokens exist, Firebase push is sent.
+6. Frontend reads notification inbox with GET /notification.
+
+10. Admin review flow
+---------------------
+
+1. Admin logs in with POST /admin/login.
+2. Admin lists users with GET /admin/users.
+3. Admin views details with GET /admin/user/:id.
+4. Admin approves with POST /admin/approve-user/:id or rejects with
+   POST /admin/reject-user.
+5. Approval sets is_verified true.
+6. Rejection sets is_rejected true and stores rejection_reason.
+7. If a rejected user edits profile/driving details, backend resets rejection
+   and verification flags so they can be reviewed again.
+
+Frontend screens and likely backend calls
+=========================================
+
+Auth/register screens:
+
+- POST /user
+- POST /auth/login
+- POST /auth/request-otp
+- POST /auth/verify-otp
+- POST /auth/reset-password
+
+Session/bootstrap:
+
+- GET /user/me
+- POST /user/fcm-token
+
+Onboarding screens:
+
+- POST /upload?folder=profile
+- POST /upload?folder=documents
+- POST /user/personal-details
+- POST /user/driving-details
+- For hosts, redirect to stripeLink returned by driving-details.
+
+Search/home/map:
+
+- PATCH /user/location
+- GET /car/filter
+- GET /car/map
+- GET /car/map/:id
+
+Car detail:
+
+- GET /car/:id
+- GET /car/:id/bookings
+- POST /booking
+- POST /stripe/payment-intent
+
+Payment method screens:
+
+- POST /stripe/setup-intent
+- GET /stripe/payment-methods
+- DELETE /stripe/payment-method/:id
+
+Renter bookings:
+
+- GET /user/orders
+- GET /booking/user/:id
+- PATCH /booking/cancel/:id
+- POST /booking/review
+
+Host dashboard:
+
+- GET /car/host
+- POST /upload?folder=cars
+- POST /car
+- PATCH /car/:id
+- PATCH /car/unpublish/:id
+- GET /user/orders/mycars
+- GET /booking/:id
+
+Chat:
+
+- GET /chat
+- GET /chat/:id/messages
+- DELETE /chat/:id
+- Socket.IO /chat joinRoom
+- Socket.IO /chat sendMessage
+
+Notifications:
+
+- POST /user/preference
+- GET /notification
+
+Help center:
+
+- GET /terms-and-conditions
+
+Admin panel:
+
+- POST /admin/login
+- GET /admin/users
+- GET /admin/user/:id
+- POST /admin/approve-user/:id
+- POST /admin/reject-user
+
+External integrations
+=====================
+
+Stripe
+------
+
+Stripe is used in two ways:
+
+1. Renter payments:
+   - User registration creates a Stripe customer.
+   - SetupIntent saves card/payment method.
+   - PaymentIntent charges for a booking.
+   - payment_intent.succeeded webhook creates the booking.
+   - Refunds are created on cancellation.
+
+2. Host payouts:
+   - Host onboarding creates Stripe Express connected account.
+   - Account link sends host to Stripe onboarding.
+   - Connect webhook updates host onboarding status when capabilities activate.
+   - Booking completion cron transfers payout to the host connected account.
+   - Platform keeps 15 percent in transferToHostConnectedAccount.
+
+AWS S3
+------
+
+- Used only for media upload.
+- Upload returns public S3 URLs.
+- Those URLs are saved in user profile, ID card fields, license_image, and
+  car images.
+
+Google geocoding
+----------------
+
+- Used when creating/editing cars and when filtering by address.
+- Address is converted to lat/long, then stored/searched as PostGIS points.
+
+Firebase FCM
+------------
+
+- Used for push notifications.
+- FCM tokens are stored per user.
+- NotificationService removes unregistered tokens when Firebase reports them.
+
+Email/SMTP
+----------
+
+- Used for forgot password OTP emails.
+- Used for admin approval/rejection emails.
+- Used for refund success email.
+
+Database and query behavior
+===========================
+
+PostgreSQL is configured through TypeORM with autoLoadEntities true and
+synchronize false. Migrations exist in the migrations folder.
+
+Location logic uses PostGIS geography points and ST_DWithin:
+
+- User.location stores the user's current location.
+- Car.pickup_location and Car.dropoff_location store geocoded car locations.
+- Car filtering and map routes search around:
+  - user's saved location when authenticated and available,
+  - address query when supplied,
+  - Paris fallback coordinates when no location/address is available.
+
+Soft deletes:
+
+- AbstractEntity includes deletedAt.
+- Chat membership uses soft delete behavior so a user can hide a chat without
+  deleting it for the other participant.
+
+Important implementation notes
+==============================
+
+- /booking POST validates a booking but does not create it. Booking creation is
+  tied to Stripe webhook success.
+- Users and hosts are not separate login types. Host is a role plus a HostEntity.
+- Admin JWT and user JWT use different secrets and guards.
+- Upload accepts multipart files under field name files.
+- The upload controller allows up to 7 files, but S3Service enforces image MIME
+  types and 1MB max per file.
+- The app currently allows CORS from every origin.
+- Stripe webhook routes require raw body and Stripe-Signature.
+- GET /admin/users is documented as bearer-auth but currently has no
+  JwtAdminGuard in the controller.
+- HostController currently has no endpoints.
+- Some route names are intentionally role-specific:
+  - /booking/:id is host booking detail.
+  - /booking/user/:id is renter booking detail.
+  - /user/orders is renter orders.
+  - /user/orders/mycars is host car bookings.
+
+Short app summary
+=================
+
+Limitless backend is a marketplace API where one account can act as renter,
+host, or both. Renters search cars by filters/location, validate booking times,
+pay through Stripe, then receive bookings after the Stripe webhook confirms
+payment. Hosts onboard through profile documents, driving details, Stripe
+Connect, and admin approval before publishing cars. Bookings move automatically
+from Upcoming to Ongoing to Completed through cron jobs, and completed bookings
+trigger host payouts. Chat and notifications connect renters and hosts during
+the booking lifecycle, while the admin panel controls verification approval and
+rejection.

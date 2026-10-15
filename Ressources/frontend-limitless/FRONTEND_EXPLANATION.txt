@@ -1,0 +1,1716 @@
+LIMITLESS FRONTEND APPLICATION EXPLANATION
+==========================================
+
+This file explains the frontend side of the Limitless application.
+
+There are two frontend projects in this workspace:
+
+1. Limitless-mobile-app-master
+   This is the customer and host mobile app built with React Native.
+
+2. Limitless-admin-panel-master
+   This is the admin web dashboard built with React, Vite, Material UI, Tailwind, and React Query.
+
+Both frontends talk to the same backend API:
+
+https://limitless-backend-production-578b.up.railway.app/
+
+The backend provides authentication, user profiles, host verification, cars, bookings, payments, chat, notifications, admin review tools, and other shared business logic. The frontends are responsible for collecting user input, showing the correct screens, storing local state, calling the backend endpoints, and reacting to backend responses.
+
+
+============================================================
+1. MOBILE APP OVERVIEW
+============================================================
+
+Project path:
+
+Limitless-mobile-app-master
+
+Main technologies:
+
+- React Native
+- React Navigation
+- TanStack React Query
+- Zustand
+- MMKV local persistence
+- Axios
+- Stripe React Native SDK
+- Firebase Messaging
+- Notifee
+- Socket.IO client
+- React Hook Form
+- i18next / react-i18next
+- React Native Maps
+- Google Places input
+- GiftedChat
+
+The mobile app is the main product used by normal customers and hosts.
+
+A normal customer uses it to:
+
+- Sign up or log in.
+- Complete personal details.
+- Add driving details.
+- Search for cars.
+- View car details.
+- Book cars.
+- Pay with Stripe.
+- Chat with hosts.
+- View orders.
+- Cancel bookings.
+- Leave reviews.
+- Receive notifications.
+- Change language and account settings.
+
+A host uses it to:
+
+- Sign up or log in as a host.
+- Complete personal and driving details.
+- Complete Stripe onboarding.
+- Publish cars.
+- Edit cars.
+- Publish or unpublish cars.
+- See orders for their cars.
+- Chat with customers.
+- Receive booking notifications.
+
+
+============================================================
+2. MOBILE APP STARTUP FLOW
+============================================================
+
+The mobile app starts in:
+
+App.tsx
+
+At startup, the app does several important things:
+
+1. It initializes translations with i18n.
+2. It applies the global app status bar style.
+3. It checks internet connectivity.
+4. It renders the main navigation stack.
+5. It mounts the notification listener.
+6. It mounts toast UI for app messages.
+7. It saves the user's Firebase Cloud Messaging token after the user is known.
+
+The top-level render flow is:
+
+App.tsx
+-> I18nextProvider
+-> StatusBar
+-> NoInternetModal
+-> AuthStack
+-> NotificationListener
+-> Toast
+
+The app stores user data in Zustand and persists it with MMKV. When App.tsx sees a valid user id, it gets the FCM token and sends it to the backend through the notification service.
+
+
+============================================================
+3. MOBILE NAVIGATION
+============================================================
+
+The main mobile navigation file is:
+
+src/navigation/AuthStack.tsx
+
+Despite the name "AuthStack", this file contains both authentication screens and app screens.
+
+The navigation stack includes:
+
+- Onboarding
+- RootStack
+- VerifyOtp
+- Signup
+- Signin
+- ForgotPassword
+- SetPassword
+- Notification
+- SingleChat
+- MyOrders
+- OrderForMyCar
+- EditProfile
+- ChangePassword
+- DrivingDetails
+- HelpCenter
+- SignupComplete
+- PublishCar
+- CarDetails
+- Hosting
+- AssistanceDetails
+- UserCarDetails
+- PaymentScreen
+- UserAuthScreen
+- Reviews
+- UserBookingDetails
+- HostBookingDetails
+- UserAuthCarDetailsScreen
+- CancelBooking
+
+The RootStack is defined in:
+
+src/navigation/RootStack.tsx
+
+RootStack renders the bottom tab navigator.
+
+The bottom tab navigator is defined in:
+
+src/navigation/BottomTabNavigation.tsx
+
+The bottom tabs are:
+
+- Home
+- Search
+- Hosting
+- Chat
+- Setting
+
+The Chat tab checks whether the user has a token. If there is no token, it navigates to UserAuthScreen instead of opening chat.
+
+Most authentication protection is handled at the screen or action level. This means the user can browse public parts of the app, but protected actions redirect them to login or signup screens.
+
+
+============================================================
+4. MOBILE API CONFIGURATION
+============================================================
+
+The backend URL is defined in:
+
+src/utils/constants.ts
+
+Current API URL:
+
+https://limitless-backend-production-578b.up.railway.app/
+
+The endpoint names are defined in:
+
+src/utils/endpoints.ts
+
+Important endpoint groups:
+
+Authentication and user:
+
+- auth/login
+- user/logout
+- user
+- auth/request-otp
+- auth/verify-otp
+- auth/reset-password
+- user/personal-details
+- user/driving-details
+- user/change-password
+- user/location
+- user/me
+- user/language
+
+Cars:
+
+- car
+- car/:id
+- car/host
+- car/filter
+- car/map
+- car/unpublish/:id
+- car/:id/bookings
+
+Bookings and orders:
+
+- booking
+- booking/:id
+- booking/user/:id
+- booking/cancel/:id
+- booking/review
+- user/orders
+- user/orders/mycars
+
+Payments:
+
+- stripe/setup-intent
+- stripe/payment-methods
+- stripe/payment-intent
+- stripe/payment-method/:id
+- stripe/account-link
+
+Chat:
+
+- chat
+- chat/:id/messages
+- chat/:id
+
+Notifications:
+
+- notification
+- user/fcm-token
+- user/preference
+
+Help center:
+
+- terms-and-conditions
+
+The Axios client is defined in:
+
+src/service/api/index.ts
+
+It does three main things:
+
+1. Uses the backend base URL.
+2. Adds the access token as a Bearer token on requests.
+3. Handles 401 responses by trying to refresh the token and clearing user state if refresh fails.
+
+The generic API helper functions are defined in:
+
+src/service/api/api.ts
+
+These helpers wrap common request patterns:
+
+- GET requests
+- mutation requests
+- upload requests
+
+
+============================================================
+5. MOBILE STATE AND LOCAL STORAGE
+============================================================
+
+The mobile app uses Zustand for client state and MMKV for persistence.
+
+Main stores:
+
+src/store/user.store.ts
+
+Stores:
+
+- userDetails
+- accessToken
+- isHost
+- hasSeenOnboarding
+- isFcmToken
+
+This is the main authentication and user profile store. It decides whether the user is a host by checking whether user_type includes host.
+
+src/store/language.store.ts
+
+Stores:
+
+- selected language
+
+The default language is English.
+
+src/store/chat.store.ts
+
+Stores:
+
+- chatId
+- chatType
+- receiverId
+- senderId
+
+This is used before opening the SingleChat screen.
+
+src/store/booking.store.ts
+
+Stores:
+
+- selectedCarDetails
+
+This stores the booking validation response before the user confirms payment.
+
+src/store/publishCar.store.ts
+
+Stores:
+
+- carInfo
+- carSpecification
+- carFeatures
+
+This lets the publish car wizard keep data across steps.
+
+
+============================================================
+6. MOBILE REACT QUERY HOOKS
+============================================================
+
+The app uses React Query for API calls, loading states, caching, refetching, and mutations.
+
+Main hooks:
+
+src/hooks/useAuth.ts
+
+Handles:
+
+- Login
+- Logout
+- Signup
+- OTP
+- Password reset
+- Profile details
+- Driving details
+- Change password
+- Stripe account link recreation
+
+On login, it stores the access token and user data, saves the user's current location, and applies the backend language preference.
+
+On signup, it stores the new user and token, then navigates to SignupComplete.
+
+For host driving details, it may open Stripe onboarding if the backend returns a Stripe onboarding link.
+
+src/hooks/useUserCar.ts
+
+Handles:
+
+- Searching/filtering cars
+- Loading map cars
+- Loading car details
+- Loading current user's backend profile
+
+It also converts backend car enum values into display values for the active language.
+
+src/hooks/useHostCar.ts
+
+Handles:
+
+- Publishing cars
+- Updating cars
+- Unpublishing or publishing cars
+- Loading host car list
+- Loading host car details
+
+src/hooks/useBooking.ts
+
+Handles:
+
+- Booking validation
+- Booking details for host
+- Booking details for user
+- Booking cancellation
+- Booking reviews
+- Existing bookings for a car
+
+src/hooks/usePayment.ts
+
+Handles:
+
+- Stripe setup intent
+- Saved payment methods
+- Payment method removal
+- Payment intent creation
+
+src/hooks/useChat.ts
+
+Handles:
+
+- Chat list
+- Chat messages
+- Chat deletion
+
+src/hooks/useSocket.ts
+
+Handles:
+
+- Socket.IO connection
+- Joining a chat room
+- Sending messages
+- Receiving messages
+
+src/hooks/useNotification.ts
+
+Handles:
+
+- Notification list
+- Saving FCM token
+- Updating notification preference
+
+src/hooks/useLocation.ts
+
+Handles:
+
+- Saving the user's current location to the backend
+
+src/hooks/useSettings.ts
+
+Handles:
+
+- Updating user language
+
+src/hooks/useTranslate.ts
+
+Handles:
+
+- Translating app labels using i18next and the selected language store
+
+
+============================================================
+7. MOBILE AUTHENTICATION FLOW
+============================================================
+
+The sign-in screen is in:
+
+src/screens/Auth/Signin
+
+The user enters:
+
+- Email
+- Password
+
+The app sends this to:
+
+POST /auth/login
+
+If successful:
+
+1. The backend returns user data and tokens.
+2. The mobile app stores the access token.
+3. The mobile app stores userDetails.
+4. The selected backend language is applied locally.
+5. The user's location may be saved.
+6. The user is navigated into the app.
+
+The signup screen is in:
+
+src/screens/Auth/Signup
+
+The user enters:
+
+- First name
+- Last name
+- Email
+- Phone
+- Password
+- Confirm password
+- Terms acceptance
+
+The route decides whether the signup is for a normal user or host.
+
+The app sends this to:
+
+POST /user
+
+If successful:
+
+1. The user and token are stored.
+2. The user is moved to SignupComplete.
+3. The user completes profile details and driving details.
+
+Forgot password uses:
+
+- auth/request-otp
+- auth/verify-otp
+- auth/reset-password
+
+Change password uses:
+
+- user/change-password
+
+Logout uses:
+
+- user/logout
+
+After logout, local user state is cleared.
+
+
+============================================================
+8. MOBILE ONBOARDING AND PROFILE COMPLETION
+============================================================
+
+The first-run onboarding screen is in:
+
+src/screens/Onboarding
+
+When the user finishes onboarding, the app stores:
+
+hasSeenOnboarding = true
+
+Signup completion is in:
+
+src/screens/Auth/SignupComplete
+
+It contains a two-step flow:
+
+1. ProfileDetails
+2. DrivingDetails
+
+ProfileDetails collects:
+
+- Profile picture
+- ID card front image
+- ID card back image
+- Date of birth
+- Emergency contact
+- Country
+- City
+- Address
+
+It uploads images first, then sends profile data to:
+
+POST /user/personal-details
+
+DrivingDetails collects:
+
+- Driving license image
+- Driving license number
+- License expiry date
+- User type
+
+It uploads the license image first, then sends data to:
+
+POST /user/driving-details
+
+For hosts, this step can also trigger Stripe onboarding. If the backend returns an onboarding URL, the app opens a WebView modal so the host can complete Stripe onboarding.
+
+
+============================================================
+9. MOBILE HOME, SEARCH, AND MAP FLOW
+============================================================
+
+The Home screen is in:
+
+src/screens/Home/index.tsx
+
+Home provides:
+
+- Current location handling
+- Google Places search
+- Date and time picker
+- Banner sections
+- Popular vehicle sections
+- Assistance section
+- Find cars action
+
+When the user chooses a location/date/time and taps Find cars, the app navigates to Search.
+
+The Search screen is in:
+
+src/screens/Search/index.tsx
+
+Search can display:
+
+- Search listing mode
+- Map mode
+
+The listing component is:
+
+src/screens/Search/SearchListing.tsx
+
+It allows filtering by:
+
+- Vehicle type
+- Features
+- Seats
+- Price
+- Age
+- Gearbox
+- Engine
+- Brand
+- Date
+- Time
+- Address
+
+It calls:
+
+GET /car/filter
+
+The map component is:
+
+src/screens/Search/MapViewScreen.tsx
+
+It calls:
+
+GET /car/map
+
+When a user taps a map marker, the app selects a car and loads its detail data.
+
+
+============================================================
+10. MOBILE CAR DETAILS FLOW
+============================================================
+
+The renter-facing car detail screen is:
+
+src/screens/UserCarDetails
+
+It calls:
+
+GET /car/:id
+
+The app passes chat_type so the backend knows whether the viewer is acting as a customer or host.
+
+This screen shows:
+
+- Car images
+- Car name
+- Host information
+- Rating
+- Description
+- Price
+- Features
+- Reviews
+- Chat button
+- Book button
+
+When the user taps chat:
+
+1. The app stores chat metadata in chat.store.
+2. The app navigates to SingleChat.
+3. The socket layer creates or joins the room.
+
+When the user taps Book:
+
+1. If there is no token, the app navigates to UserAuthCarDetailsScreen.
+2. If the user has no driving license, the app navigates to SignupComplete.
+3. If the user is pending or rejected, the app shows a pending modal.
+4. Otherwise, the app navigates to PaymentScreen.
+
+The host-facing car detail screen is:
+
+src/screens/HostCarDetails
+
+It also calls:
+
+GET /car/:id
+
+It lets the host:
+
+- View their car
+- Edit the car
+- Publish the car
+- Unpublish the car
+
+Publishing and unpublishing use:
+
+PATCH /car/unpublish/:id
+
+
+============================================================
+11. MOBILE BOOKING AND PAYMENT FLOW
+============================================================
+
+The booking and payment screen is:
+
+src/screens/PaymentScreen
+
+It uses StripeProvider and the Stripe React Native SDK.
+
+The flow has four steps:
+
+1. SelectDate
+2. Payment
+3. ConfirmPayment
+4. PaymentSummary
+
+SelectDate:
+
+- Loads existing bookings for the car.
+- Checks for local time clashes.
+- Sends the chosen booking period to the backend for validation.
+
+Endpoints:
+
+GET /car/:id/bookings
+POST /booking
+
+The POST /booking call validates the booking and returns price information. This response is stored in booking.store.
+
+Payment:
+
+- Loads saved Stripe payment methods.
+- Lets the user select a saved card.
+- Lets the user add a new card using Stripe PaymentSheet.
+- Lets the user remove a saved card.
+
+Endpoints:
+
+POST /stripe/setup-intent
+GET /stripe/payment-methods
+DELETE /stripe/payment-method/:id
+
+ConfirmPayment:
+
+- Creates the real payment intent.
+- Sends booking and payment metadata to the backend.
+
+Endpoint:
+
+POST /stripe/payment-intent
+
+PaymentSummary:
+
+- Shows the success result.
+- Lets the user return to the main app.
+
+The backend is responsible for the actual payment confirmation, booking creation, platform fees, host payout logic, and notification creation.
+
+
+============================================================
+12. MOBILE ORDER FLOW
+============================================================
+
+Customer orders are shown in:
+
+src/screens/MyOrders
+
+This calls:
+
+GET /user/orders
+
+The screen has tabs:
+
+- Ongoing
+- Upcoming
+- Completed
+
+Upcoming bookings can be canceled.
+
+Completed bookings can open the review screen when a rating is still pending.
+
+Host orders are shown in:
+
+src/screens/OrderForMyCar
+
+This calls:
+
+GET /user/orders/mycars
+
+The host can view bookings for cars they own.
+
+Customer booking details are shown in:
+
+src/screens/UserBookingDetails
+
+This calls:
+
+GET /booking/user/:id
+
+Host booking details are shown in:
+
+src/screens/HostBookingDetails
+
+This calls:
+
+GET /booking/:id
+
+Cancel booking is handled by:
+
+src/screens/CancelBooking
+
+This calls:
+
+PATCH /booking/cancel/:id
+
+Reviews are handled by:
+
+src/screens/Reviews
+
+This calls:
+
+POST /booking/review
+
+
+============================================================
+13. MOBILE HOSTING AND PUBLISH CAR FLOW
+============================================================
+
+The Hosting screen is:
+
+src/screens/Hosting/index.tsx
+
+The screen decides whether to show:
+
+- HostSignedin
+- HostNotSignedin
+
+HostNotSignedin is shown when the user is not ready to host. It provides signup/signin or profile completion actions.
+
+HostSignedin is shown when the user has a host role and the expected host onboarding status. It loads the host's cars.
+
+Endpoint:
+
+GET /car/host
+
+The publish car wizard is:
+
+src/screens/PublishCar
+
+The wizard has four steps:
+
+1. CarInfo
+2. Specification
+3. FeaturesAndDetails
+4. SummaryReview
+
+CarInfo collects:
+
+- Car images
+- Car name
+- Brand
+- Description
+- Prices
+- Vehicle type
+- Country of manufacture
+- Registration city
+
+Specification collects:
+
+- Color
+- Mileage
+- Engine type
+- Transmission type
+- Fuel economy
+- Availability date
+- Availability time
+- Pickup address
+- Dropoff address
+
+FeaturesAndDetails collects:
+
+- Feature badges
+- Passenger count
+- Luggage count
+- Insurance option
+- Pet option
+- Smoking option
+
+SummaryReview assembles the stored wizard data and calls the host car service.
+
+New cars use:
+
+POST /car
+
+Existing cars use:
+
+PATCH /car/:id
+
+Images are uploaded before the car payload is sent to the backend.
+
+
+============================================================
+14. MOBILE CHAT FLOW
+============================================================
+
+The chat list screen is:
+
+src/screens/ChatList
+
+It calls:
+
+GET /chat
+
+The chat list supports:
+
+- Search
+- As Customer tab
+- As Host tab
+- Delete chat
+
+Deleting a chat uses:
+
+DELETE /chat/:id
+
+The single chat screen is:
+
+src/screens/SingleChat
+
+It uses:
+
+- GiftedChat for the UI
+- useSocket for real-time communication
+
+The chat service loads existing messages with:
+
+GET /chat/:id/messages
+
+The socket connection uses the backend chat namespace:
+
+{API_URL}chat
+
+The socket sends the user's token in the Authorization header.
+
+Socket flow:
+
+1. Connect to the chat namespace.
+2. Emit joinRoom with chatId, receiverId, and chatType.
+3. Receive joinedRoom and store the chat id.
+4. Send messages with sendMessage.
+5. Receive messages with newMessage.
+
+
+============================================================
+15. MOBILE NOTIFICATION FLOW
+============================================================
+
+Notification handling is split between list display and push handling.
+
+Notification list screen:
+
+src/screens/Notification
+
+It calls:
+
+GET /notification
+
+Notifications are grouped into sections for display.
+
+Push listener:
+
+src/screens/Notification/components/NotificationListener
+
+It uses:
+
+- Firebase Messaging
+- Notifee
+
+The listener:
+
+1. Requests notification permission.
+2. Gets the FCM token.
+3. Displays foreground notifications.
+4. Handles notification press events.
+5. Navigates based on notification data when possible.
+
+The app saves the FCM token to the backend with:
+
+POST /user/fcm-token
+
+Notification preference is updated with:
+
+POST /user/preference
+
+
+============================================================
+16. MOBILE SETTINGS FLOW
+============================================================
+
+The Setting screen is:
+
+src/screens/Setting
+
+For public users, it mainly shows:
+
+- Help center
+- Language options
+
+For authenticated users, it shows:
+
+- Language options
+- Notification preference
+- My orders
+- Orders for my cars
+- Edit profile
+- Change password
+- Driving details
+- Help center
+- Logout
+
+Language updates call:
+
+POST /user/language
+
+Notification preference updates call:
+
+POST /user/preference
+
+Edit profile screen:
+
+src/screens/EditProfile
+
+This updates personal details with:
+
+PATCH /user/personal-details
+
+Driving details settings screen:
+
+src/screens/DrivingDetails
+
+This updates driving details with:
+
+PATCH /user/driving-details
+
+Change password screen:
+
+src/screens/ChangePassword
+
+This updates the password with:
+
+PATCH /user/change-password
+
+Help center screen:
+
+src/screens/HelpCenter
+
+This loads FAQs or terms content with:
+
+GET /terms-and-conditions
+
+
+============================================================
+17. MOBILE LOCALIZATION
+============================================================
+
+The mobile app supports English and French.
+
+Translation setup:
+
+- i18next
+- react-i18next
+- language.store.ts
+- useTranslate.ts
+
+The backend stores the selected language. The frontend updates it with:
+
+POST /user/language
+
+The app also converts some car values between backend values and display values.
+
+For example, car brand, engine type, transmission type, features, and other display fields may be transformed before sending to the backend or showing to the user.
+
+The helpers used for this are:
+
+- prepareDataForApi
+- prepareDataForDisplay
+
+This matters because the backend expects stable API values, while the frontend shows language-specific labels.
+
+
+============================================================
+18. MOBILE DATE, TIME, AND LOCATION HANDLING
+============================================================
+
+The app asks for the user's current location and can save it to the backend.
+
+Endpoint:
+
+PATCH /user/location
+
+Search uses:
+
+- Current location
+- Google Places selected location
+- Latitude
+- Longitude
+- Selected date
+- Selected time
+
+Booking and car availability dates are encoded before being sent to the backend. The hook used for this is:
+
+useOffsetDate
+
+This helps preserve the intended date and time when sending values through URLs or request bodies.
+
+
+============================================================
+19. MOBILE FRONTEND TO BACKEND FLOW SUMMARY
+============================================================
+
+Normal customer flow:
+
+1. User opens the app.
+2. Onboarding appears if they have not seen it before.
+3. User signs up or logs in.
+4. User completes profile and driving details.
+5. App stores token and user profile in local state.
+6. App saves the FCM token to the backend.
+7. User searches for cars.
+8. App calls /car/filter or /car/map.
+9. User opens car details.
+10. App calls /car/:id.
+11. User selects booking dates.
+12. App validates booking with /booking.
+13. User selects or adds a payment card.
+14. App uses Stripe endpoints to setup or retrieve payment methods.
+15. User confirms payment.
+16. App calls /stripe/payment-intent.
+17. Backend creates the booking and sends notifications.
+18. User sees the booking in MyOrders.
+19. User can chat, cancel, or review depending on booking status.
+
+Host flow:
+
+1. Host signs up or logs in.
+2. Host completes personal details.
+3. Host completes driving details.
+4. Host completes Stripe onboarding if required.
+5. Backend and admin verification determine whether the host can fully operate.
+6. Host opens Hosting.
+7. App calls /car/host to list host cars.
+8. Host publishes a car through the publish car wizard.
+9. App uploads images.
+10. App sends car data to /car.
+11. Host can edit the car with /car/:id.
+12. Host can publish or unpublish the car.
+13. Host receives bookings from customers.
+14. Host views them under Orders for My Car.
+15. Host can chat with customers.
+
+Chat flow:
+
+1. User taps chat from car details or booking details.
+2. App stores sender, receiver, chat type, and chat id if known.
+3. App opens SingleChat.
+4. App connects to the backend chat socket namespace.
+5. App joins or creates the room.
+6. Messages are sent and received in real time.
+7. Existing messages are also loaded from the REST API.
+
+Notification flow:
+
+1. App requests notification permission.
+2. App gets an FCM token.
+3. App sends the token to /user/fcm-token.
+4. Backend stores the token.
+5. Backend sends notifications after important events.
+6. App displays foreground notifications through Notifee.
+7. User can also view notification history in the Notification screen.
+
+
+============================================================
+20. MOBILE IMPLEMENTATION NOTES
+============================================================
+
+These are important implementation notes found while reading the app:
+
+1. The Axios response interceptor tries to call /auth/refresh on 401. The backend explanation did not show a refresh endpoint, so this should be checked.
+
+2. chat.store.ts and booking.store.ts both use the persisted storage name "chat". This can cause persisted state collisions.
+
+3. getUserCarByIdService appears to call GET /car with an id parameter instead of GET /car/:id. Other detail services correctly use /car/:id.
+
+4. The Hosting screen uses host_onboarding_status to decide whether to show the signed-in host view. Backend-side admin approval still matters for full host behavior.
+
+5. The Stripe publishable key is hardcoded in the mobile app. It should be managed carefully for environment separation.
+
+6. Notification press navigation depends on backend data.navigateTo values matching mobile route names. The values should be checked against the real route names.
+
+
+============================================================
+21. ADMIN PANEL OVERVIEW
+============================================================
+
+Project path:
+
+Limitless-admin-panel-master
+
+Main technologies:
+
+- React
+- Vite
+- React Router
+- TanStack React Query
+- Axios
+- Material UI
+- Tailwind
+- Formik
+- Yup
+- React Cookies
+- React Hot Toast
+
+The admin panel is used by internal admins to:
+
+- Log in.
+- View users.
+- Search users.
+- Filter users by role and status.
+- View user details.
+- Review profile and driving details.
+- Approve users.
+- Reject users with a reason.
+- View host Stripe account information.
+
+The admin panel talks to the same backend API as the mobile app.
+
+
+============================================================
+22. ADMIN PANEL STARTUP FLOW
+============================================================
+
+The app starts in:
+
+src/main.tsx
+
+Startup render flow:
+
+main.tsx
+-> BrowserRouter
+-> Providers
+-> App
+
+The global providers are defined in:
+
+src/providers/index.tsx
+
+Providers include:
+
+- ReactQueryProvider
+- ToasterProvider
+
+The React Query provider is defined in:
+
+src/providers/react-query-provider.tsx
+
+It creates the QueryClient and disables refetch on window focus.
+
+
+============================================================
+23. ADMIN PANEL ROUTING
+============================================================
+
+Routes are defined in:
+
+src/App.tsx
+
+The admin panel checks for an access_token cookie.
+
+Routes:
+
+- /
+- /users
+- /users/:id
+
+If an access_token cookie exists:
+
+- / redirects to /users.
+- /users shows the users page.
+- /users/:id shows the user detail page.
+
+If no access_token cookie exists:
+
+- / shows the login page.
+- protected routes redirect back to /.
+
+The route protection is cookie-based. It checks whether the cookie exists, not whether the backend still accepts the token.
+
+
+============================================================
+24. ADMIN AUTHENTICATION FLOW
+============================================================
+
+The login view is:
+
+src/views/auth/index.tsx
+
+The login form is:
+
+src/components/auth/loginForm.tsx
+
+The admin enters:
+
+- Email
+- Password
+
+The app calls:
+
+POST /admin/login
+
+If the backend returns an access token:
+
+1. The token is saved in a cookie named access_token.
+2. The token is also stored in localStorage by the auth provider.
+3. The app navigates to /users.
+
+The auth context is defined in:
+
+src/context/auth/provider.tsx
+
+It reads the access_token cookie and stores the token in context and localStorage.
+
+Logout is handled in the sidebar. It removes the access_token cookie and navigates back to /.
+
+
+============================================================
+25. ADMIN API CONFIGURATION
+============================================================
+
+Axios config is defined in:
+
+src/configs/axios.config.ts
+
+It uses this backend base URL:
+
+https://limitless-backend-production-578b.up.railway.app
+
+The request interceptor adds:
+
+Authorization: Bearer <access_token>
+
+The token comes from localStorage.
+
+Endpoint builders are defined in:
+
+src/services/api-base-urls.ts
+
+Admin endpoints:
+
+- /admin/login
+- /admin/users
+- /admin/user/:id
+- /admin/approve-user/:id
+- /admin/reject-user
+
+Request helper functions are defined in:
+
+src/services/axios-request-handler.ts
+
+These wrap:
+
+- GET
+- POST
+- PUT
+- PATCH
+- DELETE
+
+
+============================================================
+26. ADMIN USERS LIST FLOW
+============================================================
+
+The users page is:
+
+src/views/users/index.tsx
+
+It renders:
+
+- DashboardLayout
+- Users Header
+- Users table
+
+The users table logic is mostly in:
+
+src/views/users/Header.tsx
+
+The page supports:
+
+- Status tabs
+- Search
+- Role filter
+- Pagination
+- View action
+
+Status tabs:
+
+- Approved
+- Pending
+- Rejected
+
+Role filter:
+
+- User
+- Host
+
+The frontend calls:
+
+GET /admin/users?page=<page>&limit=<limit>&search=<search>&role=<role>&status=<status>
+
+The React Query hook is:
+
+src/services/users/get-filtered-users.ts
+
+The query key includes:
+
+- Page
+- Limit
+- Search
+- Role
+- Status
+
+When the admin clicks View, the app navigates to:
+
+/users/:id
+
+
+============================================================
+27. ADMIN USER DETAIL FLOW
+============================================================
+
+The user detail page is:
+
+src/views/users/details.tsx
+
+It calls:
+
+GET /admin/user/:id
+
+The React Query hook is:
+
+src/services/users/get-user-by-id.ts
+
+The detail page shows:
+
+- User profile summary
+- Rejection reason if rejected
+- Personal details
+- Driving details
+- Payment details for verified hosts
+- Approve button
+- Reject button
+- Approved state
+
+Personal details component:
+
+src/views/users/person-details.tsx
+
+Shows:
+
+- First name
+- Last name
+- Email
+- Phone number
+- Emergency contact
+- Date of birth
+- Country
+- City
+- Address
+- ID card front link
+- ID card back link
+- User role
+
+Driving details component:
+
+src/views/users/driving-details.tsx
+
+Shows:
+
+- Driving license number
+- Driving license expiry date
+- Driving license image link
+
+Payment details component:
+
+src/views/users/payment-details.tsx
+
+Shows:
+
+- Host Stripe account id
+
+
+============================================================
+28. ADMIN APPROVAL AND REJECTION FLOW
+============================================================
+
+Approving a user calls:
+
+POST /admin/approve-user/:id
+
+The React Query mutation is:
+
+src/services/users/approve-user.ts
+
+After success:
+
+- A success toast is shown.
+- get-user-by-id is invalidated.
+- get-all-users is invalidated.
+- The UI refetches updated user data.
+
+Rejecting a user uses:
+
+src/views/users/rejection-modal.tsx
+
+The admin enters a rejection reason.
+
+The app calls:
+
+POST /admin/reject-user
+
+Payload:
+
+- id
+- rejection_reason
+
+The React Query mutation is:
+
+src/services/users/reject-user.ts
+
+After success:
+
+- A success toast is shown.
+- get-user-by-id is invalidated.
+- get-all-users is invalidated.
+- The UI refetches updated user data.
+
+
+============================================================
+29. ADMIN LAYOUT AND COMPONENTS
+============================================================
+
+The main admin layout is:
+
+src/layouts/DashboardLayout
+
+It wraps authenticated pages.
+
+The sidebar contains:
+
+- Logo
+- Users navigation item
+- Logout button
+
+The admin table uses reusable components for:
+
+- Search
+- Dropdowns
+- Pagination
+- Table body
+- Buttons
+- Empty/loading states
+
+The app uses React Hot Toast to show success and error feedback.
+
+
+============================================================
+30. ADMIN FRONTEND TO BACKEND FLOW SUMMARY
+============================================================
+
+Admin login flow:
+
+1. Admin opens the web app.
+2. App checks for access_token cookie.
+3. If missing, app shows login.
+4. Admin submits email and password.
+5. App calls /admin/login.
+6. Backend returns an access token.
+7. App stores token in a cookie and localStorage.
+8. App redirects to /users.
+
+Admin user review flow:
+
+1. Admin opens /users.
+2. App calls /admin/users with pagination and filters.
+3. Admin searches or filters users.
+4. App refetches /admin/users.
+5. Admin opens a user detail page.
+6. App calls /admin/user/:id.
+7. Admin reviews profile, ID card, driving license, and host Stripe data.
+8. Admin approves or rejects the user.
+9. App calls /admin/approve-user/:id or /admin/reject-user.
+10. React Query invalidates user queries.
+11. List and detail pages update with the new status.
+
+
+============================================================
+31. ADMIN IMPLEMENTATION NOTES
+============================================================
+
+These are important implementation notes found while reading the admin panel:
+
+1. Route protection is based on whether the access_token cookie exists. It does not verify the token with the backend on page load.
+
+2. Axios sends the Authorization header from localStorage, while routing checks the cookie. These should stay synchronized.
+
+3. Logout removes the cookie. The localStorage token may remain unless the auth state is overwritten or cleared elsewhere.
+
+4. The admin panel sends a bearer token to /admin/users. This is correct from the frontend side, but the backend should also guard sensitive admin routes.
+
+5. The role dropdown sends lowercase role values such as user and host, which match the backend filter style.
+
+6. The status tabs send Approved, Pending, and Rejected.
+
+
+============================================================
+32. HOW BOTH FRONTENDS WORK TOGETHER WITH THE BACKEND
+============================================================
+
+The mobile app and admin panel are separate clients, but they share the same backend and database.
+
+The mobile app creates and updates user data:
+
+- User account
+- Profile details
+- Driving details
+- Host onboarding data
+- Car listings
+- Bookings
+- Payments
+- Chats
+- Notifications
+
+The admin panel reviews user data:
+
+- Profile details
+- ID cards
+- Driving license
+- Host Stripe account information
+- Verification status
+
+The backend is the source of truth.
+
+The mobile app depends on the backend to decide:
+
+- Whether login succeeds.
+- Whether a user is verified.
+- Whether a host can publish cars.
+- Whether a booking is valid.
+- Whether payment succeeds.
+- Which bookings are active, upcoming, completed, or canceled.
+- Which notifications exist.
+- Which chat rooms and messages exist.
+
+The admin panel depends on the backend to decide:
+
+- Which users appear in each status tab.
+- Which user details are available.
+- Whether approve or reject actions succeed.
+
+The shared high-level product flow is:
+
+1. A user signs up in the mobile app.
+2. The user uploads identity and driving documents.
+3. The backend stores the data.
+4. An admin reviews the user in the admin panel.
+5. The admin approves or rejects the user.
+6. The backend updates the user's verification status.
+7. The mobile app reads the updated status and unlocks or blocks actions.
+8. If the user is a host, they can publish cars after the required onboarding and verification.
+9. Customers can find, book, pay for, and review cars.
+10. Hosts can manage cars and bookings.
+11. Both sides can chat and receive notifications.
+
+
+============================================================
+33. QUICK ROUTER / SCREEN MAP
+============================================================
+
+Mobile app:
+
+- App.tsx: global app bootstrapping
+- AuthStack.tsx: main app navigation stack
+- RootStack.tsx: root app stack
+- BottomTabNavigation.tsx: Home, Search, Hosting, Chat, Setting tabs
+- Home: public landing/search start screen
+- Search: car search and map
+- UserCarDetails: customer car detail screen
+- PaymentScreen: booking and payment flow
+- MyOrders: customer booking list
+- OrderForMyCar: host booking list
+- Hosting: host area entry
+- PublishCar: car publishing wizard
+- HostCarDetails: host car detail and publish/unpublish controls
+- ChatList: chat overview
+- SingleChat: real-time messages
+- Notification: notification history
+- Setting: account, language, notification, and logout settings
+- SignupComplete: profile and driving onboarding
+- HelpCenter: terms and FAQ content
+
+Admin panel:
+
+- App.tsx: route definitions and auth redirect logic
+- /: login or redirect
+- /users: user management table
+- /users/:id: user detail and approval page
+- DashboardLayout: protected admin shell
+- Sidebar: navigation and logout
+- loginForm.tsx: admin login form
+- Header.tsx: users filter/search/table controller
+- details.tsx: user review page
+- rejection-modal.tsx: reject user form
+
+
+============================================================
+34. SHORT SUMMARY
+============================================================
+
+The frontend system has two parts.
+
+The mobile app is the main user and host product. It handles onboarding, authentication, car search, hosting, bookings, payments, chat, notifications, settings, localization, and profile management.
+
+The admin panel is the internal review tool. It lets admins log in, filter users, inspect submitted documents and details, then approve or reject accounts.
+
+Both clients depend on the backend API as the source of truth. The mobile app creates activity and user data. The admin panel reviews and changes verification status. The backend coordinates the database, authentication, Stripe, chat, notifications, and business rules that both frontends rely on.
